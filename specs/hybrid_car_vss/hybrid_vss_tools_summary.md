@@ -1,6 +1,6 @@
 # AI-powered cockpit assistant tools VSS
 
-**113 tools** in total: **101 positive** and **12 negative**, over **146 vehicle state values** named after [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) signals (129 standard, 17 extensions). The spec files are the `2026-10-14_hybrid_vss_*` files in this folder.
+**113 tools** in total: **101 positive** and **12 negative**, over **146 vehicle state values** named after [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) signals (129 standard, 17 extensions). The spec files are the `hybrid_vss_*` files in this folder.
 
 Of the 101 positive tools, **52 come from CAR-bench** (32 with the same capability, 20 extended) and **49 are new**.
 
@@ -190,7 +190,7 @@ These 12 tools cover smart-home, phone, and other requests that do not belong in
 
 ## Vehicle state
 
-The 146 state values the tools change and read, named by their [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) path. 129 are standard VSS signals and 17 are extensions declared in `2026-10-14_hybrid_vss_overlay.vspec`. Each conversation starts from a random but valid state, and every successful action updates it.
+The 146 state values the tools change and read, named by their [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) path. 129 are standard VSS signals and 17 are extensions declared in `hybrid_vss_overlay.vspec`. Each conversation starts from a random but valid state, and every successful action updates it.
 
 ### Doors and windows
 

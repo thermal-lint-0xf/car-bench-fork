@@ -4,7 +4,7 @@ Usage:
     python generate_specs.py OUT_DIR [--vss-json FULL_VSS_EXPORT.json]
 
 Every state value is either a standard VSS signal (checked against vss_reference.json) or an
-extension declared in the overlay file this script writes (2026-10-14_hybrid_vss_overlay.vspec).
+extension declared in the overlay file this script writes (hybrid_vss_overlay.vspec).
 Pass --vss-json with a full `vspec export json` of VSS to refresh vss_reference.json.
 """
 import json
@@ -15,7 +15,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = Path(sys.argv[1])
-PREFIX = "2026-10-14_hybrid_vss"
+PREFIX = "hybrid_vss"
 REF_PATH = HERE / "vss_reference.json"
 VSS_COMMIT = "dcc7cf570f27378d7ff9333f2a4d1cf552645cfe"
 VSS_VERSION = "7.0-dev"

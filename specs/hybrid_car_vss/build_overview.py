@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from origin import ORIGIN
 d = Path(sys.argv[1]); out_md = Path(sys.argv[2]); out_html_frag = Path(sys.argv[3]); out_html_full = Path(sys.argv[4])
-PFX = "2026-10-14_hybrid_vss"
+PFX = "hybrid_vss"
 pos = json.load(open(d/f"{PFX}_positive_tools_spec.json"))
 neg = json.load(open(d/f"{PFX}_negative_tools_spec.json"))
 inv = json.load(open(d/f"{PFX}_state_inventory.json"))
