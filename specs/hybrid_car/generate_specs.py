@@ -237,9 +237,21 @@ tool("set_charge_port", "Vehicle", "action",
      "Open or close the charging port door for plug-in charging. " + STOPPED_RULE,
      {"open": P("bool", "true to open the charge port door, false to close it.")},
      writes=["vehicle.access.charge_port_open"])
-tool("get_access_status", "Vehicle", "retrieve",
-     "Return whether the doors are locked, the rear child locks, and whether the trunk, fuel door, and charge port door are open.",
-     reads=paths("vehicle.access."))
+tool("get_door_lock_status", "Vehicle", "retrieve",
+     "Return whether the doors are locked.",
+     reads=["vehicle.access.doors_locked"])
+tool("get_child_lock_status", "Vehicle", "retrieve",
+     "Return whether the child safety lock is engaged on each rear door.",
+     reads=["vehicle.access.child_lock.rear_left", "vehicle.access.child_lock.rear_right"])
+tool("get_trunk_status", "Vehicle", "retrieve",
+     "Return whether the trunk lid is open or closed.",
+     reads=["vehicle.access.trunk_open"])
+tool("get_fuel_door_status", "Vehicle", "retrieve",
+     "Return whether the fuel filler door is open or closed.",
+     reads=["vehicle.access.fuel_door_open"])
+tool("get_charge_port_status", "Vehicle", "retrieve",
+     "Return whether the charging port door is open or closed.",
+     reads=["vehicle.access.charge_port_open"])
 
 # ======================================================== vehicle: lights & visibility
 tool("set_low_beams", "Vehicle", "action",

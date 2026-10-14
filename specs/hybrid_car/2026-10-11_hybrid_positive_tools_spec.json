@@ -123,8 +123,36 @@
     },
     "sample_commands": []
   },
-  "get_access_status": {
-    "description": "Return whether the doors are locked, the rear child locks, and whether the trunk, fuel door, and charge port door are open.",
+  "get_door_lock_status": {
+    "description": "Return whether the doors are locked.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_child_lock_status": {
+    "description": "Return whether the child safety lock is engaged on each rear door.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_trunk_status": {
+    "description": "Return whether the trunk lid is open or closed.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_fuel_door_status": {
+    "description": "Return whether the fuel filler door is open or closed.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_charge_port_status": {
+    "description": "Return whether the charging port door is open or closed.",
     "domain": "Vehicle",
     "kind": "retrieve",
     "parameters": {},

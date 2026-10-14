@@ -872,13 +872,29 @@
         "vehicle.access.charge_port_open"
       ]
     },
-    "get_access_status": {
+    "get_door_lock_status": {
       "reads": [
-        "vehicle.access.doors_locked",
+        "vehicle.access.doors_locked"
+      ]
+    },
+    "get_child_lock_status": {
+      "reads": [
         "vehicle.access.child_lock.rear_left",
-        "vehicle.access.child_lock.rear_right",
-        "vehicle.access.trunk_open",
-        "vehicle.access.fuel_door_open",
+        "vehicle.access.child_lock.rear_right"
+      ]
+    },
+    "get_trunk_status": {
+      "reads": [
+        "vehicle.access.trunk_open"
+      ]
+    },
+    "get_fuel_door_status": {
+      "reads": [
+        "vehicle.access.fuel_door_open"
+      ]
+    },
+    "get_charge_port_status": {
+      "reads": [
         "vehicle.access.charge_port_open"
       ]
     },

@@ -1,14 +1,14 @@
 # Hybrid Assistant Tools
 
-**100 tools** in total: **88 positive** and **12 negative**. The spec files are the `2026-10-11_hybrid_*.json` files in this folder.
+**104 tools** in total: **92 positive** and **12 negative**. The spec files are the `2026-10-11_hybrid_*.json` files in this folder.
 
-Of the 88 positive tools, **50 come from CAR-bench** (34 with the same capability, 16 extended) and **38 are new**.
+Of the 92 positive tools, **50 come from CAR-bench** (35 with the same capability, 15 extended) and **42 are new**.
 
 ## Positive tools by domain
 
 | Domain | Action | Retrieve | Total | From CAR-bench | New |
 |---|---|---|---|---|---|
-| Vehicle (Body, lights, climate, seats, vehicle status) | 32 | 11 | 43 | 24 | 19 |
+| Vehicle (Body, lights, climate, seats, vehicle status) | 32 | 15 | 47 | 24 | 23 |
 | Navigation (Routes, stops, places) | 9 | 6 | 15 | 13 | 2 |
 | Energy (Hybrid powertrain, charging, fuel) | 5 | 7 | 12 | 4 | 8 |
 | Media (Audio and radio) | 7 | 1 | 8 | – | 8 |
@@ -16,7 +16,7 @@ Of the 88 positive tools, **50 come from CAR-bench** (34 with the same capabilit
 | Utility (Math and time) | – | 2 | 2 | 2 | – |
 | Weather (Conditions at a place today) | – | 1 | 1 | 1 | – |
 | Preferences (Saved driver preferences) | – | 1 | 1 | 1 | – |
-| **Total** | **56** | **32** | **88** | **50** | **38** |
+| **Total** | **56** | **36** | **92** | **50** | **42** |
 
 CAR-bench has 57 tools. All of them are covered except `think` and `planning_tool`, which are reasoning scaffolds for the agent rather than features for the driver.
 
@@ -28,7 +28,7 @@ Origin tags used below:
 
 ## Positive tools
 
-### Vehicle (43)
+### Vehicle (47)
 
 | Tool | Kind | Origin | CAR-bench source | What it does |
 |---|---|---|---|---|
@@ -41,7 +41,11 @@ Origin tags used below:
 | `set_trunk` | action | CAR-bench, extended | `open_close_trunk_door` | Open or close the power trunk lid. Adds the stopped-in-park rule. |
 | `set_fuel_door` | action | New | – | Open or close the fuel filler door for refueling. |
 | `set_charge_port` | action | New | – | Open or close the charging port door for plug-in charging. |
-| `get_access_status` | retrieve | CAR-bench, extended | `get_trunk_door_position` | Return whether the doors are locked, the rear child locks, and whether the trunk, fuel door, and charge port door are open. Adds door locks, child locks, fuel door, and charge port. |
+| `get_door_lock_status` | retrieve | New | – | Return whether the doors are locked. |
+| `get_child_lock_status` | retrieve | New | – | Return whether the child safety lock is engaged on each rear door. |
+| `get_trunk_status` | retrieve | CAR-bench | `get_trunk_door_position` | Return whether the trunk lid is open or closed. |
+| `get_fuel_door_status` | retrieve | New | – | Return whether the fuel filler door is open or closed. |
+| `get_charge_port_status` | retrieve | New | – | Return whether the charging port door is open or closed. |
 | `set_low_beams` | action | CAR-bench | `set_head_lights_low_beams` | Turn the low beam headlights on or off. |
 | `set_high_beams` | action | CAR-bench | `set_head_lights_high_beams` | Turn the high beam headlights on or off. |
 | `set_fog_lights` | action | CAR-bench | `set_fog_lights` | Turn the front fog lights on or off. |

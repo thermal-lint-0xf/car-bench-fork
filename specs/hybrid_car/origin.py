@@ -8,7 +8,7 @@ ORIGIN = {
     "set_sunroof_position": ("same", ["open_close_sunroof"], ""),
     "get_window_and_roof_status": ("same", ["get_vehicle_window_positions", "get_sunroof_and_sunshade_position"], "Merges two CAR-bench getters."),
     "set_trunk": ("extended", ["open_close_trunk_door"], "Adds the stopped-in-park rule."),
-    "get_access_status": ("extended", ["get_trunk_door_position"], "Adds door locks, child locks, fuel door, and charge port."),
+    "get_trunk_status": ("same", ["get_trunk_door_position"], ""),
     "set_low_beams": ("same", ["set_head_lights_low_beams"], ""),
     "set_high_beams": ("same", ["set_head_lights_high_beams"], ""),
     "set_fog_lights": ("same", ["set_fog_lights"], ""),
