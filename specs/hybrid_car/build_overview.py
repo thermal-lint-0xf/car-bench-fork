@@ -25,6 +25,36 @@ def first_sentence(s):
     m=re.match(r"(.+?\.)(\s|$)", s)
     return m.group(1) if m else s
 
+# ---------- vehicle state
+STATE=inv["state"]
+WRITERS={p:[] for p in STATE}; READERS={p:[] for p in STATE}
+for tn,ts in inv["tools"].items():
+    for p in ts.get("writes",[]): WRITERS[p].append(tn)
+    for p in ts.get("reads",[]): READERS[p].append(tn)
+GROUPS=[("vehicle.comfort","Comfort","Windows, sunroof, seats, steering wheel, interior lights"),
+        ("vehicle.climate","Climate","Temperature zones, fan, air conditioning, defrost"),
+        ("vehicle.visibility","Visibility","Exterior lights, wipers, side mirrors"),
+        ("vehicle.access","Access","Door locks, child locks, trunk, fuel door, charge port"),
+        ("vehicle.media","Media","Audio source, playback, volume, radio"),
+        ("vehicle.powertrain","Powertrain","Battery, fuel, hybrid and drive modes, charging settings"),
+        ("vehicle.telemetry","Telemetry","Read-only sensors: speed, gear, temperatures, tires, maintenance, trip computer"),
+        ("vehicle.info","Vehicle info","Fixed facts about the car"),
+        ("navigation","Navigation","Active route, stops, route options")]
+assert all(any(p.startswith(g+".") for g,_,_ in GROUPS) for p in STATE)
+def values_text(v):
+    if "enum" in v: return ", ".join(json.dumps(x) if isinstance(x,str) else str(x) for x in v["enum"])
+    if v["type"]=="bool": return "true, false"
+    if "minimum" in v:
+        st=f", step {v['step']}" if "step" in v else ""
+        return f"{v['minimum']} to {v['maximum']}{st}"
+    return "location or route ID, empty when unset"
+def start_text(v):
+    if v["initial"]=="fixed": return "fixed: "+json.dumps(v["default"])
+    if v["initial"]=="from_weather": return "from weather"
+    return "random"
+state_data=[{"p":p,"g":next(g for g,_,_ in GROUPS if p.startswith(g+".")),"t":v["type"],"v":values_text(v),"s":start_text(v),"d":v["description"],"w":WRITERS[p],"r":READERS[p]} for p,v in STATE.items()]
+STYPE={p:v["type"] for p,v in STATE.items()}
+
 # ---------- markdown
 md=["# Hybrid Assistant Tools", "",
     f"**{len(pos)+len(neg)} tools** in total: **{len(pos)} positive** and **{len(neg)} negative**. The spec files are the `2026-10-11_hybrid_*.json` files in this folder.", "",
@@ -42,19 +72,30 @@ md += ["", "CAR-bench has 57 tools. All of them are covered except `think` and `
        "## Positive tools", ""]
 for dom,label,a,r,cb in rows:
     md.append(f"### {dom} ({a+r})"); md.append("")
-    md.append("| Tool | Kind | Origin | CAR-bench source | What it does |"); md.append("|---|---|---|---|---|")
+    md.append("| Tool | Parameters | Kind | Origin | CAR-bench source | What it does |"); md.append("|---|---|---|---|---|---|")
     for n,t in pos.items():
         if t["domain"]==dom:
             o,src,note=ORIGIN.get(n,("new",[],""))
             srcs=", ".join(f"`{x}`" for x in src) or "–"
             what=first_sentence(t["description"]) + (f" {note}" if note else "")
-            md.append(f"| `{n}` | {t['kind']} | {TAG[o]} | {srcs} | {what} |")
+            sig=", ".join(f"`{pn}{'' if pp['required'] else '?'}: {pp['type']}`" for pn,pp in t["parameters"].items()) or "–"
+            md.append(f"| `{n}` | {sig} | {t['kind']} | {TAG[o]} | {srcs} | {what} |")
     md.append("")
 md += ["## Negative tools", "",
        f"These {len(neg)} tools cover smart-home, phone, and other requests that do not belong in the car. The model should recognize them and decline or pick the right in-car tool. All of them are new.", "",
        "| Tool | Domain | What it does |","|---|---|---|"]
 for n,t in neg.items():
     md.append(f"| `{n}` | {t['domain']} | {first_sentence(t['description'])} |")
+md += ["", "## Vehicle state", "",
+       f"The {len(STATE)} state values the tools change and read, grouped by component. Each conversation starts from a random but valid state, and every successful action updates it.", ""]
+for g,label,desc in GROUPS:
+    md += [f"### {label}", "", desc+".", "", "| State | Type | Values | Start | Changed by | Read by |", "|---|---|---|---|---|---|"]
+    for x in state_data:
+        if x["g"]==g:
+            w=", ".join(f"`{n}`" for n in x["w"]) or "read-only"
+            r=", ".join(f"`{n}`" for n in x["r"])
+            md.append(f"| `{x['p']}` | {x['t']} | {x['v']} | {x['s']} | {w} | {r} |")
+    md.append("")
 out_md.write_text("\n".join(md).rstrip()+"\n")
 
 # ---------- html
@@ -69,8 +110,10 @@ def tool_entry(n,t,negative=False):
     for pn,p in t["parameters"].items():
         params.append({"n":pn,"t":p["type"],"req":p["required"],"d":p["description"]})
     o,src,note=("new",[],"") if negative else ORIGIN.get(n,("new",[],""))
-    return {"n":n,"dom":t["domain"],"k":t["kind"],"d":t["description"],"p":params,"s":state,"neg":negative,"o":o,"src":src,"note":note}
-data={"pos":[tool_entry(n,t) for n,t in pos.items()],"neg":[tool_entry(n,t,True) for n,t in neg.items()]}
+    return {"n":n,"dom":t["domain"],"k":t["kind"],"d":t["description"],"p":params,"s":state,"neg":negative,"o":o,"src":src,"note":note,
+            "w":st.get("writes",[]) if not negative else [],"r":st.get("reads",[]) if not negative else [],"ext":bool(st.get("external"))}
+data={"pos":[tool_entry(n,t) for n,t in pos.items()],"neg":[tool_entry(n,t,True) for n,t in neg.items()],"state":state_data,"stype":STYPE,
+      "groups":[[g,l,d] for g,l,d in GROUPS]}
 maxn=max(x[2]+x[3] for x in rows)
 table_rows="".join(
   f'<tr><th scope="row"><a href="#d-{dom.lower()}">{dom}</a><span class="sub">{html.escape(label)}</span></th>'
@@ -93,8 +136,11 @@ function item(t) {
   const label = t.neg ? "negative" : t.k;
   const params = t.p.length ? '<ul class="params">' + t.p.map(p => `<li><span><span class="pn">${esc(p.n)}</span><span class="pt">${p.t}${p.req ? "" : " · optional"}</span></span><span class="pd">${fmt(p.d)}</span></li>`).join("") + "</ul>" : '<p class="state">No parameters</p>';
   const otag = `<span class="otag o-${t.o}">${TAG[t.o]}</span>`;
+  const sig = `<span class="sig">(${t.p.map(p => `${esc(p.n)}${p.req ? "" : "?"}: <b>${p.t}</b>`).join(", ")})</span>`;
+  const plist = (label, paths) => `<div class="slist"><span class="slabel">${label}</span><ul>${paths.map(x => `<li><a href="#s-${x}" data-state="${x}"><code>${esc(x)}</code></a> <span class="pt">${DATA.stype[x]}</span></li>`).join("")}</ul></div>`;
+  const stateBlock = t.neg ? "" : t.ext ? `<p class="state">Uses outside data only. It changes and reads no vehicle state.</p>` : (t.w.length ? plist("Changes vehicle state", t.w) : plist("Reads vehicle state", t.r));
   const src = t.src.length ? `<p class="state">CAR-bench source: ${t.src.map(x => `<code>${esc(x)}</code>`).join(", ")}.${t.note ? " " + esc(t.note) : ""}</p>` : "";
-  return `<details><summary><span class="chip ${cls}">${label}</span><span class="tline"><span class="tname">${t.n}</span>${otag}</span><span class="tdesc">${fmt(first(t.d))}</span></summary><div class="body"><p>${fmt(t.d)}</p>${params}${src}${t.s ? `<p class="state">${t.s}</p>` : ""}</div></details>`;
+  return `<details id="t-${t.n}"><summary><span class="chip ${cls}">${label}</span><span class="tline"><span class="tname">${t.n}</span>${sig}${otag}</span><span class="tdesc">${fmt(first(t.d))}</span></summary><div class="body"><p>${fmt(t.d)}</p>${params}${stateBlock}${src}</div></details>`;
 }
 function render() {
   const q = document.getElementById("q").value.trim().toLowerCase();
@@ -124,7 +170,41 @@ document.querySelectorAll('tbody th a').forEach(a => a.addEventListener("click",
   document.getElementById("dom").value = ""; document.getElementById("q").value = ""; kind = ""; origin = "";
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", (x.dataset.k ?? x.dataset.o) === "")); render();
 }));
+function toolLink(n) { return `<a href="#t-${n}" data-tool="${n}"><code>${n.replace(/_/g, "_<wbr>")}</code></a>`; }
+function renderState() {
+  const q = document.getElementById("sq").value.trim().toLowerCase();
+  let out = "", n = 0;
+  for (const [g, label, desc] of DATA.groups) {
+    const rows = DATA.state.filter(x => x.g === g && (!q || (x.p + " " + x.d + " " + x.w.join(" ") + " " + x.r.join(" ")).toLowerCase().includes(q)));
+    if (!rows.length) continue;
+    n += rows.length;
+    out += `<div class="sgroup"><h3>${label} <small>${desc} · ${rows.length}</small></h3><div class="tablebox"><table class="stable"><thead><tr><th scope="col">State</th><th scope="col">Type</th><th scope="col">Values</th><th scope="col">Start</th><th scope="col">Changed by</th><th scope="col">Read by</th></tr></thead><tbody>` +
+      rows.map(x => `<tr id="s-${x.p}"><td><code class="spath">${esc(x.p.slice(g.length + 1))}</code><span class="sdesc">${esc(x.d)}</span></td><td><span class="ttype">${x.t}</span></td><td class="vals${x.t === "bool" ? " nw" : ""}">${esc(x.v)}</td><td class="start">${esc(x.s)}</td><td class="tools">${x.w.length ? x.w.map(toolLink).join(" ") : '<span class="ro">read-only</span>'}</td><td class="tools">${x.r.map(toolLink).join(" ")}</td></tr>`).join("") +
+      `</tbody></table></div></div>`;
+  }
+  document.getElementById("slist").innerHTML = out || '<p class="empty">No state values match. Try another word.</p>';
+  document.getElementById("scount").textContent = `${n} shown`;
+}
+document.getElementById("sq").addEventListener("input", renderState);
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[data-tool], a[data-state]");
+  if (!a) return;
+  e.preventDefault();
+  let el;
+  if (a.dataset.tool) {
+    document.getElementById("dom").value = ""; document.getElementById("q").value = ""; kind = ""; origin = "";
+    document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", (x.dataset.k ?? x.dataset.o) === ""));
+    render();
+    el = document.getElementById("t-" + a.dataset.tool); if (el) el.open = true;
+  } else {
+    document.getElementById("sq").value = ""; renderState();
+    el = document.getElementById("s-" + a.dataset.state);
+    if (el) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  }
+  if (el) el.scrollIntoView({block: "center"});
+});
 render();
+renderState();
 </script>
 '''
 frag=f'''<title>Hybrid Assistant Tools</title>
@@ -158,7 +238,7 @@ header {{ display:grid; gap:16px; }}
 .totals div {{ display:grid; }}
 .totals b {{ font-size:32px; font-weight:600; line-height:1.1; }}
 .totals span {{ color:var(--muted); font-size:13px; }}
-.totals .pos b {{ color:var(--fg); }} .totals .neg b {{ color:var(--neg); }}
+.totals .pos b {{ color:var(--fg); }} .totlink {{ color:inherit; text-decoration:none; }} .totals .neg b {{ color:var(--neg); }}
 section {{ display:grid; gap:14px; min-width:0; }}
 .tablebox {{ position:relative; overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:10px; }}
 table {{ border-collapse:collapse; width:100%; min-width:680px; font-variant-numeric:tabular-nums; }}
@@ -205,10 +285,35 @@ summary::-webkit-details-marker {{ display:none; }}
 .params {{ display:grid; gap:6px; margin:0; padding:0; list-style:none; }}
 .params li {{ font-size:14px; display:grid; grid-template-columns:minmax(0,max-content) 1fr; gap:2px 10px; }}
 .params .pn {{ font-family:var(--font-mono); }}
-.params .pt {{ color:var(--muted); font-size:12px; margin-left:6px; font-family:var(--font-mono); }}
+.params .pt {{ margin-left:6px; }}
 .params .pd {{ color:var(--muted); min-width:0; }}
 .state {{ font-size:13px; color:var(--muted); }}
 .empty {{ color:var(--muted); padding:20px 0; }}
+.sig {{ font-family:var(--font-mono); font-size:13px; color:var(--muted); overflow-wrap:anywhere; }}
+.sig b {{ font-weight:500; color:var(--retrieve); }}
+.slist {{ display:grid; gap:4px; }}
+.slabel {{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; }}
+.slist ul {{ margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:4px 16px; font-size:13px; }}
+.slist a, td.tools a {{ color:var(--fg); text-decoration:none; border-bottom:1px dotted var(--muted); }}
+.slist a:hover, td.tools a:hover {{ border-bottom-style:solid; }}
+.pt {{ color:var(--muted); font-size:12px; font-family:var(--font-mono); }}
+.sgroup {{ display:grid; gap:8px; }}
+.sgroup h3 {{ display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; padding-top:8px; }}
+.sgroup h3 small {{ font-weight:400; color:var(--muted); font-size:13px; }}
+table.stable {{ min-width:860px; font-size:13px; }}
+table.stable td {{ vertical-align:top; }}
+.spath {{ font-weight:500; display:block; }}
+.sdesc {{ display:block; color:var(--muted); max-width:36ch; }}
+.ttype {{ font-family:var(--font-mono); color:var(--retrieve); }}
+td.vals {{ font-family:var(--font-mono); font-size:12px; min-width:14ch; max-width:22ch; overflow-wrap:anywhere; }}
+td.start {{ color:var(--muted); white-space:nowrap; }}
+td.tools {{ font-size:12px; line-height:1.9; min-width:16ch; }}
+td.tools a {{ margin-right:6px; }}
+.ro {{ color:var(--muted); font-style:italic; }}
+td.nw {{ white-space:nowrap; }}
+tr.flash td {{ animation:flash 1.6s ease-out; }}
+@keyframes flash {{ from {{ background:var(--retrieve-soft); }} to {{ background:transparent; }} }}
+@media (prefers-reduced-motion: reduce) {{ tr.flash td {{ animation:none; background:var(--retrieve-soft); }} }}
 @media (max-width:560px) {{ .params li {{ grid-template-columns:1fr; }} .totals b {{ font-size:26px; }} }}
 @media (prefers-reduced-motion: reduce) {{ * {{ scroll-behavior:auto !important; }} }}
 </style>
@@ -216,12 +321,12 @@ summary::-webkit-details-marker {{ display:none; }}
 <header>
   <div class="eyebrow">Plug-in hybrid · in-car assistant · tool spec</div>
   <h1>Hybrid Assistant Tools</h1>
-  <p>Tool specs for a plug-in hybrid in-car assistant. They keep every CAR-bench capability and add hybrid energy, media, door access, seats, visibility, and read-only vehicle status.</p>
+  <p>Tool specs and vehicle state for a plug-in hybrid in-car assistant. They keep every CAR-bench capability and add hybrid energy, media, door access, seats, visibility, and read-only vehicle status.</p>
   <div class="totals">
     <div><b>{len(pos)+len(neg)}</b><span>tools in total</span></div>
     <div class="pos"><b>{len(pos)}</b><span>positive ({TA} action · {TR} retrieve)</span></div>
     <div class="neg"><b>{len(neg)}</b><span>negative (to decline)</span></div>
-    <div><b>{len(inv["state"])}</b><span>vehicle state values</span></div>
+    <div><b><a class="totlink" href="#h-state">{len(inv["state"])}</a></b><span>vehicle state values</span></div>
   </div>
 </header>
 <section aria-labelledby="h-sum">
@@ -248,6 +353,15 @@ summary::-webkit-details-marker {{ display:none; }}
     <span class="count" id="count"></span>
   </div>
   <div id="list"></div>
+</section>
+<section aria-labelledby="h-state">
+  <h2 id="h-state">Vehicle state</h2>
+  <p class="note">The {len(STATE)} values the tools change and read. Each conversation starts from a random but valid state, and every successful action updates it. Tool names link to the tool above.</p>
+  <div class="controls">
+    <input id="sq" type="search" placeholder="Search state names, descriptions, or tools" aria-label="Search vehicle state">
+    <span class="count" id="scount"></span>
+  </div>
+  <div id="slist"></div>
 </section>
 </div>
 __SCRIPT__

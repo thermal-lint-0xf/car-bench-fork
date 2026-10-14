@@ -212,9 +212,12 @@ tool("set_sunroof_position", "Vehicle", "action",
      + WEATHER_CHECK + " If the condition is not \"clear\", \"sunny\", \"partly_cloudy\", or \"cloudy\", get an explicit yes from the driver before opening.",
      {"position": P("int", "integer from 0 to 100, in steps of 5. Default is 100.", False, 100)},
      writes=["vehicle.comfort.sunroof_position_pct"])
-tool("get_window_and_roof_status", "Vehicle", "retrieve",
-     "Return the position of all four windows, the sunroof, and the sunshade.",
-     reads=paths("vehicle.comfort.window_positions.") + ["vehicle.comfort.sunroof_position_pct", "vehicle.comfort.sunshade_position_pct"])
+tool("get_window_positions", "Vehicle", "retrieve",
+     "Return the opening position of all four windows.",
+     reads=paths("vehicle.comfort.window_positions."))
+tool("get_sunroof_and_sunshade_position", "Vehicle", "retrieve",
+     "Return the opening position of the sunroof and the sunshade. They are read together because the sunroof can only open when the sunshade is fully open.",
+     reads=["vehicle.comfort.sunroof_position_pct", "vehicle.comfort.sunshade_position_pct"])
 
 tool("set_door_locks", "Vehicle", "action",
      "Lock or unlock all doors. Unlocking is blocked while `vehicle.telemetry.speed_kph` is above 0.",
@@ -283,9 +286,15 @@ tool("set_mirror_heating", "Vehicle", "action",
      "Turn side mirror heating on or off, to clear ice, frost, or fog from the mirrors.",
      {"on": P("bool", "true to turn on, false to turn off.")},
      writes=["vehicle.visibility.mirror_heating"])
-tool("get_visibility_status", "Vehicle", "retrieve",
-     "Return the state of the low beams, high beams, fog lights, front and rear wipers, side mirror folding, and mirror heating.",
-     reads=paths("vehicle.visibility."))
+tool("get_exterior_lights_status", "Vehicle", "retrieve",
+     "Return whether the low beams, high beams, and fog lights are on.",
+     reads=["vehicle.visibility.low_beams", "vehicle.visibility.high_beams", "vehicle.visibility.fog_lights"])
+tool("get_wiper_status", "Vehicle", "retrieve",
+     "Return the front wiper speed and whether the rear wiper is on.",
+     reads=["vehicle.visibility.wiper_speed", "vehicle.visibility.rear_wiper"])
+tool("get_side_mirror_status", "Vehicle", "retrieve",
+     "Return whether the side mirrors are folded and whether mirror heating is on.",
+     reads=["vehicle.visibility.mirrors_folded", "vehicle.visibility.mirror_heating"])
 
 tool("set_reading_light", "Vehicle", "action",
      "Turn the reading light at one seat, or at all seats, on or off.",
@@ -297,9 +306,12 @@ tool("set_ambient_light", "Vehicle", "action",
      {"color": P("str", one_of(AMBIENT_COLORS)),
       "brightness_pct": P("int", "integer from 10 to 100, in steps of 10. Default is 70. Ignored when color is \"off\".", False, 70)},
      writes=["vehicle.comfort.ambient_light_color", "vehicle.comfort.ambient_light_brightness_pct"])
-tool("get_interior_lights_status", "Vehicle", "retrieve",
-     "Return which reading lights are on and the ambient light color and brightness.",
-     reads=paths("vehicle.comfort.reading_light.") + ["vehicle.comfort.ambient_light_color", "vehicle.comfort.ambient_light_brightness_pct"])
+tool("get_reading_lights_status", "Vehicle", "retrieve",
+     "Return which seats have their reading light on.",
+     reads=paths("vehicle.comfort.reading_light."))
+tool("get_ambient_light_status", "Vehicle", "retrieve",
+     "Return the ambient light color, or \"off\", and its brightness.",
+     reads=["vehicle.comfort.ambient_light_color", "vehicle.comfort.ambient_light_brightness_pct"])
 
 # ======================================================== vehicle: climate
 tool("set_climate_temperature", "Vehicle", "action",

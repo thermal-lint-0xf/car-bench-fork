@@ -836,12 +836,16 @@
         "vehicle.comfort.sunroof_position_pct"
       ]
     },
-    "get_window_and_roof_status": {
+    "get_window_positions": {
       "reads": [
         "vehicle.comfort.window_positions.front_left",
         "vehicle.comfort.window_positions.front_right",
         "vehicle.comfort.window_positions.rear_left",
-        "vehicle.comfort.window_positions.rear_right",
+        "vehicle.comfort.window_positions.rear_right"
+      ]
+    },
+    "get_sunroof_and_sunshade_position": {
+      "reads": [
         "vehicle.comfort.sunroof_position_pct",
         "vehicle.comfort.sunshade_position_pct"
       ]
@@ -933,13 +937,21 @@
         "vehicle.visibility.mirror_heating"
       ]
     },
-    "get_visibility_status": {
+    "get_exterior_lights_status": {
       "reads": [
         "vehicle.visibility.low_beams",
         "vehicle.visibility.high_beams",
-        "vehicle.visibility.fog_lights",
+        "vehicle.visibility.fog_lights"
+      ]
+    },
+    "get_wiper_status": {
+      "reads": [
         "vehicle.visibility.wiper_speed",
-        "vehicle.visibility.rear_wiper",
+        "vehicle.visibility.rear_wiper"
+      ]
+    },
+    "get_side_mirror_status": {
+      "reads": [
         "vehicle.visibility.mirrors_folded",
         "vehicle.visibility.mirror_heating"
       ]
@@ -958,12 +970,16 @@
         "vehicle.comfort.ambient_light_brightness_pct"
       ]
     },
-    "get_interior_lights_status": {
+    "get_reading_lights_status": {
       "reads": [
         "vehicle.comfort.reading_light.front_left",
         "vehicle.comfort.reading_light.front_right",
         "vehicle.comfort.reading_light.rear_left",
-        "vehicle.comfort.reading_light.rear_right",
+        "vehicle.comfort.reading_light.rear_right"
+      ]
+    },
+    "get_ambient_light_status": {
+      "reads": [
         "vehicle.comfort.ambient_light_color",
         "vehicle.comfort.ambient_light_brightness_pct"
       ]

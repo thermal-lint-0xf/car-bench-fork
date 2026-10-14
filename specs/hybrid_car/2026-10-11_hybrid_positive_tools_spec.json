@@ -46,8 +46,15 @@
     },
     "sample_commands": []
   },
-  "get_window_and_roof_status": {
-    "description": "Return the position of all four windows, the sunroof, and the sunshade.",
+  "get_window_positions": {
+    "description": "Return the opening position of all four windows.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_sunroof_and_sunshade_position": {
+    "description": "Return the opening position of the sunroof and the sunshade. They are read together because the sunroof can only open when the sunshade is fully open.",
     "domain": "Vehicle",
     "kind": "retrieve",
     "parameters": {},
@@ -249,8 +256,22 @@
     },
     "sample_commands": []
   },
-  "get_visibility_status": {
-    "description": "Return the state of the low beams, high beams, fog lights, front and rear wipers, side mirror folding, and mirror heating.",
+  "get_exterior_lights_status": {
+    "description": "Return whether the low beams, high beams, and fog lights are on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_wiper_status": {
+    "description": "Return the front wiper speed and whether the rear wiper is on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_side_mirror_status": {
+    "description": "Return whether the side mirrors are folded and whether mirror heating is on.",
     "domain": "Vehicle",
     "kind": "retrieve",
     "parameters": {},
@@ -293,8 +314,15 @@
     },
     "sample_commands": []
   },
-  "get_interior_lights_status": {
-    "description": "Return which reading lights are on and the ambient light color and brightness.",
+  "get_reading_lights_status": {
+    "description": "Return which seats have their reading light on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_ambient_light_status": {
+    "description": "Return the ambient light color, or \"off\", and its brightness.",
     "domain": "Vehicle",
     "kind": "retrieve",
     "parameters": {},
