@@ -1,4 +1,4 @@
-# Tools VSS
+# AI-powered cockpit assistant tools VSS
 
 **113 tools** in total: **101 positive** and **12 negative**, over **146 vehicle state values** named after [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) signals (129 standard, 17 extensions). The spec files are the `2026-10-14_hybrid_vss_*` files in this folder.
 

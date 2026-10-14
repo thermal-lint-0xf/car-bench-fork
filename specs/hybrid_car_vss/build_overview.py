@@ -71,7 +71,7 @@ state_data.sort(key=lambda x: x["g"])
 STYPE={p:v["type"] for p,v in STATE.items()}
 
 # ---------- markdown
-md=["# Tools VSS", "",
+md=["# AI-powered cockpit assistant tools VSS", "",
     f"**{len(pos)+len(neg)} tools** in total: **{len(pos)} positive** and **{len(neg)} negative**, over **{len(STATE)} vehicle state values** named after [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) signals ({NSTD} standard, {NEXTN} extensions). The spec files are the `{PFX}_*` files in this folder.", "",
     f"Of the {len(pos)} positive tools, **{TCB} come from CAR-bench** ({NSAME} with the same capability, {NEXT} extended) and **{NNEW} are new**.", "",
     "## Positive tools by domain", "",
@@ -241,7 +241,7 @@ render();
 renderState();
 </script>
 '''
-frag=f'''<title>Tools VSS</title>
+frag=f'''<title>AI-powered cockpit assistant tools VSS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -369,7 +369,7 @@ tr.flash td {{ animation:flash 1.6s ease-out; }}
 </style>
 <div class="wrap">
 <header>
-  <h1>Tools VSS</h1>
+  <h1>AI-powered cockpit assistant tools VSS</h1>
   <p>Tool specs and vehicle state for a plug-in hybrid in-car assistant, with every state value named after a COVESA Vehicle Signal Specification signal. They keep every CAR-bench capability and add hybrid energy, media, access, seats, visibility, and read-only vehicle status.</p>
   <div class="totals">
     <div><b>{len(pos)+len(neg)}</b><span>tools in total</span></div>
