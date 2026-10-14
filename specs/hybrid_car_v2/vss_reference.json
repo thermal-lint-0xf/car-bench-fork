@@ -1,0 +1,896 @@
+{
+  "vss_version": "7.0-dev",
+  "vss_commit": "dcc7cf570f27378d7ff9333f2a4d1cf552645cfe",
+  "signals": {
+    "Vehicle.AverageSpeed": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km/h",
+      "description": "Average speed for the current trip."
+    },
+    "Vehicle.Body.Lights.Beam.High.IsOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates if light is on or off. True = On. False = Off."
+    },
+    "Vehicle.Body.Lights.Beam.Low.IsOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates if light is on or off. True = On. False = Off."
+    },
+    "Vehicle.Body.Lights.Fog.Front.IsOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates if light is on or off. True = On. False = Off."
+    },
+    "Vehicle.Body.Lights.Fog.Rear.IsOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates if light is on or off. True = On. False = Off."
+    },
+    "Vehicle.Body.Lights.Hazard.IsSignaling": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates if light is signaling or off. True = signaling. False = Off."
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsFolded": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is mirror folded? True = Fully or partially folded. False = Fully unfolded."
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Mirror Heater on or off. True = Heater On. False = Heater Off."
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsFolded": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is mirror folded? True = Fully or partially folded. False = Fully unfolded."
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Mirror Heater on or off. True = Heater On. False = Heater Off."
+    },
+    "Vehicle.Body.Trunk.Rear.IsLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item locked or unlocked. True = Locked. False = Unlocked."
+    },
+    "Vehicle.Body.Trunk.Rear.IsOpen": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item open or closed? True = Fully or partially open. False = Fully closed."
+    },
+    "Vehicle.Body.Windshield.Front.WasherFluid.Level": {
+      "type": "sensor",
+      "datatype": "uint8",
+      "unit": "percent",
+      "max": 100,
+      "description": "Washer fluid level as a percent. 0 = Empty. 100 = Full."
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Intensity": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "description": "Relative intensity/sensitivity for interval and rain sensor mode as requested by user/driver. Has no significance if Windshield.Wiping.Mode is OFF/SLOW/MEDIUM/FAST 0 - wipers inactive. 1 - minimum intensity (lowest frequency/sensitivity, longest interval). 2/3/4/... - higher intensity (higher frequency/sensitivity, shorter interval). Maximum value supported is vehicle specific."
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Mode": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "OFF",
+        "SLOW",
+        "MEDIUM",
+        "FAST",
+        "INTERVAL",
+        "RAIN_SENSOR"
+      ],
+      "description": "Wiper mode requested by user/driver. INTERVAL indicates intermittent wiping, with fixed time interval between each wipe. RAIN_SENSOR indicates intermittent wiping based on rain intensity."
+    },
+    "Vehicle.Body.Windshield.Rear.Wiping.Mode": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "OFF",
+        "SLOW",
+        "MEDIUM",
+        "FAST",
+        "INTERVAL",
+        "RAIN_SENSOR"
+      ],
+      "description": "Wiper mode requested by user/driver. INTERVAL indicates intermittent wiping, with fixed time interval between each wipe. RAIN_SENSOR indicates intermittent wiping based on rain intensity."
+    },
+    "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item locked or unlocked. True = Locked. False = Unlocked."
+    },
+    "Vehicle.Cabin.Door.Row1.DriverSide.Window.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item locked or unlocked. True = Locked. False = Unlocked."
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.Window.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsChildLockActive": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Is door child lock active. True = Door cannot be opened from inside. False = Door can be opened from inside."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item locked or unlocked. True = Locked. False = Unlocked."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.Window.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Is door child lock active. True = Door cannot be opened from inside. False = Door can be opened from inside."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is item locked or unlocked. True = Locked. False = Unlocked."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Cabin.HVAC.AmbientAirTemperature": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Ambient air temperature inside the vehicle."
+    },
+    "Vehicle.Cabin.HVAC.IsAirConditioningActive": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is Air conditioning active."
+    },
+    "Vehicle.Cabin.HVAC.IsFrontDefrosterActive": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is front defroster active."
+    },
+    "Vehicle.Cabin.HVAC.IsRearDefrosterActive": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is rear defroster active."
+    },
+    "Vehicle.Cabin.HVAC.IsRecirculationActive": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is recirculation active."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "description": "Direction of airstream"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Fan Speed, 0 = off. 100 = max"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Temperature"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "description": "Direction of airstream"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Fan Speed, 0 = off. 100 = max"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Temperature"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.AirDistribution": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "description": "Direction of airstream"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.FanSpeed": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Fan Speed, 0 = off. 100 = max"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.Temperature": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Temperature"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.AirDistribution": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "description": "Direction of airstream"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.FanSpeed": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Fan Speed, 0 = off. 100 = max"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.Temperature": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Temperature"
+    },
+    "Vehicle.Cabin.Infotainment.Media.Action": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "STOP",
+        "PLAY",
+        "FAST_FORWARD",
+        "FAST_BACKWARD",
+        "SKIP_FORWARD",
+        "SKIP_BACKWARD"
+      ],
+      "description": "Tells if the media was"
+    },
+    "Vehicle.Cabin.Infotainment.Media.Played.Source": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "SIRIUS_XM",
+        "AM",
+        "FM",
+        "DAB",
+        "TV",
+        "CD",
+        "DVD",
+        "AUX",
+        "USB",
+        "DISK",
+        "BLUETOOTH",
+        "INTERNET",
+        "VOICE",
+        "BEEP"
+      ],
+      "description": "Media selected for playback"
+    },
+    "Vehicle.Cabin.Infotainment.Media.SelectedURI": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "URI of suggested media that was selected"
+    },
+    "Vehicle.Cabin.Infotainment.Media.Volume": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Current Media Volume"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude": {
+      "type": "actuator",
+      "datatype": "double",
+      "unit": "degrees",
+      "min": -90,
+      "max": 90,
+      "description": "Latitude of destination in WGS 84 geodetic coordinates."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude": {
+      "type": "actuator",
+      "datatype": "double",
+      "unit": "degrees",
+      "min": -180,
+      "max": 180,
+      "description": "Longitude of destination in WGS 84 geodetic coordinates."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.IsDestinationReached": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Indicates if destination has been reached. Shall be set to False is navigation is active and destination has not been reached."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Mute": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "MUTED",
+        "ALERT_ONLY",
+        "UNMUTED"
+      ],
+      "description": "Navigation mute state that was selected."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Volume": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Current navigation volume"
+    },
+    "Vehicle.Cabin.IsWindowChildLockEngaged": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is window child lock engaged. True = Engaged. False = Disengaged."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Color": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Hexadecimal color code represented as a 3-byte RGB (i.e. Red, Green, and Blue) value preceded by a hash symbol \"#\". Allowed range \"#000000\" to \"#FFFFFF\"."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Intensity": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100,
+      "description": "How much of the maximum possible brightness of the light is used. 1 = Maximum attenuation, 100 = No attenuation (i.e. full brightness)."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Color": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Hexadecimal color code represented as a 3-byte RGB (i.e. Red, Green, and Blue) value preceded by a hash symbol \"#\". Allowed range \"#000000\" to \"#FFFFFF\"."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Intensity": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100,
+      "description": "How much of the maximum possible brightness of the light is used. 1 = Maximum attenuation, 100 = No attenuation (i.e. full brightness)."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Color": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Hexadecimal color code represented as a 3-byte RGB (i.e. Red, Green, and Blue) value preceded by a hash symbol \"#\". Allowed range \"#000000\" to \"#FFFFFF\"."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Intensity": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100,
+      "description": "How much of the maximum possible brightness of the light is used. 1 = Maximum attenuation, 100 = No attenuation (i.e. full brightness)."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Color": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Hexadecimal color code represented as a 3-byte RGB (i.e. Red, Green, and Blue) value preceded by a hash symbol \"#\". Allowed range \"#000000\" to \"#FFFFFF\"."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Intensity": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100,
+      "description": "How much of the maximum possible brightness of the light is used. 1 = Maximum attenuation, 100 = No attenuation (i.e. full brightness)."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.DriverSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.PassengerSide.IsLightOn": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Indicates whether the light is turned on. True = On, False = Off."
+    },
+    "Vehicle.Cabin.RearShade.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "degrees",
+      "description": "Backrest recline compared to seat z-axis (seat vertical axis). 0 degrees = Upright/Vertical backrest. Negative degrees for forward recline. Positive degrees for backward recline."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling": {
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Heating or Cooling requsted for the Item. -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.Level": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Seat massage level. 0 = off. 100 = max massage."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.TypeActive": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Type of massage active."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.OccupancyStatus": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "description": "Occupancy status of the seat."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Position": {
+      "type": "actuator",
+      "datatype": "uint16",
+      "unit": "mm",
+      "min": 0,
+      "description": "Seat position on vehicle x-axis. Position is relative to the frontmost position supported by the seat. 0 = Frontmost position supported."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline": {
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "degrees",
+      "description": "Backrest recline compared to seat z-axis (seat vertical axis). 0 degrees = Upright/Vertical backrest. Negative degrees for forward recline. Positive degrees for backward recline."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling": {
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Heating or Cooling requsted for the Item. -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.Level": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Seat massage level. 0 = off. 100 = max massage."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive": {
+      "type": "actuator",
+      "datatype": "string",
+      "description": "Type of massage active."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.OccupancyStatus": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "description": "Occupancy status of the seat."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Position": {
+      "type": "actuator",
+      "datatype": "uint16",
+      "unit": "mm",
+      "min": 0,
+      "description": "Seat position on vehicle x-axis. Position is relative to the frontmost position supported by the seat. 0 = Frontmost position supported."
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling": {
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Heating or Cooling requsted for the Item. -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating."
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.OccupancyStatus": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "description": "Occupancy status of the seat."
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling": {
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Heating or Cooling requsted for the Item. -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating."
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.OccupancyStatus": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "description": "Occupancy status of the seat."
+    },
+    "Vehicle.Cabin.Sunroof.Position": {
+      "type": "sensor",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Sunroof position. 0 = Fully closed 100 = Fully opened. -100 = Fully tilted."
+    },
+    "Vehicle.Cabin.Sunroof.Shade.Position": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Item position. 0 = Start position 100 = End position."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.IsPressureLow": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Tire Pressure Status. True = Low tire pressure. False = Good tire pressure."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.Pressure": {
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa",
+      "description": "Tire pressure in kilo-Pascal."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.IsPressureLow": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Tire Pressure Status. True = Low tire pressure. False = Good tire pressure."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.Pressure": {
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa",
+      "description": "Tire pressure in kilo-Pascal."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.IsPressureLow": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Tire Pressure Status. True = Low tire pressure. False = Good tire pressure."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.Pressure": {
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa",
+      "description": "Tire pressure in kilo-Pascal."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.IsPressureLow": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Tire Pressure Status. True = Low tire pressure. False = Good tire pressure."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.Pressure": {
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa",
+      "description": "Tire pressure in kilo-Pascal."
+    },
+    "Vehicle.Chassis.SteeringWheel.HeatingCooling": {
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100,
+      "description": "Heating or Cooling requsted for the Item. -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating."
+    },
+    "Vehicle.Exterior.AirTemperature": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "Celsius",
+      "description": "Air temperature outside the vehicle."
+    },
+    "Vehicle.Exterior.Humidity": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Relative humidity outside the vehicle. 0 = Dry, 100 = Air fully saturated."
+    },
+    "Vehicle.LowVoltageBattery.CurrentVoltage": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "V",
+      "description": "Current Voltage of the low voltage battery."
+    },
+    "Vehicle.Powertrain.CombustionEngine.EngineOil.Level": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "CRITICALLY_LOW",
+        "LOW",
+        "NORMAL",
+        "HIGH",
+        "CRITICALLY_HIGH"
+      ],
+      "description": "Engine oil level."
+    },
+    "Vehicle.Powertrain.CombustionEngine.IsRunning": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Engine Running. True if engine is rotating (Speed > 0)."
+    },
+    "Vehicle.Powertrain.FuelSystem.AverageConsumption": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "l/100km",
+      "min": 0,
+      "description": "Average consumption in liters per 100 km."
+    },
+    "Vehicle.Powertrain.FuelSystem.HybridType": {
+      "type": "attribute",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "STOP_START",
+        "BELT_ISG",
+        "CIMG",
+        "PHEV"
+      ],
+      "description": "Defines the hybrid type of the vehicle."
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelLevelLow": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Indicates that the fuel level is low (e.g. <50km range)."
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Status of the fuel port flap(s). True if at least one is open."
+    },
+    "Vehicle.Powertrain.FuelSystem.RelativeLevel": {
+      "type": "sensor",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Level in fuel tank as percent of capacity. 0 = empty. 100 = full."
+    },
+    "Vehicle.Powertrain.FuelSystem.TankCapacity": {
+      "type": "attribute",
+      "datatype": "float",
+      "unit": "l",
+      "description": "Capacity of the fuel tank in liters."
+    },
+    "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "kWh/100km",
+      "description": "Current electric energy consumption rate during Charge Depleting mode operation."
+    },
+    "Vehicle.Powertrain.RangeExtender.OperatingMode": {
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "CHARGE_DEPLETING",
+        "CHARGE_SUSTAINING",
+        "BLENDED"
+      ],
+      "description": "Current operating mode of the Extended Range Electric Vehicle."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit": {
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100,
+      "description": "Target charge limit (state of charge) for battery."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableConnected": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Indicates whether a charging cable is physically connected to a particular charging port or not."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Is charging cable locked to prevent removal."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen": {
+      "type": "actuator",
+      "datatype": "boolean",
+      "description": "Status of the charging port flap(s)."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.IsCharging": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "True if charging is ongoing. Charging is considered to be ongoing if energy is flowing from charger to vehicle."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Mode": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "INACTIVE",
+        "START_TIME",
+        "END_TIME"
+      ],
+      "description": "Defines timer mode for charging: INACTIVE - no timer set, charging may start as soon as battery is connected to a charger. START_TIME - charging shall start at Charging.Timer.Time. END_TIME - charging shall be finished (reach Charging.ChargeLimit) at Charging.Timer.Time. When charging is completed the vehicle shall change mode to 'inactive' or set a new Charging.Timer.Time. Charging shall start immediately if mode is 'starttime' or 'endtime' and Charging.Timer.Time is a time in the past."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time": {
+      "type": "actuator",
+      "datatype": "string",
+      "unit": "iso8601",
+      "description": "Time for next charging-related action, formatted according to ISO 8601 with UTC time zone. Value has no significance if Charging.Timer.Mode is 'inactive'."
+    },
+    "Vehicle.Powertrain.TractionBattery.NetCapacity": {
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kWh",
+      "description": "Total net capacity of the battery considering aging."
+    },
+    "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "percent",
+      "min": 0,
+      "max": 100.0,
+      "description": "State of charge displayed to the customer."
+    },
+    "Vehicle.Powertrain.Transmission.PerformanceMode": {
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "NORMAL",
+        "SPORT",
+        "ECONOMY",
+        "SNOW",
+        "RAIN"
+      ],
+      "description": "Current gearbox performance mode."
+    },
+    "Vehicle.Powertrain.Transmission.SelectedGear": {
+      "type": "actuator",
+      "datatype": "int8",
+      "description": "The selected gear. 0=Neutral, 1/2/..=Forward, -1/-2/..=Reverse, 126=Park, 127=Drive."
+    },
+    "Vehicle.Powertrain.Type": {
+      "type": "attribute",
+      "datatype": "string",
+      "allowed": [
+        "COMBUSTION",
+        "HYBRID",
+        "ELECTRIC"
+      ],
+      "description": "Defines the powertrain type of the vehicle."
+    },
+    "Vehicle.Service.DistanceToService": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km",
+      "description": "Remaining distance to service (of any kind). Negative values indicate service overdue."
+    },
+    "Vehicle.Service.IsServiceDue": {
+      "type": "sensor",
+      "datatype": "boolean",
+      "description": "Indicates if vehicle needs service (of any kind). True = Service needed now or in the near future. False = No known need for service."
+    },
+    "Vehicle.Speed": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km/h",
+      "description": "Vehicle speed."
+    },
+    "Vehicle.TraveledDistance": {
+      "type": "sensor",
+      "datatype": "uint32",
+      "unit": "m",
+      "description": "Odometer reading, total distance traveled during the lifetime of the vehicle."
+    },
+    "Vehicle.TripDuration": {
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "s",
+      "description": "Duration of latest trip."
+    },
+    "Vehicle.TripMeterReading": {
+      "type": "actuator",
+      "datatype": "uint32",
+      "unit": "m",
+      "description": "Trip meter reading."
+    },
+    "Vehicle.VehicleIdentification.VehicleExteriorColor": {
+      "type": "attribute",
+      "datatype": "string",
+      "description": "The main color of the exterior within the basic color palette (eg. red, blue, black, white, ...)."
+    }
+  }
+}

@@ -1,0 +1,1465 @@
+{
+  "set_window_position": {
+    "description": "Open or close one window, or all four, to a position from 0 (closed) to 100 (fully open). Policy: if air conditioning is on and a window is opened beyond 25, warn about energy waste and ask for confirmation first.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "window": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", \"row2_driver_side\", \"row2_passenger_side\", or \"all\". \"row1_driver_side\" is the driver window."
+      },
+      "position": {
+        "type": "int",
+        "required": false,
+        "default": 100,
+        "description": "integer from 0 to 100, in steps of 5. Default is 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_window_child_lock": {
+    "description": "Disable or enable the rear passengers' window switches, so only the driver can move the rear windows.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to disable the rear window switches, false to enable them."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_window_positions": {
+    "description": "Return the opening position of all four windows and whether the rear window switches are locked.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_sunshade_position": {
+    "description": "Open or close the sunroof shade from 0 (closed) to 100 (fully open). It cannot close below 100 while the sunroof is open; close the sunroof first.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "position": {
+        "type": "int",
+        "required": false,
+        "default": 100,
+        "description": "integer from 0 to 100, in steps of 5. Default is 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_sunroof_position": {
+    "description": "Open, close, or tilt the sunroof. Opening above 0 is blocked unless the shade is already at 100 or is opened to 100 with `set_sunshade_position` in the same turn; tilting needs no shade. Check the weather with `get_weather` first. If the condition is not \"clear\", \"sunny\", \"partly_cloudy\", or \"cloudy\", get an explicit yes from the driver before opening or tilting.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "position": {
+        "type": "int",
+        "required": false,
+        "default": 100,
+        "description": "integer from -100 to 100, in steps of 5. 0 closes, 100 opens fully, negative values tilt up with -100 fully tilted. Default is 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_sunroof_and_sunshade_position": {
+    "description": "Return the sunroof position (negative means tilted) and the sunroof shade position. They are read together because the sunroof can only open when the shade is fully open.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_rear_window_shade": {
+    "description": "Raise or lower the rear window sun shade.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "position": {
+        "type": "int",
+        "required": false,
+        "default": 100,
+        "description": "integer from 0 to 100, in steps of 10. 0 retracts it, 100 raises it fully. Default is 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_rear_window_shade_position": {
+    "description": "Return how far the rear window sun shade is raised.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_door_locks": {
+    "description": "Lock or unlock one door or all doors. Unlocking is blocked while `Vehicle.Speed` is above 0.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "door": {
+        "type": "str",
+        "required": false,
+        "default": "all",
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", \"row2_driver_side\", \"row2_passenger_side\", or \"all\". Default is \"all\"."
+      },
+      "locked": {
+        "type": "bool",
+        "required": true,
+        "description": "true to lock, false to unlock."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_door_status": {
+    "description": "Return which doors are locked and whether the rear child safety locks are engaged. Child locks are mechanical switches on the doors, so the assistant can report them but not change them.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_trunk": {
+    "description": "Open or close the power trunk lid. Blocked unless the car is stopped in park (`Vehicle.Speed` is 0 and `Vehicle.Powertrain.Transmission.SelectedGear` is 126); if blocked, tell the driver why instead of retrying.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "open": {
+        "type": "bool",
+        "required": true,
+        "description": "true to open the trunk, false to close it."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_trunk_lock": {
+    "description": "Lock or unlock the trunk separately from the doors, for example to keep valet staff out.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "locked": {
+        "type": "bool",
+        "required": true,
+        "description": "true to lock the trunk, false to unlock it."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_trunk_status": {
+    "description": "Return whether the trunk lid is open and whether the trunk is locked.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_fuel_door": {
+    "description": "Open or close the fuel filler door for refueling. Blocked unless the car is stopped in park (`Vehicle.Speed` is 0 and `Vehicle.Powertrain.Transmission.SelectedGear` is 126); if blocked, tell the driver why instead of retrying.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "open": {
+        "type": "bool",
+        "required": true,
+        "description": "true to open the fuel door, false to close it."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_fuel_door_status": {
+    "description": "Return whether the fuel filler door is open.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_charge_port": {
+    "description": "Open or close the charging port door. Blocked unless the car is stopped in park (`Vehicle.Speed` is 0 and `Vehicle.Powertrain.Transmission.SelectedGear` is 126); if blocked, tell the driver why instead of retrying.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "open": {
+        "type": "bool",
+        "required": true,
+        "description": "true to open the charge port door, false to close it."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_charging_cable_lock": {
+    "description": "Lock or release the charging cable in the port. Only works while a cable is connected; release it before the driver unplugs.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "locked": {
+        "type": "bool",
+        "required": true,
+        "description": "true to lock the cable, false to release it."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_charge_port_status": {
+    "description": "Return whether the charge port door is open, whether a cable is connected, and whether the cable is locked.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_low_beams": {
+    "description": "Turn the low beam headlights on or off. Turning them off is not allowed while the front fog lights are on.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_high_beams": {
+    "description": "Turn the high beam headlights on or off. Turning them on is blocked while the front fog lights are on.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_fog_lights": {
+    "description": "Turn the front fog lights, the rear fog light, or both on or off. Policy: when turning the front fog lights on, also make sure the low beams are on (`set_low_beams`) and the high beams are off (`set_high_beams`). Check the weather with `get_weather` first. If the condition is not \"fog\", \"heavy_rain\", \"snow\", or \"storm\", get an explicit yes from the driver before turning any fog light on.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "which": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"front\", \"rear\", or \"both\"."
+      },
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_hazard_lights": {
+    "description": "Turn the hazard warning lights on or off.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to start flashing, false to stop."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_exterior_lights_status": {
+    "description": "Return whether the low beams, high beams, front fog lights, rear fog light, and hazard lights are on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_wipers": {
+    "description": "Set the front or rear wiper mode, and for the front wiper the interval or rain sensor sensitivity.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "window": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"front\" or \"rear\"."
+      },
+      "mode": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"OFF\", \"SLOW\", \"MEDIUM\", \"FAST\", \"INTERVAL\", or \"RAIN_SENSOR\". The rear wiper supports only \"OFF\", \"INTERVAL\", and \"SLOW\"."
+      },
+      "intensity": {
+        "type": "int",
+        "required": false,
+        "default": 2,
+        "description": "integer from 1 to 4. Default is 2. Used only for the front wiper in \"INTERVAL\" or \"RAIN_SENSOR\" mode."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_wiper_status": {
+    "description": "Return the front and rear wiper modes and the front wiper intensity.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_side_mirrors_folded": {
+    "description": "Fold or unfold both exterior mirrors. Folding is blocked while `Vehicle.Speed` is above 0.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "folded": {
+        "type": "bool",
+        "required": true,
+        "description": "true to fold the mirrors in, false to unfold them."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_mirror_heating": {
+    "description": "Turn exterior mirror heating on or off for both mirrors, to clear ice, frost, or fog.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_side_mirror_status": {
+    "description": "Return whether each exterior mirror is folded and whether its heating is on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_reading_light": {
+    "description": "Turn the reading light at one seat, or at all seats, on or off.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", \"row2_driver_side\", \"row2_passenger_side\", or \"all\". \"row1_driver_side\" is the driver seat; row 2 is the back seat."
+      },
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_reading_lights_status": {
+    "description": "Return which seats have their reading light on.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_ambient_light": {
+    "description": "Set the ambient interior lighting in all four zones: on or off, color, and brightness. Colors map to RGB codes: white #FFFFFF, red #FF0000, orange #FF8000, yellow #FFD700, green #00C853, cyan #00FFFF, blue #0050FF, purple #8000FF, pink #FF4FA0.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      },
+      "color": {
+        "type": "str",
+        "required": false,
+        "default": "white",
+        "description": "one of \"white\", \"red\", \"orange\", \"yellow\", \"green\", \"cyan\", \"blue\", \"purple\", or \"pink\". Default is \"white\". Ignored when on is false."
+      },
+      "brightness_pct": {
+        "type": "int",
+        "required": false,
+        "default": 70,
+        "description": "integer from 10 to 100, in steps of 10. Default is 70. Ignored when on is false."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_ambient_light_status": {
+    "description": "Return, for each ambient light zone, whether it is on, its color code, and its brightness.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_climate_temperature": {
+    "description": "Set the target temperature of one climate zone, both rear zones, or all zones. Policy: if the result leaves more than 3 Celsius between zones, tell the driver.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "zone": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver\", \"row1_passenger\", \"row2_driver\", \"row2_passenger\", \"row2\", or \"all\". \"row1_driver\" is the driver zone; \"row2\" means both rear zones."
+      },
+      "temperature_c": {
+        "type": "float",
+        "required": true,
+        "description": "number from 16.0 to 28.0, in steps of 0.5."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_fan_speed": {
+    "description": "Set the fan speed of one climate zone or all zones. This switches climate auto mode off.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "zone": {
+        "type": "str",
+        "required": false,
+        "default": "all",
+        "description": "one of \"row1_driver\", \"row1_passenger\", \"row2_driver\", \"row2_passenger\", \"row2\", or \"all\". \"row1_driver\" is the driver zone; \"row2\" means both rear zones. Default is \"all\"."
+      },
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 5. 0 is off; each level adds 20 percent fan speed."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_air_distribution": {
+    "description": "Set where a climate zone blows air: up to the windshield, middle to the face, or down to the feet. This switches climate auto mode off.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "zone": {
+        "type": "str",
+        "required": false,
+        "default": "all",
+        "description": "one of \"row1_driver\", \"row1_passenger\", \"row2_driver\", \"row2_passenger\", \"row2\", or \"all\". \"row1_driver\" is the driver zone; \"row2\" means both rear zones. Default is \"all\"."
+      },
+      "direction": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"UP\", \"MIDDLE\", or \"DOWN\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_air_conditioning": {
+    "description": "Turn the air conditioning compressor on or off. Policy: when turning it on, also close any window open beyond 20 (`set_window_position`) and raise the fan to level 1 if it is off (`set_fan_speed`).",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_air_recirculation": {
+    "description": "Switch between recirculating cabin air and drawing fresh outside air.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to recirculate cabin air, false for fresh outside air."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_defrost": {
+    "description": "Turn the front windshield defroster, the rear window defroster, or both on or off. Policy: when turning on the front defroster, also set fan level 2 or higher (`set_fan_speed`), set the front air distribution to \"UP\" (`set_air_distribution`), and turn on air conditioning (`set_air_conditioning`).",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "window": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"front\", \"rear\", or \"all\"."
+      },
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_climate_auto_mode": {
+    "description": "Turn climate auto mode on or off. In auto mode the car picks fan speed and air distribution to reach the target temperatures.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_climate_status": {
+    "description": "Return the climate settings (auto mode, each zone's temperature, fan speed, and air distribution, air conditioning, recirculation, defrosters) plus the measured cabin temperature and the outside temperature and humidity.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_seat_heating": {
+    "description": "Set seat heating for one seat or all seats. On a front seat this replaces any ventilation, because both use the same heating-cooling setting.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", \"row2_driver_side\", \"row2_passenger_side\", or \"all\". \"row1_driver_side\" is the driver seat; row 2 is the back seat."
+      },
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 3. 0 is off; 1, 2, 3 set 33, 66, 100 percent."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_seat_ventilation": {
+    "description": "Set seat ventilation (cooling) for a front seat. Only the front seats ventilate. This replaces any heating on that seat, because both use the same heating-cooling setting.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", or \"both\". \"row1_driver_side\" is the driver seat."
+      },
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 3. 0 is off; 1, 2, 3 set -33, -66, -100 percent."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_seat_massage": {
+    "description": "Start, change, or stop the massage of a front seat. Only the front seats have massage.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\", \"row1_passenger_side\", or \"both\". \"row1_driver_side\" is the driver seat."
+      },
+      "program": {
+        "type": "str",
+        "required": false,
+        "default": "WAVE",
+        "description": "one of \"WAVE\", \"PULSE\", \"STRETCH\", or \"LUMBAR\". Default is \"WAVE\"."
+      },
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 3. 0 is off; 1, 2, 3 set 33, 66, 100 percent."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_seat_position": {
+    "description": "Move a front seat forward or back. Moving the driver seat is blocked while `Vehicle.Speed` is above 0. For relative requests, read the current position with `get_seat_status` first.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\" or \"row1_passenger_side\". \"row1_driver_side\" is the driver seat."
+      },
+      "position_mm": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 250, in steps of 10. 0 is fully forward."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_seat_recline": {
+    "description": "Change the backrest recline of a front seat. Changing the driver seat is blocked while `Vehicle.Speed` is above 0. For relative requests, read the current angle with `get_seat_status` first.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "seat": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"row1_driver_side\" or \"row1_passenger_side\". \"row1_driver_side\" is the driver seat."
+      },
+      "angle_deg": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 40. Degrees back from upright."
+      }
+    },
+    "sample_commands": []
+  },
+  "recall_seat_memory": {
+    "description": "Move the driver seat to a saved memory profile. Blocked while `Vehicle.Speed` is above 0.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "profile": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 3."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_steering_wheel_heating": {
+    "description": "Set the steering wheel heating level.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 3. 0 is off; 1, 2, 3 set 33, 66, 100 percent."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_seat_status": {
+    "description": "Return seat occupancy, each seat's heating or ventilation, front seat massage, front seat position and recline, the last recalled memory profile, and steering wheel heating.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_media_volume": {
+    "description": "Set the audio volume. Setting a volume also unmutes the audio.",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "volume_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_media_mute": {
+    "description": "Mute or unmute the audio without changing the volume.",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "muted": {
+        "type": "bool",
+        "required": true,
+        "description": "true to mute, false to unmute."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_media_source": {
+    "description": "Switch the audio source. Playback continues from the new source.",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "source": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"FM\", \"AM\", \"DAB\", \"BLUETOOTH\", \"USB\", or \"INTERNET\". \"INTERNET\" is the streaming service."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_media_playback": {
+    "description": "Play or pause the current audio source.",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "playing": {
+        "type": "bool",
+        "required": true,
+        "description": "true to play, false to pause."
+      }
+    },
+    "sample_commands": []
+  },
+  "skip_media_track": {
+    "description": "Skip to the next or previous track on the current source and keep playing. Not available on \"FM\", \"AM\", or \"DAB\".",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "direction": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"next\" or \"previous\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "tune_fm_radio": {
+    "description": "Tune the FM radio to a frequency and switch the audio source to FM.",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "frequency_mhz": {
+        "type": "float",
+        "required": true,
+        "description": "number from 87.5 to 108.0, in steps of 0.1."
+      }
+    },
+    "sample_commands": []
+  },
+  "play_media_by_query": {
+    "description": "Search the streaming service for a song, artist, album, playlist, or podcast and start playing the best match. Switches the audio source to \"INTERNET\".",
+    "domain": "Media",
+    "kind": "action",
+    "parameters": {
+      "query": {
+        "type": "str",
+        "required": true,
+        "description": "free text naming what to play.",
+        "sample_values": [
+          "Bohemian Rhapsody",
+          "Norah Jones",
+          "lo-fi focus playlist",
+          "the latest episode of a daily news podcast"
+        ]
+      },
+      "media_type": {
+        "type": "str",
+        "required": false,
+        "default": "any",
+        "description": "one of \"any\", \"song\", \"artist\", \"album\", \"playlist\", or \"podcast\". Default is \"any\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_media_status": {
+    "description": "Return the audio source, the last playback command, the volume, mute state, the tuned FM frequency, and the last item chosen by search.",
+    "domain": "Media",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_driving_status": {
+    "description": "Return the current speed, the selected gear (126 park, 127 drive, 0 neutral, -1 reverse), and the odometer. Use it to check whether the car is stopped in park before actions that require it.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_tire_pressure": {
+    "description": "Return the pressure of all four tires in kPa and which tires have a low-pressure warning.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_maintenance_status": {
+    "description": "Return the distance to the next service, whether service is due, the engine oil level, the washer fluid level, and the 12 V battery voltage.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_trip_info": {
+    "description": "Return the trip meter, trip duration, average speed, and average fuel consumption.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "reset_trip_meter": {
+    "description": "Reset the trip meter to zero. Ask for confirmation first, because the old trip distance is lost.",
+    "domain": "Vehicle",
+    "kind": "action",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_vehicle_specs": {
+    "description": "Return fixed facts about the car: exterior color, powertrain and hybrid type, fuel tank capacity, usable battery capacity, and maximum AC and DC charging power.",
+    "domain": "Vehicle",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_energy_status": {
+    "description": "Return the battery level, fuel level and low-fuel warning, the electric, fuel, and combined range in km (computed from the levels and reference consumption), the hybrid mode and how the hybrid is running, the drive mode, regen level, charge target, and whether the engine is running.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_hybrid_mode": {
+    "description": "Choose how the hybrid uses the battery and the engine. \"AUTO\" blends both, \"ELECTRIC\" drives on battery only (blocked when the battery level is below 10), \"HOLD\" saves the battery level for later (for example a city zone at the destination), \"CHARGE\" runs the engine to charge the battery up to `charge_target_pct`. Policy: in \"CHARGE\" mode warn that fuel consumption rises.",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "mode": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"AUTO\", \"ELECTRIC\", \"HOLD\", or \"CHARGE\"."
+      },
+      "charge_target_pct": {
+        "type": "int",
+        "required": false,
+        "default": 60,
+        "description": "integer from 20 to 80, in steps of 10. Default is 60. Used only when mode is \"CHARGE\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_drive_mode": {
+    "description": "Set the driving mode, which changes throttle response and efficiency.",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "mode": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"NORMAL\", \"SPORT\", or \"ECONOMY\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_regen_level": {
+    "description": "Set the regenerative braking strength.",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 3. 0 is coasting, 3 is strongest."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_charging_status": {
+    "description": "Return the plug-in charging state: whether it is charging, the charge limit, the charging timer, and the car's maximum AC and DC charging power.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_charge_limit": {
+    "description": "Set the battery level at which plug-in charging stops.",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "limit_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 50 to 100, in steps of 5."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_charging_timer": {
+    "description": "Set when plug-in charging runs: right away, starting at a time (for example cheaper night power), or finished by a time (for example a morning departure).",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "mode": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"INACTIVE\", \"START_TIME\", or \"END_TIME\". \"INACTIVE\" charges as soon as the cable is plugged in."
+      },
+      "time": {
+        "type": "str",
+        "required": false,
+        "default": "",
+        "description": "time as HH:MM on a 24-hour clock, local time. Default is \"\". Required unless mode is \"INACTIVE\".",
+        "sample_values": [
+          "22:00",
+          "06:30"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "start_stop_charging": {
+    "description": "Start or stop plug-in charging now. Only works while a charging cable is connected (`get_charge_port_status`).",
+    "domain": "Energy",
+    "kind": "action",
+    "parameters": {
+      "action": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"START\" or \"STOP\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "estimate_charging_time": {
+    "description": "Estimate how many minutes charging takes at a given charging station plug, from a start battery level to a target level. The tool looks up the plug's power and AC or DC type, and caps it at the car's maximum.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {
+      "charging_station_id": {
+        "type": "str",
+        "required": true,
+        "description": "charging station ID returned by `search_poi_at_location` or `search_poi_along_route`."
+      },
+      "plug_id": {
+        "type": "str",
+        "required": true,
+        "description": "plug ID of that station, returned in the same search result."
+      },
+      "target_soc_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 100. Must be above the start level."
+      },
+      "start_soc_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 99. Use the current battery level from `get_energy_status` unless the driver names another start level."
+      }
+    },
+    "sample_commands": []
+  },
+  "estimate_soc_after_charging": {
+    "description": "Estimate the battery level after charging for a given number of minutes at a given charging station plug.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {
+      "charging_station_id": {
+        "type": "str",
+        "required": true,
+        "description": "charging station ID returned by `search_poi_at_location` or `search_poi_along_route`."
+      },
+      "plug_id": {
+        "type": "str",
+        "required": true,
+        "description": "plug ID of that station, returned in the same search result."
+      },
+      "minutes": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 720."
+      },
+      "start_soc_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 99. Use the current battery level from `get_energy_status` unless the driver names another start level."
+      }
+    },
+    "sample_commands": []
+  },
+  "estimate_electric_distance": {
+    "description": "Estimate how many km the car can drive on electric power alone between two battery levels.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {
+      "from_soc_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 100. Use the current battery level from `get_energy_status` unless the driver names another start level."
+      },
+      "to_soc_pct": {
+        "type": "int",
+        "required": false,
+        "default": 0,
+        "description": "integer from 0 to 99. Must be below the start level. Default is 0."
+      }
+    },
+    "sample_commands": []
+  },
+  "estimate_refuel": {
+    "description": "Estimate how many liters fill the tank to a target level, and the fuel range that adds in km.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {
+      "target_fuel_pct": {
+        "type": "int",
+        "required": false,
+        "default": 100,
+        "description": "integer from 1 to 100. Default is 100."
+      }
+    },
+    "sample_commands": []
+  },
+  "estimate_route_energy": {
+    "description": "Estimate how much of a route can be driven electrically, how much fuel the rest needs, and whether the car arrives without charging or refueling. The route ID comes from `get_routes` or `get_navigation_status`.",
+    "domain": "Energy",
+    "kind": "retrieve",
+    "parameters": {
+      "route_id": {
+        "type": "str",
+        "required": true,
+        "description": "route ID returned by `get_routes` or `get_navigation_status`."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_location_id_by_name": {
+    "description": "Look up the location ID of a city, address, or named place. Navigation, route, weather, and POI tools need this ID.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {
+      "name": {
+        "type": "str",
+        "required": true,
+        "description": "free text name of the city, address, or place.",
+        "sample_values": [
+          "Munich",
+          "Chico",
+          "Sacramento International Airport",
+          "1200 Main Street, Madison"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "search_poi_at_location": {
+    "description": "Find points of interest of one category near a location. Results include POI IDs, distance, opening hours, phone number, and for charging stations the station ID and each plug's ID, power in kW, AC or DC type, and availability. The location ID comes from `get_location_id_by_name`.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {
+      "location_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      },
+      "category": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"gas_station\", \"charging_station\", \"restaurant\", \"fast_food\", \"cafe\", \"bakery\", \"supermarket\", \"parking\", \"public_toilet\", \"hotel\", \"airport\", \"pharmacy\", \"hospital\", or \"car_wash\"."
+      },
+      "filters": {
+        "type": "list",
+        "required": false,
+        "default": [],
+        "description": "list of 0 to 3 filters, each one of \"open_now\", \"has_available_plug\", or \"has_dc_plug\". \"has_available_plug\" and \"has_dc_plug\" apply only to \"charging_station\". Default is an empty list."
+      }
+    },
+    "sample_commands": []
+  },
+  "search_poi_along_route": {
+    "description": "Find points of interest of one category along a route, with the km along the route and the detour time. Results include the same details as `search_poi_at_location`. The route ID comes from `get_routes` or `get_navigation_status`.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {
+      "route_id": {
+        "type": "str",
+        "required": true,
+        "description": "route ID returned by `get_routes` or `get_navigation_status`."
+      },
+      "category": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"gas_station\", \"charging_station\", \"restaurant\", \"fast_food\", \"cafe\", \"bakery\", \"supermarket\", \"parking\", \"public_toilet\", \"hotel\", \"airport\", \"pharmacy\", \"hospital\", or \"car_wash\"."
+      },
+      "filters": {
+        "type": "list",
+        "required": false,
+        "default": [],
+        "description": "list of 0 to 3 filters, each one of \"open_now\", \"has_available_plug\", or \"has_dc_plug\". \"has_available_plug\" and \"has_dc_plug\" apply only to \"charging_station\". Default is an empty list."
+      },
+      "max_detour_minutes": {
+        "type": "int",
+        "required": false,
+        "default": 10,
+        "description": "integer from 1 to 30. Default is 10."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_routes": {
+    "description": "Return up to three route options between two locations with route IDs, distance, duration, toll roads, and road types. Respects the avoid-tolls and avoid-highways options. Location IDs come from `get_location_id_by_name`.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {
+      "destination_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      },
+      "start_id": {
+        "type": "str",
+        "required": false,
+        "default": "current",
+        "description": "location ID returned by `get_location_id_by_name`. Default is \"current\", the car's current location."
+      }
+    },
+    "sample_commands": []
+  },
+  "convert_route_distance_and_time": {
+    "description": "On a given route, convert a distance in km into driving time, or a driving time in minutes into distance. The route ID comes from `get_routes` or `get_navigation_status`.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {
+      "route_id": {
+        "type": "str",
+        "required": true,
+        "description": "route ID returned by `get_routes` or `get_navigation_status`."
+      },
+      "value": {
+        "type": "float",
+        "required": true,
+        "description": "number from 0.0 to 2000.0. A distance in km or a time in minutes, as set by `unit`."
+      },
+      "unit": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"km\" or \"minutes\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_navigation": {
+    "description": "Start guidance from the current location to a destination, with up to three intermediate stops in order. Use only when guidance is not active; if it is active, use the add, replace, or delete tools instead. Location IDs come from `get_location_id_by_name`, and the route ID of the first leg from `get_routes`.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "destination_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      },
+      "route_id": {
+        "type": "str",
+        "required": true,
+        "description": "route ID of the first leg, returned by `get_routes`."
+      },
+      "waypoint_ids": {
+        "type": "list",
+        "required": false,
+        "default": [],
+        "description": "list of 0 to 3 location IDs from `get_location_id_by_name`, in driving order. Default is an empty list."
+      }
+    },
+    "sample_commands": []
+  },
+  "add_navigation_waypoint": {
+    "description": "Insert an intermediate stop into the active route. Only works while guidance is active and fewer than three stops are set. Call one at a time, never in parallel, because stop numbers shift.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "location_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      },
+      "position": {
+        "type": "int",
+        "required": false,
+        "default": 1,
+        "description": "integer from 1 to 3. The stop number the new stop gets; later stops move back. Default is 1."
+      }
+    },
+    "sample_commands": []
+  },
+  "replace_navigation_waypoint": {
+    "description": "Replace one intermediate stop of the active route with another location. Only works while guidance is active and that stop exists.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "position": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 3. The stop number to replace."
+      },
+      "location_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      }
+    },
+    "sample_commands": []
+  },
+  "delete_navigation_waypoint": {
+    "description": "Remove one intermediate stop from the active route. Only works while guidance is active and that stop exists. Call one at a time, never in parallel, because stop numbers shift.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "position": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 1 to 3. The stop number to remove."
+      }
+    },
+    "sample_commands": []
+  },
+  "replace_navigation_destination": {
+    "description": "Replace the final destination of the active route and keep the intermediate stops. Only works while guidance is active.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "location_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`."
+      }
+    },
+    "sample_commands": []
+  },
+  "delete_navigation_destination": {
+    "description": "Remove the final destination so the last intermediate stop becomes the destination. Only works while guidance is active and at least one intermediate stop exists; otherwise use `cancel_navigation`.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "cancel_navigation": {
+    "description": "Stop guidance and clear the destination and all stops.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "set_route_options": {
+    "description": "Set whether route planning avoids toll roads and highways. Applies to the next `get_routes` call; an active route is not recalculated.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "avoid_tolls": {
+        "type": "bool",
+        "required": true,
+        "description": "true to avoid toll roads, false to allow them."
+      },
+      "avoid_highways": {
+        "type": "bool",
+        "required": true,
+        "description": "true to avoid highways, false to allow them."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_voice_guidance": {
+    "description": "Choose how much spoken navigation guidance plays: every instruction, alerts only, or none.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "mode": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"UNMUTED\", \"ALERT_ONLY\", or \"MUTED\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_navigation_volume": {
+    "description": "Set the volume of the navigation voice, separately from the media volume.",
+    "domain": "Navigation",
+    "kind": "action",
+    "parameters": {
+      "volume_pct": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 100, in steps of 5."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_navigation_status": {
+    "description": "Return whether guidance is active, the destination and its coordinates, intermediate stops, the current route ID, whether the destination is reached, route options, and voice guidance mode and volume.",
+    "domain": "Navigation",
+    "kind": "retrieve",
+    "parameters": {},
+    "sample_commands": []
+  },
+  "get_weather": {
+    "description": "Return the weather condition, temperature, humidity, and wind for a location at a time today. Only today can be requested. The location ID comes from `get_location_id_by_name`.",
+    "domain": "Weather",
+    "kind": "retrieve",
+    "parameters": {
+      "location_id": {
+        "type": "str",
+        "required": true,
+        "description": "location ID returned by `get_location_id_by_name`, or \"current\" for the car's current location."
+      },
+      "time": {
+        "type": "str",
+        "required": false,
+        "default": "now",
+        "description": "time today as HH:MM on a 24-hour clock, or \"now\". Default is \"now\".",
+        "sample_values": [
+          "now",
+          "17:30"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "get_contact_id_by_name": {
+    "description": "Find contacts in the connected phone's address book by name and return their contact IDs.",
+    "domain": "Communication",
+    "kind": "retrieve",
+    "parameters": {
+      "name": {
+        "type": "str",
+        "required": true,
+        "description": "free text first name, last name, or both.",
+        "sample_values": [
+          "Alex",
+          "Jordan Lee",
+          "Dr. Patel",
+          "Mom"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "get_contact_details": {
+    "description": "Return the phone numbers and email addresses of contacts. Contact IDs come from `get_contact_id_by_name`.",
+    "domain": "Communication",
+    "kind": "retrieve",
+    "parameters": {
+      "contact_ids": {
+        "type": "list",
+        "required": true,
+        "description": "list of 1 to 5 contact IDs returned by `get_contact_id_by_name`."
+      }
+    },
+    "sample_commands": []
+  },
+  "call_phone_number": {
+    "description": "Place a hands-free call through the connected phone. The number usually comes from `get_contact_details`.",
+    "domain": "Communication",
+    "kind": "action",
+    "parameters": {
+      "phone_number": {
+        "type": "str",
+        "required": true,
+        "description": "phone number in international format.",
+        "sample_values": [
+          "+1 530 555 0142",
+          "+49 89 5550 1234"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "send_text_message": {
+    "description": "Send a short SMS through the connected phone. Read the message back and get confirmation before sending.",
+    "domain": "Communication",
+    "kind": "action",
+    "parameters": {
+      "phone_number": {
+        "type": "str",
+        "required": true,
+        "description": "phone number in international format, usually from `get_contact_details`.",
+        "sample_values": [
+          "+1 530 555 0142"
+        ]
+      },
+      "message": {
+        "type": "str",
+        "required": true,
+        "description": "free text message, at most 300 characters.",
+        "sample_values": [
+          "Running 15 minutes late, start without me.",
+          "Just parked, see you at the entrance."
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "send_email": {
+    "description": "Send a short email from the driver's connected account. Read the content back and get confirmation before sending. Addresses usually come from `get_contact_details`.",
+    "domain": "Communication",
+    "kind": "action",
+    "parameters": {
+      "to": {
+        "type": "list",
+        "required": true,
+        "description": "list of 1 to 5 email addresses."
+      },
+      "subject": {
+        "type": "str",
+        "required": true,
+        "description": "free text subject line.",
+        "sample_values": [
+          "Running late",
+          "Meeting notes"
+        ]
+      },
+      "body": {
+        "type": "str",
+        "required": true,
+        "description": "free text message body.",
+        "sample_values": [
+          "I'm stuck in traffic and will arrive around 10:20."
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "get_calendar_events": {
+    "description": "Return today's calendar events with start time, duration, topic, location, and attendees. Only today can be requested.",
+    "domain": "Communication",
+    "kind": "retrieve",
+    "parameters": {
+      "from_hour": {
+        "type": "int",
+        "required": false,
+        "default": 0,
+        "description": "integer from 0 to 23, local time. Default is 0."
+      }
+    },
+    "sample_commands": []
+  },
+  "get_user_preferences": {
+    "description": "Return the driver's saved preferences for one category, such as preferred charging or fuel brands, route choices, or climate habits. Check them before choosing between options on the driver's behalf.",
+    "domain": "Preferences",
+    "kind": "retrieve",
+    "parameters": {
+      "category": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"points_of_interest\", \"navigation_and_routing\", \"climate\", \"seats\", \"media\", \"energy\", \"communication\", or \"weather\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "calculate_math": {
+    "description": "Evaluate an arithmetic expression, for example to add up distances or costs.",
+    "domain": "Utility",
+    "kind": "retrieve",
+    "parameters": {
+      "expression": {
+        "type": "str",
+        "required": true,
+        "description": "free text arithmetic expression using numbers, + - * / and parentheses.",
+        "sample_values": [
+          "(42.5 + 17.3) * 1.8",
+          "45 * 0.62"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "calculate_datetime": {
+    "description": "Add or subtract minutes to a time, for example to work out an arrival time.",
+    "domain": "Utility",
+    "kind": "retrieve",
+    "parameters": {
+      "time": {
+        "type": "str",
+        "required": true,
+        "description": "time as HH:MM on a 24-hour clock, or \"now\".",
+        "sample_values": [
+          "now",
+          "14:35"
+        ]
+      },
+      "add_minutes": {
+        "type": "int",
+        "required": true,
+        "description": "integer from -1440 to 1440. Negative values subtract."
+      }
+    },
+    "sample_commands": []
+  }
+}
