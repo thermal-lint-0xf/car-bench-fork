@@ -29,7 +29,7 @@ h3 { font-size:16px; font-weight:600; }
 p { margin:0; max-width:65ch; }
 code, .mono { font-family:var(--font-mono); font-size:.92em; }
 header { display:grid; gap:16px; }
-.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.eyebrow { font-size:12px; color:var(--muted); font-weight:500; }
 .totals { display:flex; flex-wrap:wrap; gap:8px 28px; font-variant-numeric:tabular-nums; }
 .totals div { display:grid; }
 .totals b { font-size:32px; font-weight:600; line-height:1.1; }
@@ -39,7 +39,7 @@ section { display:grid; gap:14px; min-width:0; }
 .tablebox { position:relative; overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:10px; }
 table { border-collapse:collapse; width:100%; min-width:680px; font-variant-numeric:tabular-nums; }
 th,td { padding:10px 14px; text-align:left; border-bottom:1px solid var(--line); vertical-align:middle; }
-thead th { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+thead th { font-size:12px; color:var(--muted); font-weight:500; }
 tbody th { font-weight:600; }
 tbody th a { color:var(--fg); text-decoration:none; } tbody th a:hover { text-decoration:underline; }
 .sub { display:block; font-weight:400; font-size:13px; color:var(--muted); }
@@ -66,7 +66,7 @@ tfoot td, tfoot th { border-bottom:0; font-weight:600; }
 details { background:var(--surface); border:1px solid var(--line); border-radius:8px; }
 summary { list-style:none; cursor:pointer; padding:10px 14px; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:baseline; }
 summary::-webkit-details-marker { display:none; }
-.chip { font-size:11px; letter-spacing:.05em; text-transform:uppercase; font-weight:500; padding:2px 7px; border-radius:4px; grid-row:span 2; align-self:start; margin-top:3px; min-width:68px; text-align:center; }
+.chip { font-size:12px; font-weight:500; padding:2px 7px; border-radius:4px; grid-row:span 3; align-self:start; margin-top:3px; min-width:68px; text-align:center; }
 .k-action { background:var(--action-soft); color:var(--action); }
 .k-retrieve { background:var(--retrieve-soft); color:var(--retrieve); }
 .k-neg { background:var(--neg-soft); color:var(--neg); }
@@ -88,7 +88,13 @@ summary::-webkit-details-marker { display:none; }
 .sig { font-family:var(--font-mono); font-size:13px; color:var(--muted); overflow-wrap:anywhere; }
 .sig b { font-weight:500; color:var(--retrieve); }
 .slist { display:grid; gap:4px; }
-.slabel { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.slabel { font-size:13px; color:var(--muted); font-weight:500; }
+.tstate { display:flex; flex-wrap:wrap; gap:4px 8px; align-items:baseline; font-size:13px; min-width:0; }
+.glabel { color:var(--muted); }
+.gpath { color:var(--fg); text-decoration:none; background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:0 6px; overflow-wrap:anywhere; }
+.gpath:hover { border-color:var(--muted); }
+.gpath code { font-size:12px; }
+.gn { color:var(--muted); font-size:12px; margin-left:3px; }
 .slist ul { margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:4px 16px; font-size:13px; }
 .slist a, td.tools a { color:var(--fg); text-decoration:none; border-bottom:1px dotted var(--muted); }
 .slist a:hover, td.tools a:hover { border-bottom-style:solid; }
@@ -192,6 +198,16 @@ const fmt = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const first = s => (s.match(/^(.+?\.)(\s|$)/) || [null, s])[1];
 let kind = "", origin = "";
 const TAG = {same: "CAR-bench", extended: "CAR-bench, extended", "new": "New"};
+// Collapse seat, door, zone, and wheel instances so one line shows what a tool touches.
+function compress(paths) {
+  const groups = new Map();
+  for (const p of paths) {
+    const pat = p.replace(/\.Row\d\./g, ".Row*.").replace(/\.(DriverSide|PassengerSide)\./g, ".*Side.").replace(/\.Row\*\.(Driver|Passenger)\./g, ".Row*.*.").replace(/\.Wheel\.(Left|Right)\./g, ".Wheel.*.").replace(/\.Stop\d\./g, ".Stop*.");
+    if (!groups.has(pat)) groups.set(pat, [pat, 0, p]);
+    groups.get(pat)[1]++;
+  }
+  return [...groups.values()];
+}
 function item(t) {
   const cls = t.neg ? "k-neg" : "k-" + t.k;
   const label = t.neg ? "negative" : t.k;
@@ -199,9 +215,11 @@ function item(t) {
   const otag = `<span class="otag o-${t.o}">${TAG[t.o]}</span>`;
   const sig = `<span class="sig">(${t.p.map(p => `${esc(p.n)}${p.req ? "" : "?"}: <b>${p.t}</b>`).join(", ")})</span>`;
   const plist = (label, paths) => `<div class="slist"><span class="slabel">${label}</span><ul>${paths.map(x => `<li><a href="#s-${x}" data-state="${x}"><code>${esc(x)}</code></a> <span class="pt">${DATA.stype[x]}</span></li>`).join("")}</ul></div>`;
-  const stateBlock = t.neg ? "" : t.ext ? `<p class="state">Uses outside data only. It changes and reads no vehicle state.</p>` : (t.w.length ? plist("Changes vehicle state", t.w) : plist("Reads vehicle state", t.r));
+  const glance = t.neg ? "" : t.ext ? `<span class="tstate"><span class="glabel">No vehicle state</span></span>` :
+    `<span class="tstate"><span class="glabel">${t.w.length ? "Changes" : "Reads"}</span>${compress(t.w.length ? t.w : t.r).map(([pat, n, first]) => `<a class="gpath" href="#s-${first}" data-state="${first}"><code>${esc(pat).replace(/\./g, ".<wbr>")}</code>${n > 1 ? `<span class="gn">×${n}</span>` : ""} <span class="pt">${DATA.stype[first]}</span></a>`).join("")}</span>`;
+  const stateBlock = t.neg ? "" : t.ext ? `<p class="state">Uses outside data only. It changes and reads no vehicle state.</p>` : (t.w.length ? plist("All vehicle state it changes", t.w) : plist("All vehicle state it reads", t.r));
   const src = t.src.length ? `<p class="state">CAR-bench source: ${t.src.map(x => `<code>${esc(x)}</code>`).join(", ")}.${t.note ? " " + esc(t.note) : ""}</p>` : "";
-  return `<details id="t-${t.n}"><summary><span class="chip ${cls}">${label}</span><span class="tline"><span class="tname">${t.n}</span>${sig}${otag}</span><span class="tdesc">${fmt(first(t.d))}</span></summary><div class="body"><p>${fmt(t.d)}</p>${params}${stateBlock}${src}</div></details>`;
+  return `<details id="t-${t.n}"><summary><span class="chip ${cls}">${label}</span><span class="tline"><span class="tname">${t.n}</span>${sig}${otag}</span><span class="tdesc">${fmt(first(t.d))}</span>${glance}</summary><div class="body"><p>${fmt(t.d)}</p>${params}${stateBlock}${src}</div></details>`;
 }
 function render() {
   const q = document.getElementById("q").value.trim().toLowerCase();
