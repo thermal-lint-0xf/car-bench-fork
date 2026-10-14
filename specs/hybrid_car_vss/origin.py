@@ -1,4 +1,4 @@
-# Origin of each v2 positive tool relative to CAR-bench (car_bench/envs/car_voice_assistant/tools).
+# Origin of each positive tool in tools vss relative to CAR-bench (car_bench/envs/car_voice_assistant/tools).
 # "same": same capability as a CAR-bench tool. "extended": built on one, with more parameters, values, or state.
 # Tools missing from this dict are new.
 ORIGIN = {

@@ -1,4 +1,4 @@
-# VSS overlay for the plug-in hybrid assistant (v2).
+# VSS overlay for the plug-in hybrid assistant (tools vss).
 # Apply on top of VSS 7.0-dev (commit dcc7cf5):
 #   vspec export json -s spec/VehicleSignalSpecification.vspec -u spec/units.yaml -q spec/quantities.yaml -l <this file> -o out.json
 

@@ -1,10 +1,10 @@
-"""Generate the v2 hybrid-car assistant spec files, with vehicle state named after COVESA VSS signals.
+"""Generate the hybrid-car assistant spec files (tools vss), with vehicle state named after COVESA VSS signals.
 
 Usage:
     python generate_specs.py OUT_DIR [--vss-json FULL_VSS_EXPORT.json]
 
 Every state value is either a standard VSS signal (checked against vss_reference.json) or an
-extension declared in the overlay file this script writes (2026-10-14_hybrid_v2_vss_overlay.vspec).
+extension declared in the overlay file this script writes (2026-10-14_hybrid_vss_overlay.vspec).
 Pass --vss-json with a full `vspec export json` of VSS to refresh vss_reference.json.
 """
 import json
@@ -15,7 +15,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = Path(sys.argv[1])
-PREFIX = "2026-10-14_hybrid_v2"
+PREFIX = "2026-10-14_hybrid_vss"
 REF_PATH = HERE / "vss_reference.json"
 VSS_COMMIT = "dcc7cf570f27378d7ff9333f2a4d1cf552645cfe"
 VSS_VERSION = "7.0-dev"
@@ -824,13 +824,13 @@ dump = lambda obj: json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
 (OUT / f"{PREFIX}_negative_tools_spec.json").write_text(dump(NEG))
 (OUT / f"{PREFIX}_state_inventory.json").write_text(dump({"state": STATE, "tools": TOOL_STATE}))
 # Side-car for people and the overview page; not a pipeline input.
-(OUT / f"{PREFIX}_vss_mapping.json").write_text(dump({"vss_version": VSS_VERSION, "vss_commit": VSS_COMMIT, "signals": META}))
+(OUT / f"{PREFIX}_signal_mapping.json").write_text(dump({"vss_version": VSS_VERSION, "vss_commit": VSS_COMMIT, "signals": META}))
 if VSS_ALL is not None:
     REF_PATH.write_text(dump({"vss_version": VSS_VERSION, "vss_commit": VSS_COMMIT,
                               "signals": {p: VSS_ALL[p] for p in sorted(STATE) if p in VSS_ALL}}))
 
 # Overlay with every extension, in VSS's own .vspec format.
-lines = ["# VSS overlay for the plug-in hybrid assistant (v2).",
+lines = ["# VSS overlay for the plug-in hybrid assistant (tools vss).",
          f"# Apply on top of VSS {VSS_VERSION} (commit {VSS_COMMIT[:7]}):",
          "#   vspec export json -s spec/VehicleSignalSpecification.vspec -u spec/units.yaml -q spec/quantities.yaml -l <this file> -o out.json",
          ""]
@@ -852,7 +852,7 @@ for p in EXT:
     if "minimum" in s and e["datatype"] != "string":
         lines += [f"  min: {s['minimum']}", f"  max: {s['maximum']}"]
     lines += [f"  description: {e['description']}", ""]
-(OUT / f"{PREFIX}_vss_overlay.vspec").write_text("\n".join(lines))
+(OUT / f"{PREFIX}_overlay.vspec").write_text("\n".join(lines))
 
 print("positive", len(TOOLS), Counter((t["domain"], t["kind"]) for t in TOOLS.values()))
 print("negative", len(NEG), "| state", len(STATE), "standard", sum(m["standard"] for m in META.values()), "extension", len(EXT))

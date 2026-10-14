@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hybrid Assistant Tools v2</title>
+<title>Tools VSS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -127,8 +127,7 @@ tr.flash td { animation:flash 1.6s ease-out; }
 <body>
 <div class="wrap">
 <header>
-  <div class="eyebrow">Plug-in hybrid · in-car assistant · tool spec on COVESA VSS</div>
-  <h1>Hybrid Assistant Tools v2</h1>
+  <h1>Tools VSS</h1>
   <p>Tool specs and vehicle state for a plug-in hybrid in-car assistant, with every state value named after a COVESA Vehicle Signal Specification signal. They keep every CAR-bench capability and add hybrid energy, media, access, seats, visibility, and read-only vehicle status.</p>
   <div class="totals">
     <div><b>113</b><span>tools in total</span></div>
@@ -142,10 +141,9 @@ tr.flash td { animation:flash 1.6s ease-out; }
   <p>The <a href="https://github.com/COVESA/vehicle_signal_specification">Vehicle Signal Specification</a> (VSS) from COVESA is an open catalog of vehicle data, not a programming framework. It names every signal a car can expose with a dot path such as <code>Vehicle.Body.Lights.Fog.Front.IsOn</code> and gives it a kind, a datatype, a unit, and allowed values. BMW, Volvo, JLR, Bosch, and others contribute to it, and servers such as KUKSA expose a car's live data under these names.</p>
   <ul class="facts">
     <li><b>sensor</b> is read from the car, like <code>Vehicle.Speed</code>. <b>actuator</b> can be requested, like <code>Vehicle.Cabin.HVAC.IsAirConditioningActive</code>. <b>attribute</b> is a fixed fact, like the tank capacity.</li>
-    <li>v2 names every vehicle state value after its VSS signal and keeps VSS's types, units, and allowed values. Tools follow them too: fan speed is stored in percent, the sunroof can tilt, and seat heating and ventilation share one heating-cooling value, so a seat cannot heat and cool at once.</li>
+    <li>This tool set names every vehicle state value after its VSS signal and keeps VSS's types, units, and allowed values. Tools follow them too: fan speed is stored in percent, the sunroof can tilt, and seat heating and ventilation share one heating-cooling value, so a seat cannot heat and cool at once.</li>
     <li>What VSS lacks, such as the hybrid mode, navigation stops, and media mute, is added as an overlay in VSS's own format. COVESA's vss-tools accepts the overlay in strict mode, so every path here resolves to a real or declared signal.</li>
   </ul>
-  <p class="note">Checked against VSS 7.0-dev, commit <code>dcc7cf5</code>. Version 1 of these specs, with its own state names, is kept in <code>specs/hybrid_car</code>.</p>
 </section>
 <section aria-labelledby="h-sum">
   <h2 id="h-sum">Positive tools by domain</h2>
@@ -174,7 +172,7 @@ tr.flash td { animation:flash 1.6s ease-out; }
 </section>
 <section aria-labelledby="h-state">
   <h2 id="h-state">Vehicle state</h2>
-  <p class="note">The 146 values the tools change and read, each named by its VSS path. 129 are standard VSS signals; 17 are extensions this car needs that VSS does not define, declared in <code>2026-10-14_hybrid_v2_vss_overlay.vspec</code>. Each conversation starts from a random but valid state, and every successful action updates it. Tool names link to the tool above.</p>
+  <p class="note">The 146 values the tools change and read, each named by its VSS path. 129 are standard VSS signals; 17 are extensions this car needs that VSS does not define, declared in <code>2026-10-14_hybrid_vss_overlay.vspec</code>. Each conversation starts from a random but valid state, and every successful action updates it. Tool names link to the tool above.</p>
   <div class="controls">
     <input id="sq" type="search" placeholder="Search VSS paths, descriptions, or tools" aria-label="Search vehicle state">
     <div class="seg" role="group" aria-label="Filter by VSS status">

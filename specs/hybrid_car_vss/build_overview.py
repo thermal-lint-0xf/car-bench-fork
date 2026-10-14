@@ -4,11 +4,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from origin import ORIGIN
 d = Path(sys.argv[1]); out_md = Path(sys.argv[2]); out_html_frag = Path(sys.argv[3]); out_html_full = Path(sys.argv[4])
-PFX = "2026-10-14_hybrid_v2"
+PFX = "2026-10-14_hybrid_vss"
 pos = json.load(open(d/f"{PFX}_positive_tools_spec.json"))
 neg = json.load(open(d/f"{PFX}_negative_tools_spec.json"))
 inv = json.load(open(d/f"{PFX}_state_inventory.json"))
-vmap = json.load(open(d/f"{PFX}_vss_mapping.json"))
+vmap = json.load(open(d/f"{PFX}_signal_mapping.json"))
 VSSM = vmap["signals"]
 NSTD = sum(m["standard"] for m in VSSM.values()); NEXTN = len(VSSM) - NSTD
 ORDER = [("Vehicle","Body, lights, climate, seats, vehicle status"),("Navigation","Routes, stops, places"),("Energy","Hybrid powertrain, charging, fuel"),("Media","Audio and radio"),("Communication","Calls, texts, email, calendar"),("Utility","Math and time"),("Weather","Conditions at a place today"),("Preferences","Saved driver preferences")]
@@ -71,7 +71,7 @@ state_data.sort(key=lambda x: x["g"])
 STYPE={p:v["type"] for p,v in STATE.items()}
 
 # ---------- markdown
-md=["# Hybrid Assistant Tools v2", "",
+md=["# Tools VSS", "",
     f"**{len(pos)+len(neg)} tools** in total: **{len(pos)} positive** and **{len(neg)} negative**, over **{len(STATE)} vehicle state values** named after [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) signals ({NSTD} standard, {NEXTN} extensions). The spec files are the `{PFX}_*` files in this folder.", "",
     f"Of the {len(pos)} positive tools, **{TCB} come from CAR-bench** ({NSAME} with the same capability, {NEXT} extended) and **{NNEW} are new**.", "",
     "## Positive tools by domain", "",
@@ -102,7 +102,7 @@ md += ["## Negative tools", "",
 for n,t in neg.items():
     md.append(f"| `{n}` | {t['domain']} | {first_sentence(t['description'])} |")
 md += ["", "## Vehicle state", "",
-       f"The {len(STATE)} state values the tools change and read, named by their [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) path. {NSTD} are standard VSS {vmap['vss_version']} signals and {NEXTN} are extensions declared in `{PFX}_vss_overlay.vspec`. Each conversation starts from a random but valid state, and every successful action updates it.", ""]
+       f"The {len(STATE)} state values the tools change and read, named by their [COVESA VSS](https://github.com/COVESA/vehicle_signal_specification) path. {NSTD} are standard VSS signals and {NEXTN} are extensions declared in `{PFX}_overlay.vspec`. Each conversation starts from a random but valid state, and every successful action updates it.", ""]
 for g,(label,desc,_) in enumerate(GROUPS):
     md += [f"### {label}", "", desc+".", "", "| VSS signal | VSS kind | VSS type | Simulator type | Values | Start | Changed by | Read by |", "|---|---|---|---|---|---|---|---|"]
     for x in state_data:
@@ -229,7 +229,7 @@ render();
 renderState();
 </script>
 '''
-frag=f'''<title>Hybrid Assistant Tools v2</title>
+frag=f'''<title>Tools VSS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -351,8 +351,7 @@ tr.flash td {{ animation:flash 1.6s ease-out; }}
 </style>
 <div class="wrap">
 <header>
-  <div class="eyebrow">Plug-in hybrid · in-car assistant · tool spec on COVESA VSS</div>
-  <h1>Hybrid Assistant Tools v2</h1>
+  <h1>Tools VSS</h1>
   <p>Tool specs and vehicle state for a plug-in hybrid in-car assistant, with every state value named after a COVESA Vehicle Signal Specification signal. They keep every CAR-bench capability and add hybrid energy, media, access, seats, visibility, and read-only vehicle status.</p>
   <div class="totals">
     <div><b>{len(pos)+len(neg)}</b><span>tools in total</span></div>
@@ -366,10 +365,9 @@ tr.flash td {{ animation:flash 1.6s ease-out; }}
   <p>The <a href="https://github.com/COVESA/vehicle_signal_specification">Vehicle Signal Specification</a> (VSS) from COVESA is an open catalog of vehicle data, not a programming framework. It names every signal a car can expose with a dot path such as <code>Vehicle.Body.Lights.Fog.Front.IsOn</code> and gives it a kind, a datatype, a unit, and allowed values. BMW, Volvo, JLR, Bosch, and others contribute to it, and servers such as KUKSA expose a car's live data under these names.</p>
   <ul class="facts">
     <li><b>sensor</b> is read from the car, like <code>Vehicle.Speed</code>. <b>actuator</b> can be requested, like <code>Vehicle.Cabin.HVAC.IsAirConditioningActive</code>. <b>attribute</b> is a fixed fact, like the tank capacity.</li>
-    <li>v2 names every vehicle state value after its VSS signal and keeps VSS's types, units, and allowed values. Tools follow them too: fan speed is stored in percent, the sunroof can tilt, and seat heating and ventilation share one heating-cooling value, so a seat cannot heat and cool at once.</li>
+    <li>This tool set names every vehicle state value after its VSS signal and keeps VSS's types, units, and allowed values. Tools follow them too: fan speed is stored in percent, the sunroof can tilt, and seat heating and ventilation share one heating-cooling value, so a seat cannot heat and cool at once.</li>
     <li>What VSS lacks, such as the hybrid mode, navigation stops, and media mute, is added as an overlay in VSS's own format. COVESA's vss-tools accepts the overlay in strict mode, so every path here resolves to a real or declared signal.</li>
   </ul>
-  <p class="note">Checked against VSS {html.escape(vmap["vss_version"])}, commit <code>{vmap["vss_commit"][:7]}</code>. Version 1 of these specs, with its own state names, is kept in <code>specs/hybrid_car</code>.</p>
 </section>
 <section aria-labelledby="h-sum">
   <h2 id="h-sum">Positive tools by domain</h2>
@@ -398,7 +396,7 @@ tr.flash td {{ animation:flash 1.6s ease-out; }}
 </section>
 <section aria-labelledby="h-state">
   <h2 id="h-state">Vehicle state</h2>
-  <p class="note">The {len(STATE)} values the tools change and read, each named by its VSS path. {NSTD} are standard VSS signals; {NEXTN} are extensions this car needs that VSS does not define, declared in <code>{PFX}_vss_overlay.vspec</code>. Each conversation starts from a random but valid state, and every successful action updates it. Tool names link to the tool above.</p>
+  <p class="note">The {len(STATE)} values the tools change and read, each named by its VSS path. {NSTD} are standard VSS signals; {NEXTN} are extensions this car needs that VSS does not define, declared in <code>{PFX}_overlay.vspec</code>. Each conversation starts from a random but valid state, and every successful action updates it. Tool names link to the tool above.</p>
   <div class="controls">
     <input id="sq" type="search" placeholder="Search VSS paths, descriptions, or tools" aria-label="Search vehicle state">
     <div class="seg" role="group" aria-label="Filter by VSS status">
