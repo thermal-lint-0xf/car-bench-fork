@@ -1,0 +1,1451 @@
+{
+  "state": {
+    "vehicle.comfort.window_positions.front_left": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-left (driver) window opening in percent, 0 is closed."
+    },
+    "vehicle.comfort.window_positions.front_right": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-right (passenger) window opening in percent, 0 is closed."
+    },
+    "vehicle.comfort.window_positions.rear_left": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-left window opening in percent, 0 is closed."
+    },
+    "vehicle.comfort.window_positions.rear_right": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-right window opening in percent, 0 is closed."
+    },
+    "vehicle.comfort.sunroof_position_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "from_weather",
+      "description": "Sunroof opening in percent, 0 is closed."
+    },
+    "vehicle.comfort.sunshade_position_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Sunshade opening in percent, 0 is closed. Must be 100 whenever the sunroof is above 0."
+    },
+    "vehicle.comfort.seat_occupied.front_left": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": true,
+      "description": "Front-left (driver) seat occupancy sensor. The driver seat is always occupied."
+    },
+    "vehicle.comfort.seat_occupied.front_right": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front-right (passenger) seat occupancy sensor."
+    },
+    "vehicle.comfort.seat_occupied.rear_left": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-left seat occupancy sensor."
+    },
+    "vehicle.comfort.seat_occupied.rear_right": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-right seat occupancy sensor."
+    },
+    "vehicle.comfort.seat_heating.front_left": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Front-left (driver) seat heating level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_heating.front_right": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Front-right (passenger) seat heating level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_heating.rear_left": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Rear-left seat heating level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_heating.rear_right": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Rear-right seat heating level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_ventilation.front_left": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Front-left (driver) seat ventilation level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_massage_mode.front_left": {
+      "type": "str",
+      "enum": [
+        "off",
+        "wave",
+        "pulse",
+        "stretch",
+        "lumbar"
+      ],
+      "initial": "random",
+      "description": "Front-left (driver) seat massage program."
+    },
+    "vehicle.comfort.seat_massage_intensity.front_left": {
+      "type": "int",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Front-left (driver) seat massage intensity, 1 gentle, 3 strong. Ignored while the massage mode is off."
+    },
+    "vehicle.comfort.seat_fore_aft_pct.front_left": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-left (driver) seat fore-aft position in percent, 0 fully forward, 100 fully back."
+    },
+    "vehicle.comfort.seat_backrest_angle_deg.front_left": {
+      "type": "int",
+      "minimum": 5,
+      "maximum": 40,
+      "step": 1,
+      "initial": "random",
+      "description": "Front-left (driver) backrest angle in degrees from vertical."
+    },
+    "vehicle.comfort.seat_ventilation.front_right": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Front-right (passenger) seat ventilation level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.seat_massage_mode.front_right": {
+      "type": "str",
+      "enum": [
+        "off",
+        "wave",
+        "pulse",
+        "stretch",
+        "lumbar"
+      ],
+      "initial": "random",
+      "description": "Front-right (passenger) seat massage program."
+    },
+    "vehicle.comfort.seat_massage_intensity.front_right": {
+      "type": "int",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Front-right (passenger) seat massage intensity, 1 gentle, 3 strong. Ignored while the massage mode is off."
+    },
+    "vehicle.comfort.seat_fore_aft_pct.front_right": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-right (passenger) seat fore-aft position in percent, 0 fully forward, 100 fully back."
+    },
+    "vehicle.comfort.seat_backrest_angle_deg.front_right": {
+      "type": "int",
+      "minimum": 5,
+      "maximum": 40,
+      "step": 1,
+      "initial": "random",
+      "description": "Front-right (passenger) backrest angle in degrees from vertical."
+    },
+    "vehicle.comfort.driver_memory_profile": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Last recalled driver seat and mirror memory profile, 0 means no profile recalled."
+    },
+    "vehicle.comfort.steering_wheel_heating": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Steering wheel heating level, 0 off, 3 highest."
+    },
+    "vehicle.comfort.reading_light.front_left": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front-left (driver) reading light on."
+    },
+    "vehicle.comfort.reading_light.front_right": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front-right (passenger) reading light on."
+    },
+    "vehicle.comfort.reading_light.rear_left": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-left reading light on."
+    },
+    "vehicle.comfort.reading_light.rear_right": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-right reading light on."
+    },
+    "vehicle.comfort.ambient_light_color": {
+      "type": "str",
+      "enum": [
+        "off",
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "white",
+        "pink",
+        "orange",
+        "purple",
+        "cyan"
+      ],
+      "initial": "random",
+      "description": "Ambient interior light color, \"off\" when the ambient light is off."
+    },
+    "vehicle.comfort.ambient_light_brightness_pct": {
+      "type": "int",
+      "minimum": 10,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Ambient light brightness in percent."
+    },
+    "vehicle.climate.auto_mode": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": true,
+      "description": "Climate auto mode. Manual changes to fan speed or airflow direction switch it off."
+    },
+    "vehicle.climate.temperature_c.front_left": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Front-left (driver) climate zone target temperature in Celsius."
+    },
+    "vehicle.climate.temperature_c.front_right": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Front-right (passenger) climate zone target temperature in Celsius."
+    },
+    "vehicle.climate.temperature_c.rear": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Rear climate zone target temperature in Celsius."
+    },
+    "vehicle.climate.fan_speed": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "initial": "random",
+      "description": "Climate fan speed, 0 off, 5 highest."
+    },
+    "vehicle.climate.airflow_direction": {
+      "type": "str",
+      "enum": [
+        "feet",
+        "head",
+        "head_feet",
+        "windshield",
+        "windshield_feet",
+        "windshield_head",
+        "windshield_head_feet"
+      ],
+      "initial": "random",
+      "description": "Where the fan blows air."
+    },
+    "vehicle.climate.ac_on": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Air conditioning compressor on. Usually on when it is hot."
+    },
+    "vehicle.climate.air_circulation": {
+      "type": "str",
+      "enum": [
+        "auto",
+        "fresh_air",
+        "recirculation"
+      ],
+      "initial": "random",
+      "description": "Air intake mode."
+    },
+    "vehicle.climate.front_defrost": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Front windshield defrost on. Usually on in snow, fog, or below 3 Celsius."
+    },
+    "vehicle.climate.rear_defrost": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Rear window defrost on. Usually on in snow, fog, or below 3 Celsius."
+    },
+    "vehicle.visibility.low_beams": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Low beam headlights on. On at night, in rain, snow, fog, or storm."
+    },
+    "vehicle.visibility.high_beams": {
+      "type": "bool",
+      "initial": "random",
+      "description": "High beam headlights on. Always off while fog lights are on."
+    },
+    "vehicle.visibility.fog_lights": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Front fog lights on. Usually on only in fog, heavy rain, or snow."
+    },
+    "vehicle.visibility.wiper_speed": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "from_weather",
+      "description": "Front wiper speed, 0 off, 3 fastest. Should be above 0 when it rains or snows."
+    },
+    "vehicle.visibility.rear_wiper": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Rear wiper on. Usually on in rain or snow."
+    },
+    "vehicle.visibility.mirrors_folded": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Side mirrors folded in."
+    },
+    "vehicle.visibility.mirror_heating": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Side mirror heating on. Usually on in snow, fog, or below 3 Celsius."
+    },
+    "vehicle.access.doors_locked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "All doors locked."
+    },
+    "vehicle.access.child_lock.rear_left": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-left door child safety lock engaged."
+    },
+    "vehicle.access.child_lock.rear_right": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-right door child safety lock engaged."
+    },
+    "vehicle.access.trunk_open": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Trunk lid open. Can only be true while the car is stopped in park."
+    },
+    "vehicle.access.fuel_door_open": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Fuel filler door open. Can only be true while the car is stopped in park."
+    },
+    "vehicle.access.charge_port_open": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Charging port door open. Can only be true while the car is stopped in park."
+    },
+    "vehicle.media.source": {
+      "type": "str",
+      "enum": [
+        "fm_radio",
+        "dab_radio",
+        "bluetooth",
+        "usb",
+        "streaming"
+      ],
+      "initial": "random",
+      "description": "Active audio source."
+    },
+    "vehicle.media.playing": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Audio is playing rather than paused."
+    },
+    "vehicle.media.volume": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 30,
+      "step": 1,
+      "initial": "random",
+      "description": "Audio volume, 0 silent, 30 loudest."
+    },
+    "vehicle.media.muted": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Audio muted."
+    },
+    "vehicle.media.fm_frequency_mhz": {
+      "type": "float",
+      "minimum": 87.5,
+      "maximum": 108.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Tuned FM radio frequency in MHz."
+    },
+    "vehicle.telemetry.speed_kph": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 160,
+      "step": 1,
+      "initial": "random",
+      "description": "Current vehicle speed in km/h. 0 means the car is stopped."
+    },
+    "vehicle.telemetry.gear": {
+      "type": "str",
+      "enum": [
+        "P",
+        "R",
+        "N",
+        "D"
+      ],
+      "initial": "random",
+      "description": "Selected gear. \"P\" park, \"R\" reverse, \"N\" neutral, \"D\" drive. Speed is 0 whenever the gear is \"P\"."
+    },
+    "vehicle.telemetry.outside_temp_c": {
+      "type": "float",
+      "minimum": -30.0,
+      "maximum": 50.0,
+      "step": 0.5,
+      "initial": "from_weather",
+      "description": "Outside air temperature in Celsius, taken from the weather of the current city."
+    },
+    "vehicle.telemetry.cabin_temp_c": {
+      "type": "float",
+      "minimum": -20.0,
+      "maximum": 55.0,
+      "step": 0.5,
+      "initial": "from_weather",
+      "description": "Measured cabin air temperature in Celsius. Drifts toward the outside temperature when climate is off."
+    },
+    "vehicle.telemetry.tire_pressure_kpa.front_left": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-left tire pressure in kPa. Recommended 230 to 250, below 200 is a low-pressure warning."
+    },
+    "vehicle.telemetry.tire_pressure_kpa.front_right": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-right tire pressure in kPa. Recommended 230 to 250, below 200 is a low-pressure warning."
+    },
+    "vehicle.telemetry.tire_pressure_kpa.rear_left": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-left tire pressure in kPa. Recommended 230 to 250, below 200 is a low-pressure warning."
+    },
+    "vehicle.telemetry.tire_pressure_kpa.rear_right": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-right tire pressure in kPa. Recommended 230 to 250, below 200 is a low-pressure warning."
+    },
+    "vehicle.telemetry.odometer_km": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 300000,
+      "step": 1,
+      "initial": "random",
+      "description": "Total distance driven in km."
+    },
+    "vehicle.telemetry.oil_life_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "Remaining combustion engine oil life in percent."
+    },
+    "vehicle.telemetry.washer_fluid_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Windshield washer fluid level in percent."
+    },
+    "vehicle.telemetry.next_service_km": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 30000,
+      "step": 100,
+      "initial": "random",
+      "description": "Distance until the next scheduled service in km. Negative values are not used; 0 means service is due now."
+    },
+    "vehicle.telemetry.trip_distance_km": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 2000.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Distance since the trip computer was last reset, in km."
+    },
+    "vehicle.telemetry.trip_avg_fuel_l_per_100km": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 15.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Average fuel consumption since the last trip reset, in liters per 100 km."
+    },
+    "vehicle.telemetry.trip_avg_energy_kwh_per_100km": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 30.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Average electric energy consumption since the last trip reset, in kWh per 100 km."
+    },
+    "vehicle.telemetry.trip_electric_share_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "Share of trip distance driven on electric power only, in percent."
+    },
+    "vehicle.powertrain.fuel_level_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "Fuel tank level in percent of tank capacity."
+    },
+    "vehicle.powertrain.battery_soc_pct": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "High-voltage battery state of charge in percent."
+    },
+    "vehicle.powertrain.fuel_tank_capacity_l": {
+      "type": "float",
+      "minimum": 30.0,
+      "maximum": 80.0,
+      "step": 0.5,
+      "initial": "fixed",
+      "default": 45.0,
+      "description": "Fuel tank capacity in liters."
+    },
+    "vehicle.powertrain.battery_usable_capacity_kwh": {
+      "type": "float",
+      "minimum": 8.0,
+      "maximum": 40.0,
+      "step": 0.5,
+      "initial": "fixed",
+      "default": 18.0,
+      "description": "Usable high-voltage battery capacity in kWh."
+    },
+    "vehicle.powertrain.electric_consumption_kwh_per_100km": {
+      "type": "float",
+      "minimum": 12.0,
+      "maximum": 25.0,
+      "step": 0.5,
+      "initial": "fixed",
+      "default": 18.0,
+      "description": "Reference electric energy consumption used for electric range estimates, in kWh per 100 km."
+    },
+    "vehicle.powertrain.fuel_consumption_l_per_100km": {
+      "type": "float",
+      "minimum": 3.0,
+      "maximum": 12.0,
+      "step": 0.1,
+      "initial": "fixed",
+      "default": 6.0,
+      "description": "Reference fuel consumption with the engine running, used for fuel range estimates, in liters per 100 km."
+    },
+    "vehicle.powertrain.max_ac_charging_kw": {
+      "type": "float",
+      "enum": [
+        3.7,
+        7.4,
+        11.0
+      ],
+      "initial": "fixed",
+      "default": 7.4,
+      "description": "Maximum AC charging power the car accepts, in kW."
+    },
+    "vehicle.powertrain.max_dc_charging_kw": {
+      "type": "float",
+      "enum": [
+        0.0,
+        50.0,
+        80.0
+      ],
+      "initial": "fixed",
+      "default": 50.0,
+      "description": "Maximum DC fast charging power the car accepts, in kW."
+    },
+    "vehicle.powertrain.drive_mode": {
+      "type": "str",
+      "enum": [
+        "eco",
+        "comfort",
+        "sport"
+      ],
+      "initial": "random",
+      "description": "Driving dynamics mode."
+    },
+    "vehicle.powertrain.hybrid_mode": {
+      "type": "str",
+      "enum": [
+        "auto",
+        "electric",
+        "hold",
+        "charge"
+      ],
+      "initial": "random",
+      "description": "How the hybrid system uses battery and engine. \"auto\" blends both, \"electric\" drives on battery only, \"hold\" keeps the current battery charge for later, \"charge\" uses the engine to charge the battery up to the charge target."
+    },
+    "vehicle.powertrain.battery_charge_target_pct": {
+      "type": "int",
+      "minimum": 20,
+      "maximum": 80,
+      "step": 10,
+      "initial": "random",
+      "description": "Battery level the engine charges up to while the hybrid mode is \"charge\"."
+    },
+    "vehicle.powertrain.regen_level": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Regenerative braking strength, 0 coasting, 3 strongest (one-pedal feel)."
+    },
+    "vehicle.powertrain.engine_running": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Combustion engine currently running. False whenever the hybrid mode is \"electric\"."
+    },
+    "vehicle.powertrain.plugged_in": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Charging cable connected. Always false while driving."
+    },
+    "vehicle.powertrain.charge_limit_pct": {
+      "type": "int",
+      "minimum": 50,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Maximum battery level plug-in charging stops at."
+    },
+    "vehicle.powertrain.scheduled_charging_enabled": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Delayed plug-in charging is enabled, so charging starts at the scheduled hour instead of immediately."
+    },
+    "vehicle.powertrain.scheduled_charging_start_hour": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 23,
+      "step": 1,
+      "initial": "random",
+      "description": "Hour of day (local time, 24-hour clock) delayed charging starts."
+    },
+    "vehicle.info.exterior_color": {
+      "type": "str",
+      "enum": [
+        "black",
+        "white",
+        "silver",
+        "gray",
+        "blue",
+        "red",
+        "green"
+      ],
+      "initial": "fixed",
+      "default": "blue",
+      "description": "Exterior paint color of the car."
+    },
+    "navigation.active": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "A route is set and guidance is running."
+    },
+    "navigation.destination_id": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of the final destination, empty when no route is set."
+    },
+    "navigation.waypoint_1_id": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 1 in driving order, empty when unused. Stops are always filled from 1 upward without gaps."
+    },
+    "navigation.waypoint_2_id": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 2 in driving order, empty when unused. Stops are always filled from 1 upward without gaps."
+    },
+    "navigation.waypoint_3_id": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 3 in driving order, empty when unused. Stops are always filled from 1 upward without gaps."
+    },
+    "navigation.route_id": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Route ID of the route currently being followed to the next stop, empty when no route is set."
+    },
+    "navigation.avoid_tolls": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Route planning avoids toll roads."
+    },
+    "navigation.avoid_highways": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Route planning avoids highways."
+    },
+    "navigation.voice_guidance_on": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Spoken turn-by-turn guidance on."
+    }
+  },
+  "tools": {
+    "set_window_position": {
+      "writes": [
+        "vehicle.comfort.window_positions.front_left",
+        "vehicle.comfort.window_positions.front_right",
+        "vehicle.comfort.window_positions.rear_left",
+        "vehicle.comfort.window_positions.rear_right"
+      ]
+    },
+    "set_sunshade_position": {
+      "writes": [
+        "vehicle.comfort.sunshade_position_pct"
+      ]
+    },
+    "set_sunroof_position": {
+      "writes": [
+        "vehicle.comfort.sunroof_position_pct"
+      ]
+    },
+    "get_window_positions": {
+      "reads": [
+        "vehicle.comfort.window_positions.front_left",
+        "vehicle.comfort.window_positions.front_right",
+        "vehicle.comfort.window_positions.rear_left",
+        "vehicle.comfort.window_positions.rear_right"
+      ]
+    },
+    "get_sunroof_and_sunshade_position": {
+      "reads": [
+        "vehicle.comfort.sunroof_position_pct",
+        "vehicle.comfort.sunshade_position_pct"
+      ]
+    },
+    "set_door_locks": {
+      "writes": [
+        "vehicle.access.doors_locked"
+      ]
+    },
+    "set_child_lock": {
+      "writes": [
+        "vehicle.access.child_lock.rear_left",
+        "vehicle.access.child_lock.rear_right"
+      ]
+    },
+    "set_trunk": {
+      "writes": [
+        "vehicle.access.trunk_open"
+      ]
+    },
+    "set_fuel_door": {
+      "writes": [
+        "vehicle.access.fuel_door_open"
+      ]
+    },
+    "set_charge_port": {
+      "writes": [
+        "vehicle.access.charge_port_open"
+      ]
+    },
+    "get_door_lock_status": {
+      "reads": [
+        "vehicle.access.doors_locked"
+      ]
+    },
+    "get_child_lock_status": {
+      "reads": [
+        "vehicle.access.child_lock.rear_left",
+        "vehicle.access.child_lock.rear_right"
+      ]
+    },
+    "get_trunk_status": {
+      "reads": [
+        "vehicle.access.trunk_open"
+      ]
+    },
+    "get_fuel_door_status": {
+      "reads": [
+        "vehicle.access.fuel_door_open"
+      ]
+    },
+    "get_charge_port_status": {
+      "reads": [
+        "vehicle.access.charge_port_open"
+      ]
+    },
+    "set_low_beams": {
+      "writes": [
+        "vehicle.visibility.low_beams"
+      ]
+    },
+    "set_high_beams": {
+      "writes": [
+        "vehicle.visibility.high_beams"
+      ]
+    },
+    "set_fog_lights": {
+      "writes": [
+        "vehicle.visibility.fog_lights"
+      ]
+    },
+    "set_wiper_speed": {
+      "writes": [
+        "vehicle.visibility.wiper_speed"
+      ]
+    },
+    "set_rear_wiper": {
+      "writes": [
+        "vehicle.visibility.rear_wiper"
+      ]
+    },
+    "set_side_mirrors_folded": {
+      "writes": [
+        "vehicle.visibility.mirrors_folded"
+      ]
+    },
+    "set_mirror_heating": {
+      "writes": [
+        "vehicle.visibility.mirror_heating"
+      ]
+    },
+    "get_exterior_lights_status": {
+      "reads": [
+        "vehicle.visibility.low_beams",
+        "vehicle.visibility.high_beams",
+        "vehicle.visibility.fog_lights"
+      ]
+    },
+    "get_wiper_status": {
+      "reads": [
+        "vehicle.visibility.wiper_speed",
+        "vehicle.visibility.rear_wiper"
+      ]
+    },
+    "get_side_mirror_status": {
+      "reads": [
+        "vehicle.visibility.mirrors_folded",
+        "vehicle.visibility.mirror_heating"
+      ]
+    },
+    "set_reading_light": {
+      "writes": [
+        "vehicle.comfort.reading_light.front_left",
+        "vehicle.comfort.reading_light.front_right",
+        "vehicle.comfort.reading_light.rear_left",
+        "vehicle.comfort.reading_light.rear_right"
+      ]
+    },
+    "set_ambient_light": {
+      "writes": [
+        "vehicle.comfort.ambient_light_color",
+        "vehicle.comfort.ambient_light_brightness_pct"
+      ]
+    },
+    "get_reading_lights_status": {
+      "reads": [
+        "vehicle.comfort.reading_light.front_left",
+        "vehicle.comfort.reading_light.front_right",
+        "vehicle.comfort.reading_light.rear_left",
+        "vehicle.comfort.reading_light.rear_right"
+      ]
+    },
+    "get_ambient_light_status": {
+      "reads": [
+        "vehicle.comfort.ambient_light_color",
+        "vehicle.comfort.ambient_light_brightness_pct"
+      ]
+    },
+    "set_climate_temperature": {
+      "writes": [
+        "vehicle.climate.temperature_c.front_left",
+        "vehicle.climate.temperature_c.front_right",
+        "vehicle.climate.temperature_c.rear"
+      ]
+    },
+    "set_fan_speed": {
+      "writes": [
+        "vehicle.climate.fan_speed",
+        "vehicle.climate.auto_mode"
+      ]
+    },
+    "set_airflow_direction": {
+      "writes": [
+        "vehicle.climate.airflow_direction",
+        "vehicle.climate.auto_mode"
+      ]
+    },
+    "set_air_conditioning": {
+      "writes": [
+        "vehicle.climate.ac_on"
+      ]
+    },
+    "set_air_circulation": {
+      "writes": [
+        "vehicle.climate.air_circulation"
+      ]
+    },
+    "set_defrost": {
+      "writes": [
+        "vehicle.climate.front_defrost",
+        "vehicle.climate.rear_defrost"
+      ]
+    },
+    "set_climate_auto_mode": {
+      "writes": [
+        "vehicle.climate.auto_mode"
+      ]
+    },
+    "get_climate_status": {
+      "reads": [
+        "vehicle.climate.auto_mode",
+        "vehicle.climate.temperature_c.front_left",
+        "vehicle.climate.temperature_c.front_right",
+        "vehicle.climate.temperature_c.rear",
+        "vehicle.climate.fan_speed",
+        "vehicle.climate.airflow_direction",
+        "vehicle.climate.ac_on",
+        "vehicle.climate.air_circulation",
+        "vehicle.climate.front_defrost",
+        "vehicle.climate.rear_defrost",
+        "vehicle.telemetry.cabin_temp_c",
+        "vehicle.telemetry.outside_temp_c"
+      ]
+    },
+    "set_seat_heating": {
+      "writes": [
+        "vehicle.comfort.seat_heating.front_left",
+        "vehicle.comfort.seat_heating.front_right",
+        "vehicle.comfort.seat_heating.rear_left",
+        "vehicle.comfort.seat_heating.rear_right"
+      ]
+    },
+    "set_seat_ventilation": {
+      "writes": [
+        "vehicle.comfort.seat_ventilation.front_left",
+        "vehicle.comfort.seat_ventilation.front_right"
+      ]
+    },
+    "set_seat_massage": {
+      "writes": [
+        "vehicle.comfort.seat_massage_mode.front_left",
+        "vehicle.comfort.seat_massage_mode.front_right",
+        "vehicle.comfort.seat_massage_intensity.front_left",
+        "vehicle.comfort.seat_massage_intensity.front_right"
+      ]
+    },
+    "set_seat_fore_aft": {
+      "writes": [
+        "vehicle.comfort.seat_fore_aft_pct.front_left",
+        "vehicle.comfort.seat_fore_aft_pct.front_right"
+      ]
+    },
+    "set_seat_backrest": {
+      "writes": [
+        "vehicle.comfort.seat_backrest_angle_deg.front_left",
+        "vehicle.comfort.seat_backrest_angle_deg.front_right"
+      ]
+    },
+    "recall_driver_memory_profile": {
+      "writes": [
+        "vehicle.comfort.driver_memory_profile",
+        "vehicle.comfort.seat_fore_aft_pct.front_left",
+        "vehicle.comfort.seat_backrest_angle_deg.front_left"
+      ]
+    },
+    "set_steering_wheel_heating": {
+      "writes": [
+        "vehicle.comfort.steering_wheel_heating"
+      ]
+    },
+    "get_seat_status": {
+      "reads": [
+        "vehicle.comfort.seat_occupied.front_left",
+        "vehicle.comfort.seat_occupied.front_right",
+        "vehicle.comfort.seat_occupied.rear_left",
+        "vehicle.comfort.seat_occupied.rear_right",
+        "vehicle.comfort.seat_heating.front_left",
+        "vehicle.comfort.seat_heating.front_right",
+        "vehicle.comfort.seat_heating.rear_left",
+        "vehicle.comfort.seat_heating.rear_right",
+        "vehicle.comfort.seat_ventilation.front_left",
+        "vehicle.comfort.seat_massage_mode.front_left",
+        "vehicle.comfort.seat_massage_intensity.front_left",
+        "vehicle.comfort.seat_fore_aft_pct.front_left",
+        "vehicle.comfort.seat_backrest_angle_deg.front_left",
+        "vehicle.comfort.seat_ventilation.front_right",
+        "vehicle.comfort.seat_massage_mode.front_right",
+        "vehicle.comfort.seat_massage_intensity.front_right",
+        "vehicle.comfort.seat_fore_aft_pct.front_right",
+        "vehicle.comfort.seat_backrest_angle_deg.front_right",
+        "vehicle.comfort.driver_memory_profile",
+        "vehicle.comfort.steering_wheel_heating"
+      ]
+    },
+    "set_media_volume": {
+      "writes": [
+        "vehicle.media.volume",
+        "vehicle.media.muted"
+      ]
+    },
+    "set_media_mute": {
+      "writes": [
+        "vehicle.media.muted"
+      ]
+    },
+    "set_media_source": {
+      "writes": [
+        "vehicle.media.source",
+        "vehicle.media.playing"
+      ]
+    },
+    "set_media_playback": {
+      "writes": [
+        "vehicle.media.playing"
+      ]
+    },
+    "skip_media_track": {
+      "writes": [
+        "vehicle.media.playing"
+      ]
+    },
+    "tune_fm_radio": {
+      "writes": [
+        "vehicle.media.fm_frequency_mhz",
+        "vehicle.media.source",
+        "vehicle.media.playing"
+      ]
+    },
+    "play_media_by_query": {
+      "writes": [
+        "vehicle.media.source",
+        "vehicle.media.playing"
+      ]
+    },
+    "get_media_status": {
+      "reads": [
+        "vehicle.media.source",
+        "vehicle.media.playing",
+        "vehicle.media.volume",
+        "vehicle.media.muted",
+        "vehicle.media.fm_frequency_mhz"
+      ]
+    },
+    "get_driving_status": {
+      "reads": [
+        "vehicle.telemetry.speed_kph",
+        "vehicle.telemetry.gear",
+        "vehicle.telemetry.odometer_km"
+      ]
+    },
+    "get_tire_pressure": {
+      "reads": [
+        "vehicle.telemetry.tire_pressure_kpa.front_left",
+        "vehicle.telemetry.tire_pressure_kpa.front_right",
+        "vehicle.telemetry.tire_pressure_kpa.rear_left",
+        "vehicle.telemetry.tire_pressure_kpa.rear_right"
+      ]
+    },
+    "get_maintenance_status": {
+      "reads": [
+        "vehicle.telemetry.oil_life_pct",
+        "vehicle.telemetry.washer_fluid_pct",
+        "vehicle.telemetry.next_service_km",
+        "vehicle.telemetry.odometer_km"
+      ]
+    },
+    "get_trip_info": {
+      "reads": [
+        "vehicle.telemetry.trip_distance_km",
+        "vehicle.telemetry.trip_avg_fuel_l_per_100km",
+        "vehicle.telemetry.trip_avg_energy_kwh_per_100km",
+        "vehicle.telemetry.trip_electric_share_pct"
+      ]
+    },
+    "reset_trip_computer": {
+      "writes": [
+        "vehicle.telemetry.trip_distance_km",
+        "vehicle.telemetry.trip_avg_fuel_l_per_100km",
+        "vehicle.telemetry.trip_avg_energy_kwh_per_100km",
+        "vehicle.telemetry.trip_electric_share_pct"
+      ]
+    },
+    "get_vehicle_specs": {
+      "reads": [
+        "vehicle.info.exterior_color",
+        "vehicle.powertrain.fuel_tank_capacity_l",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.electric_consumption_kwh_per_100km",
+        "vehicle.powertrain.fuel_consumption_l_per_100km",
+        "vehicle.powertrain.max_ac_charging_kw",
+        "vehicle.powertrain.max_dc_charging_kw"
+      ]
+    },
+    "get_energy_status": {
+      "reads": [
+        "vehicle.powertrain.fuel_level_pct",
+        "vehicle.powertrain.battery_soc_pct",
+        "vehicle.powertrain.fuel_tank_capacity_l",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.electric_consumption_kwh_per_100km",
+        "vehicle.powertrain.fuel_consumption_l_per_100km",
+        "vehicle.powertrain.hybrid_mode",
+        "vehicle.powertrain.drive_mode",
+        "vehicle.powertrain.regen_level",
+        "vehicle.powertrain.battery_charge_target_pct",
+        "vehicle.powertrain.engine_running"
+      ]
+    },
+    "set_hybrid_mode": {
+      "writes": [
+        "vehicle.powertrain.hybrid_mode",
+        "vehicle.powertrain.battery_charge_target_pct",
+        "vehicle.powertrain.engine_running"
+      ]
+    },
+    "set_drive_mode": {
+      "writes": [
+        "vehicle.powertrain.drive_mode"
+      ]
+    },
+    "set_regen_level": {
+      "writes": [
+        "vehicle.powertrain.regen_level"
+      ]
+    },
+    "get_charging_settings": {
+      "reads": [
+        "vehicle.powertrain.plugged_in",
+        "vehicle.powertrain.charge_limit_pct",
+        "vehicle.powertrain.scheduled_charging_enabled",
+        "vehicle.powertrain.scheduled_charging_start_hour",
+        "vehicle.powertrain.max_ac_charging_kw",
+        "vehicle.powertrain.max_dc_charging_kw"
+      ]
+    },
+    "set_charge_limit": {
+      "writes": [
+        "vehicle.powertrain.charge_limit_pct"
+      ]
+    },
+    "set_scheduled_charging": {
+      "writes": [
+        "vehicle.powertrain.scheduled_charging_enabled",
+        "vehicle.powertrain.scheduled_charging_start_hour"
+      ]
+    },
+    "estimate_charging_time": {
+      "reads": [
+        "vehicle.powertrain.battery_soc_pct",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.max_ac_charging_kw",
+        "vehicle.powertrain.max_dc_charging_kw",
+        "vehicle.powertrain.charge_limit_pct"
+      ]
+    },
+    "estimate_soc_after_charging": {
+      "reads": [
+        "vehicle.powertrain.battery_soc_pct",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.max_ac_charging_kw",
+        "vehicle.powertrain.max_dc_charging_kw",
+        "vehicle.powertrain.charge_limit_pct"
+      ]
+    },
+    "estimate_electric_distance": {
+      "reads": [
+        "vehicle.powertrain.battery_soc_pct",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.electric_consumption_kwh_per_100km"
+      ]
+    },
+    "estimate_refuel": {
+      "reads": [
+        "vehicle.powertrain.fuel_level_pct",
+        "vehicle.powertrain.fuel_tank_capacity_l",
+        "vehicle.powertrain.fuel_consumption_l_per_100km"
+      ]
+    },
+    "estimate_route_energy": {
+      "reads": [
+        "vehicle.powertrain.fuel_level_pct",
+        "vehicle.powertrain.battery_soc_pct",
+        "vehicle.powertrain.fuel_tank_capacity_l",
+        "vehicle.powertrain.battery_usable_capacity_kwh",
+        "vehicle.powertrain.electric_consumption_kwh_per_100km",
+        "vehicle.powertrain.fuel_consumption_l_per_100km",
+        "vehicle.powertrain.hybrid_mode"
+      ]
+    },
+    "get_location_id_by_name": {
+      "external": true
+    },
+    "search_poi_at_location": {
+      "external": true
+    },
+    "search_poi_along_route": {
+      "external": true
+    },
+    "get_routes": {
+      "reads": [
+        "navigation.avoid_tolls",
+        "navigation.avoid_highways"
+      ]
+    },
+    "convert_route_distance_and_time": {
+      "external": true
+    },
+    "set_navigation": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "add_navigation_waypoint": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "replace_navigation_waypoint": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "delete_navigation_waypoint": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "replace_navigation_destination": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "delete_navigation_destination": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "cancel_navigation": {
+      "writes": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id"
+      ]
+    },
+    "set_route_options": {
+      "writes": [
+        "navigation.avoid_tolls",
+        "navigation.avoid_highways"
+      ]
+    },
+    "set_voice_guidance": {
+      "writes": [
+        "navigation.voice_guidance_on"
+      ]
+    },
+    "get_navigation_status": {
+      "reads": [
+        "navigation.active",
+        "navigation.destination_id",
+        "navigation.waypoint_1_id",
+        "navigation.waypoint_2_id",
+        "navigation.waypoint_3_id",
+        "navigation.route_id",
+        "navigation.avoid_tolls",
+        "navigation.avoid_highways",
+        "navigation.voice_guidance_on"
+      ]
+    },
+    "get_weather": {
+      "external": true
+    },
+    "get_contact_id_by_name": {
+      "external": true
+    },
+    "get_contact_details": {
+      "external": true
+    },
+    "call_phone_number": {
+      "external": true
+    },
+    "send_text_message": {
+      "external": true
+    },
+    "send_email": {
+      "external": true
+    },
+    "get_calendar_events": {
+      "external": true
+    },
+    "get_user_preferences": {
+      "external": true
+    },
+    "calculate_math": {
+      "external": true
+    },
+    "calculate_datetime": {
+      "external": true
+    }
+  }
+}

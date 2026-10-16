@@ -1,0 +1,124 @@
+# VSS overlay for the plug-in hybrid assistant (tools vss).
+# Apply on top of VSS 7.0-dev (commit dcc7cf5):
+#   vspec export json -s spec/VehicleSignalSpecification.vspec -u spec/units.yaml -q spec/quantities.yaml -l <this file> -o out.json
+
+Vehicle.Cabin.HVAC.IsAutoModeActive:
+  datatype: boolean
+  type: actuator
+  description: Climate control automatic mode. True = the system controls fan speed and air distribution.
+
+Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile:
+  datatype: uint8
+  type: actuator
+  description: Driver seat memory profile last recalled. 0 = none.
+
+Vehicle.Cabin.Infotainment.Media.IsMuted:
+  datatype: boolean
+  type: actuator
+  description: Media audio muted. The Volume value is kept.
+
+Vehicle.Cabin.Infotainment.Media.Radio:
+  type: branch
+  description: Radio signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Media.Radio.FMFrequency:
+  datatype: float
+  type: actuator
+  min: 87.5
+  max: 108.0
+  description: Tuned FM radio frequency in MHz.
+
+Vehicle.Powertrain.Hybrid:
+  type: branch
+  description: Hybrid signals added by the hybrid assistant overlay.
+
+Vehicle.Powertrain.Hybrid.Mode:
+  datatype: string
+  type: actuator
+  allowed: ['AUTO', 'ELECTRIC', 'HOLD', 'CHARGE']
+  description: Driver-selected hybrid operating mode.
+
+Vehicle.Powertrain.Hybrid.ChargeTarget:
+  datatype: uint8
+  type: actuator
+  unit: percent
+  min: 20
+  max: 80
+  description: Target state of charge while the hybrid mode is CHARGE.
+
+Vehicle.Powertrain.Hybrid.RegenLevel:
+  datatype: uint8
+  type: actuator
+  description: Regenerative braking level. 0 = coasting, 3 = strongest.
+
+Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC:
+  datatype: float
+  type: attribute
+  unit: kW
+  description: Maximum AC charging power the vehicle accepts.
+
+Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC:
+  datatype: float
+  type: attribute
+  unit: kW
+  description: Maximum DC charging power the vehicle accepts. 0 = no DC charging.
+
+Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive:
+  datatype: boolean
+  type: actuator
+  description: Route guidance active.
+
+Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId:
+  datatype: string
+  type: actuator
+  description: Location ID of the destination in the map database.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints:
+  type: branch
+  description: Waypoints signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1:
+  type: branch
+  description: Stop1 signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId:
+  datatype: string
+  type: actuator
+  description: Location ID of intermediate stop 1.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2:
+  type: branch
+  description: Stop2 signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId:
+  datatype: string
+  type: actuator
+  description: Location ID of intermediate stop 2.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3:
+  type: branch
+  description: Stop3 signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId:
+  datatype: string
+  type: actuator
+  description: Location ID of intermediate stop 3.
+
+Vehicle.Cabin.Infotainment.Navigation.RouteId:
+  datatype: string
+  type: actuator
+  description: ID of the route leg being followed.
+
+Vehicle.Cabin.Infotainment.Navigation.RouteOptions:
+  type: branch
+  description: RouteOptions signals added by the hybrid assistant overlay.
+
+Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided:
+  datatype: boolean
+  type: actuator
+  description: Avoid toll roads when planning routes.
+
+Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided:
+  datatype: boolean
+  type: actuator
+  description: Avoid highways when planning routes.

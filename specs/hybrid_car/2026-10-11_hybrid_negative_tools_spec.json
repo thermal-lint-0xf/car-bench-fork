@@ -1,0 +1,229 @@
+{
+  "set_home_thermostat": {
+    "description": "Set the target temperature of the home thermostat.",
+    "domain": "SmartHome",
+    "kind": "action",
+    "parameters": {
+      "temperature_c": {
+        "type": "float",
+        "required": true,
+        "description": "number from 10.0 to 30.0, in steps of 0.5."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_home_lights": {
+    "description": "Turn lights in a room of the home on or off and set their color.",
+    "domain": "SmartHome",
+    "kind": "action",
+    "parameters": {
+      "room": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"living_room\", \"bedroom\", \"kitchen\", or \"garden\"."
+      },
+      "on": {
+        "type": "bool",
+        "required": true,
+        "description": "true to turn on, false to turn off."
+      },
+      "color": {
+        "type": "str",
+        "required": false,
+        "default": "warm_white",
+        "description": "one of \"warm_white\", \"cool_white\", \"red\", \"blue\", or \"green\". Default is \"warm_white\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "lock_home_door": {
+    "description": "Lock or unlock the smart lock on the home's front door.",
+    "domain": "SmartHome",
+    "kind": "action",
+    "parameters": {
+      "locked": {
+        "type": "bool",
+        "required": true,
+        "description": "true to lock, false to unlock."
+      }
+    },
+    "sample_commands": []
+  },
+  "play_on_home_speaker": {
+    "description": "Play music on a smart speaker at home.",
+    "domain": "SmartHome",
+    "kind": "action",
+    "parameters": {
+      "query": {
+        "type": "str",
+        "required": true,
+        "description": "free text naming what to play.",
+        "sample_values": [
+          "jazz for dinner"
+        ]
+      },
+      "room": {
+        "type": "str",
+        "required": true,
+        "description": "one of \"living_room\", \"bedroom\", or \"kitchen\"."
+      }
+    },
+    "sample_commands": []
+  },
+  "start_home_wallbox_charging": {
+    "description": "Start charging on the home wallbox app account. This controls the home charger's own app, not the car.",
+    "domain": "SmartHome",
+    "kind": "action",
+    "parameters": {
+      "max_current_a": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 6 to 32."
+      }
+    },
+    "sample_commands": []
+  },
+  "set_phone_alarm": {
+    "description": "Set an alarm on the user's phone.",
+    "domain": "Phone",
+    "kind": "action",
+    "parameters": {
+      "time": {
+        "type": "str",
+        "required": true,
+        "description": "time as HH:MM on a 24-hour clock.",
+        "sample_values": [
+          "06:30"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "set_phone_ringer_volume": {
+    "description": "Change the phone's own ringer volume.",
+    "domain": "Phone",
+    "kind": "action",
+    "parameters": {
+      "level": {
+        "type": "int",
+        "required": true,
+        "description": "integer from 0 to 10."
+      }
+    },
+    "sample_commands": []
+  },
+  "book_flight": {
+    "description": "Search and book a flight ticket.",
+    "domain": "Travel",
+    "kind": "action",
+    "parameters": {
+      "origin": {
+        "type": "str",
+        "required": true,
+        "description": "free text city or airport code.",
+        "sample_values": [
+          "SFO"
+        ]
+      },
+      "destination": {
+        "type": "str",
+        "required": true,
+        "description": "free text city or airport code.",
+        "sample_values": [
+          "ORD"
+        ]
+      },
+      "date": {
+        "type": "str",
+        "required": true,
+        "description": "date as YYYY-MM-DD.",
+        "sample_values": [
+          "2026-11-02"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "order_food_delivery": {
+    "description": "Order food for delivery to a home address.",
+    "domain": "Shopping",
+    "kind": "action",
+    "parameters": {
+      "restaurant": {
+        "type": "str",
+        "required": true,
+        "description": "free text restaurant name.",
+        "sample_values": [
+          "Corner Noodle House"
+        ]
+      },
+      "items": {
+        "type": "list",
+        "required": true,
+        "description": "list of 1 to 10 free text item names."
+      }
+    },
+    "sample_commands": []
+  },
+  "transfer_money": {
+    "description": "Transfer money from the user's bank account to another account.",
+    "domain": "Finance",
+    "kind": "action",
+    "parameters": {
+      "recipient": {
+        "type": "str",
+        "required": true,
+        "description": "free text recipient name or account number.",
+        "sample_values": [
+          "Savings account"
+        ]
+      },
+      "amount": {
+        "type": "float",
+        "required": true,
+        "description": "number from 0.01 to 10000.0."
+      }
+    },
+    "sample_commands": []
+  },
+  "create_document": {
+    "description": "Create a new text document in the user's cloud drive.",
+    "domain": "Productivity",
+    "kind": "action",
+    "parameters": {
+      "title": {
+        "type": "str",
+        "required": true,
+        "description": "free text document title.",
+        "sample_values": [
+          "Trip notes"
+        ]
+      },
+      "content": {
+        "type": "str",
+        "required": true,
+        "description": "free text document content.",
+        "sample_values": [
+          "Packing list: charger cable, snacks"
+        ]
+      }
+    },
+    "sample_commands": []
+  },
+  "post_to_social_media": {
+    "description": "Publish a post on the user's social media account.",
+    "domain": "Social",
+    "kind": "action",
+    "parameters": {
+      "text": {
+        "type": "str",
+        "required": true,
+        "description": "free text post content.",
+        "sample_values": [
+          "Road trip day!"
+        ]
+      }
+    },
+    "sample_commands": []
+  }
+}

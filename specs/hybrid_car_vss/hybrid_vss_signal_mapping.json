@@ -1,0 +1,984 @@
+{
+  "vss_version": "7.0-dev",
+  "vss_commit": "dcc7cf570f27378d7ff9333f2a4d1cf552645cfe",
+  "signals": {
+    "Vehicle.Cabin.Door.Row1.DriverSide.Window.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.Window.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.Window.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.IsWindowChildLockEngaged": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Sunroof.Position": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Sunroof.Shade.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.RearShade.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsChildLockActive": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Trunk.Rear.IsOpen": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Trunk.Rear.IsLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableConnected": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Lights.Beam.Low.IsOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Lights.Beam.High.IsOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Lights.Fog.Front.IsOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Lights.Fog.Rear.IsOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Lights.Hazard.IsSignaling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Mode": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "OFF",
+        "SLOW",
+        "MEDIUM",
+        "FAST",
+        "INTERVAL",
+        "RAIN_SENSOR"
+      ]
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Intensity": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8"
+    },
+    "Vehicle.Body.Windshield.Rear.Wiping.Mode": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "OFF",
+        "SLOW",
+        "MEDIUM",
+        "FAST",
+        "INTERVAL",
+        "RAIN_SENSOR"
+      ]
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsFolded": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsFolded": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.DriverSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.PassengerSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Color": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Intensity": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Color": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Intensity": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Color": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Intensity": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.IsLightOn": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Color": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Intensity": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 1,
+      "max": 100
+    },
+    "Vehicle.Cabin.HVAC.IsAutoModeActive": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ]
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ]
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.Temperature": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.FanSpeed": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.AirDistribution": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ]
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.Temperature": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.FanSpeed": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.AirDistribution": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ]
+    },
+    "Vehicle.Cabin.HVAC.IsAirConditioningActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.HVAC.IsRecirculationActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.HVAC.IsFrontDefrosterActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.HVAC.IsRearDefrosterActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.HVAC.AmbientAirTemperature": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Exterior.AirTemperature": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "Celsius"
+    },
+    "Vehicle.Exterior.Humidity": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.OccupancyStatus": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ]
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.OccupancyStatus": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ]
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.OccupancyStatus": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ]
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.OccupancyStatus": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "OCCUPIED",
+        "EMPTY"
+      ]
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.Level": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.TypeActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint16",
+      "unit": "mm",
+      "min": 0
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "degrees"
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.Level": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Position": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint16",
+      "unit": "mm",
+      "min": 0
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "float",
+      "unit": "degrees"
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "uint8"
+    },
+    "Vehicle.Chassis.SteeringWheel.HeatingCooling": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8",
+      "unit": "percent",
+      "min": -100,
+      "max": 100
+    },
+    "Vehicle.Cabin.Infotainment.Media.Played.Source": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "SIRIUS_XM",
+        "AM",
+        "FM",
+        "DAB",
+        "TV",
+        "CD",
+        "DVD",
+        "AUX",
+        "USB",
+        "DISK",
+        "BLUETOOTH",
+        "INTERNET",
+        "VOICE",
+        "BEEP"
+      ]
+    },
+    "Vehicle.Cabin.Infotainment.Media.Action": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "STOP",
+        "PLAY",
+        "FAST_FORWARD",
+        "FAST_BACKWARD",
+        "SKIP_FORWARD",
+        "SKIP_BACKWARD"
+      ]
+    },
+    "Vehicle.Cabin.Infotainment.Media.Volume": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Infotainment.Media.IsMuted": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Infotainment.Media.Radio.FMFrequency": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "float"
+    },
+    "Vehicle.Cabin.Infotainment.Media.SelectedURI": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Speed": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km/h"
+    },
+    "Vehicle.Powertrain.Transmission.SelectedGear": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "int8"
+    },
+    "Vehicle.TraveledDistance": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint32",
+      "unit": "m"
+    },
+    "Vehicle.TripMeterReading": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint32",
+      "unit": "m"
+    },
+    "Vehicle.TripDuration": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "s"
+    },
+    "Vehicle.AverageSpeed": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km/h"
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.Pressure": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa"
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.IsPressureLow": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.Pressure": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa"
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.IsPressureLow": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.Pressure": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa"
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.IsPressureLow": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.Pressure": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kPa"
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.IsPressureLow": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Service.DistanceToService": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "km"
+    },
+    "Vehicle.Service.IsServiceDue": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.CombustionEngine.EngineOil.Level": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "CRITICALLY_LOW",
+        "LOW",
+        "NORMAL",
+        "HIGH",
+        "CRITICALLY_HIGH"
+      ]
+    },
+    "Vehicle.Body.Windshield.Front.WasherFluid.Level": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint8",
+      "unit": "percent",
+      "max": 100
+    },
+    "Vehicle.LowVoltageBattery.CurrentVoltage": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "V"
+    },
+    "Vehicle.Powertrain.Type": {
+      "standard": true,
+      "type": "attribute",
+      "datatype": "string",
+      "allowed": [
+        "COMBUSTION",
+        "HYBRID",
+        "ELECTRIC"
+      ]
+    },
+    "Vehicle.Powertrain.FuelSystem.HybridType": {
+      "standard": true,
+      "type": "attribute",
+      "datatype": "string",
+      "allowed": [
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "STOP_START",
+        "BELT_ISG",
+        "CIMG",
+        "PHEV"
+      ]
+    },
+    "Vehicle.Powertrain.FuelSystem.TankCapacity": {
+      "standard": true,
+      "type": "attribute",
+      "datatype": "float",
+      "unit": "l"
+    },
+    "Vehicle.Powertrain.TractionBattery.NetCapacity": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint16",
+      "unit": "kWh"
+    },
+    "Vehicle.Powertrain.FuelSystem.RelativeLevel": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelLevelLow": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "percent",
+      "min": 0,
+      "max": 100.0
+    },
+    "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "kWh/100km"
+    },
+    "Vehicle.Powertrain.FuelSystem.AverageConsumption": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "float",
+      "unit": "l/100km",
+      "min": 0
+    },
+    "Vehicle.Powertrain.CombustionEngine.IsRunning": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.RangeExtender.OperatingMode": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "string",
+      "allowed": [
+        "CHARGE_DEPLETING",
+        "CHARGE_SUSTAINING",
+        "BLENDED"
+      ]
+    },
+    "Vehicle.Powertrain.Hybrid.Mode": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Powertrain.Hybrid.ChargeTarget": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent"
+    },
+    "Vehicle.Powertrain.Hybrid.RegenLevel": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "uint8"
+    },
+    "Vehicle.Powertrain.Transmission.PerformanceMode": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "NORMAL",
+        "SPORT",
+        "ECONOMY",
+        "SNOW",
+        "RAIN"
+      ]
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Mode": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "INACTIVE",
+        "START_TIME",
+        "END_TIME"
+      ]
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "unit": "iso8601"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.IsCharging": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC": {
+      "standard": false,
+      "type": "attribute",
+      "datatype": "float",
+      "unit": "kW"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC": {
+      "standard": false,
+      "type": "attribute",
+      "datatype": "float",
+      "unit": "kW"
+    },
+    "Vehicle.VehicleIdentification.VehicleExteriorColor": {
+      "standard": true,
+      "type": "attribute",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "double",
+      "unit": "degrees",
+      "min": -90,
+      "max": 90
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "double",
+      "unit": "degrees",
+      "min": -180,
+      "max": 180
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteId": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "string"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided": {
+      "standard": false,
+      "type": "actuator",
+      "datatype": "boolean"
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Mute": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "string",
+      "allowed": [
+        "MUTED",
+        "ALERT_ONLY",
+        "UNMUTED"
+      ]
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Volume": {
+      "standard": true,
+      "type": "actuator",
+      "datatype": "uint8",
+      "unit": "percent",
+      "min": 0,
+      "max": 100
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.IsDestinationReached": {
+      "standard": true,
+      "type": "sensor",
+      "datatype": "boolean"
+    }
+  }
+}

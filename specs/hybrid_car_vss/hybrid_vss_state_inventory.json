@@ -1,0 +1,1867 @@
+{
+  "state": {
+    "Vehicle.Cabin.Door.Row1.DriverSide.Window.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Driver window opening, 0 closed, 100 fully open. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.Window.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Front passenger window opening, 0 closed, 100 fully open. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.Window.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear driver-side window opening, 0 closed, 100 fully open. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear passenger-side window opening, 0 closed, 100 fully open. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.IsWindowChildLockEngaged": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear window switches are disabled, so only the driver can move the rear windows. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Sunroof.Position": {
+      "type": "int",
+      "minimum": -100,
+      "maximum": 100,
+      "step": 5,
+      "initial": "from_weather",
+      "description": "Sunroof position: 0 closed, 100 fully open, negative values tilt it up, -100 fully tilted. VSS sensor, int8, percent."
+    },
+    "Vehicle.Cabin.Sunroof.Shade.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Sunroof shade opening, 0 closed, 100 fully open. Must be 100 whenever the sunroof position is above 0. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.RearShade.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Rear window sun shade, 0 retracted, 100 fully raised. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Driver door locked. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front passenger door locked. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsLocked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear driver-side door locked. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsLocked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear passenger-side door locked. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsChildLockActive": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear driver-side door child safety lock. A mechanical switch on the door, so it can be read but not set from the cabin. VSS sensor, boolean."
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear passenger-side door child safety lock. A mechanical switch on the door, so it can be read but not set from the cabin. VSS sensor, boolean."
+    },
+    "Vehicle.Body.Trunk.Rear.IsOpen": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Trunk lid open. Can only be true while the car is stopped in park. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Trunk.Rear.IsLocked": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Trunk locked. VSS actuator, boolean."
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Fuel filler door open. Can only be true while the car is stopped in park. VSS actuator, boolean."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Charging port door, on the front-left fender, open. Can only be true while the car is stopped in park. VSS actuator, boolean."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableConnected": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Charging cable plugged in. Always false while driving. VSS sensor, boolean."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Charging cable locked into the port so it cannot be pulled out. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Lights.Beam.Low.IsOn": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Low beam headlights on. On at night, in rain, snow, fog, or storm. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Lights.Beam.High.IsOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "High beam headlights on. Always false while the front fog lights are on. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Lights.Fog.Front.IsOn": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Front fog lights on. Usually on only in fog, heavy rain, or snow. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Lights.Fog.Rear.IsOn": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Rear fog light on. Usually on only in fog or heavy snow. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Lights.Hazard.IsSignaling": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Hazard warning lights flashing. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Mode": {
+      "type": "str",
+      "enum": [
+        "OFF",
+        "SLOW",
+        "MEDIUM",
+        "FAST",
+        "INTERVAL",
+        "RAIN_SENSOR"
+      ],
+      "initial": "from_weather",
+      "description": "Front wiper mode. Should not be \"OFF\" when it rains or snows. VSS actuator, string."
+    },
+    "Vehicle.Body.Windshield.Front.Wiping.Intensity": {
+      "type": "int",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "initial": "random",
+      "description": "Front wiper interval frequency or rain sensor sensitivity, 1 lowest, 4 highest. Only matters in \"INTERVAL\" and \"RAIN_SENSOR\" mode. VSS actuator, uint8."
+    },
+    "Vehicle.Body.Windshield.Rear.Wiping.Mode": {
+      "type": "str",
+      "enum": [
+        "OFF",
+        "INTERVAL",
+        "SLOW"
+      ],
+      "initial": "from_weather",
+      "description": "Rear wiper mode. This car's rear wiper supports only these modes. VSS actuator, string."
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsFolded": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Driver-side exterior mirror folded in. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Driver-side exterior mirror heating on. Usually on in snow, fog, or below 3 Celsius. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsFolded": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Passenger-side exterior mirror folded in. VSS actuator, boolean."
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Passenger-side exterior mirror heating on. Usually on in snow, fog, or below 3 Celsius. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Driver reading light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front passenger reading light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.DriverSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear driver-side reading light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.Spotlight.Row2.PassengerSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear passenger-side reading light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Driver zone ambient light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Color": {
+      "type": "str",
+      "enum": [
+        "#FFFFFF",
+        "#FF0000",
+        "#FF8000",
+        "#FFD700",
+        "#00C853",
+        "#00FFFF",
+        "#0050FF",
+        "#8000FF",
+        "#FF4FA0"
+      ],
+      "initial": "random",
+      "description": "Driver zone ambient light color as an RGB hex code. This car offers nine preset colors. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Intensity": {
+      "type": "int",
+      "minimum": 10,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Driver zone ambient light brightness in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front passenger zone ambient light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Color": {
+      "type": "str",
+      "enum": [
+        "#FFFFFF",
+        "#FF0000",
+        "#FF8000",
+        "#FFD700",
+        "#00C853",
+        "#00FFFF",
+        "#0050FF",
+        "#8000FF",
+        "#FF4FA0"
+      ],
+      "initial": "random",
+      "description": "Front passenger zone ambient light color as an RGB hex code. This car offers nine preset colors. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Intensity": {
+      "type": "int",
+      "minimum": 10,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Front passenger zone ambient light brightness in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear driver-side zone ambient light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Color": {
+      "type": "str",
+      "enum": [
+        "#FFFFFF",
+        "#FF0000",
+        "#FF8000",
+        "#FFD700",
+        "#00C853",
+        "#00FFFF",
+        "#0050FF",
+        "#8000FF",
+        "#FF4FA0"
+      ],
+      "initial": "random",
+      "description": "Rear driver-side zone ambient light color as an RGB hex code. This car offers nine preset colors. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Intensity": {
+      "type": "int",
+      "minimum": 10,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Rear driver-side zone ambient light brightness in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.IsLightOn": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear passenger-side zone ambient light on. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Color": {
+      "type": "str",
+      "enum": [
+        "#FFFFFF",
+        "#FF0000",
+        "#FF8000",
+        "#FFD700",
+        "#00C853",
+        "#00FFFF",
+        "#0050FF",
+        "#8000FF",
+        "#FF4FA0"
+      ],
+      "initial": "random",
+      "description": "Rear passenger-side zone ambient light color as an RGB hex code. This car offers nine preset colors. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Intensity": {
+      "type": "int",
+      "minimum": 10,
+      "maximum": 100,
+      "step": 10,
+      "initial": "random",
+      "description": "Rear passenger-side zone ambient light brightness in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.HVAC.IsAutoModeActive": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": true,
+      "description": "Climate auto mode: the car picks fan speed and air distribution to reach the target temperatures. Manual fan or air distribution changes switch it off. VSS extension, actuator, boolean."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Driver zone target temperature in Celsius. VSS sets no range; this car accepts 16 to 28. VSS actuator, float, Celsius."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed": {
+      "type": "int",
+      "enum": [
+        0,
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "initial": "random",
+      "description": "Driver zone fan speed in percent. This car has five fan levels, 20 percent each. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution": {
+      "type": "str",
+      "enum": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "initial": "random",
+      "description": "Driver zone air direction: \"UP\" windshield, \"MIDDLE\" face, \"DOWN\" feet. VSS actuator, string."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Front passenger zone target temperature in Celsius. VSS sets no range; this car accepts 16 to 28. VSS actuator, float, Celsius."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed": {
+      "type": "int",
+      "enum": [
+        0,
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "initial": "random",
+      "description": "Front passenger zone fan speed in percent. This car has five fan levels, 20 percent each. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution": {
+      "type": "str",
+      "enum": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "initial": "random",
+      "description": "Front passenger zone air direction: \"UP\" windshield, \"MIDDLE\" face, \"DOWN\" feet. VSS actuator, string."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.Temperature": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Rear driver-side zone target temperature in Celsius. VSS sets no range; this car accepts 16 to 28. VSS actuator, float, Celsius."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.FanSpeed": {
+      "type": "int",
+      "enum": [
+        0,
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "initial": "random",
+      "description": "Rear driver-side zone fan speed in percent. This car has five fan levels, 20 percent each. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Driver.AirDistribution": {
+      "type": "str",
+      "enum": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "initial": "random",
+      "description": "Rear driver-side zone air direction: \"UP\" windshield, \"MIDDLE\" face, \"DOWN\" feet. VSS actuator, string."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.Temperature": {
+      "type": "float",
+      "minimum": 16.0,
+      "maximum": 28.0,
+      "step": 0.5,
+      "initial": "random",
+      "description": "Rear passenger-side zone target temperature in Celsius. VSS sets no range; this car accepts 16 to 28. VSS actuator, float, Celsius."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.FanSpeed": {
+      "type": "int",
+      "enum": [
+        0,
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "initial": "random",
+      "description": "Rear passenger-side zone fan speed in percent. This car has five fan levels, 20 percent each. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.HVAC.Station.Row2.Passenger.AirDistribution": {
+      "type": "str",
+      "enum": [
+        "UP",
+        "MIDDLE",
+        "DOWN"
+      ],
+      "initial": "random",
+      "description": "Rear passenger-side zone air direction: \"UP\" windshield, \"MIDDLE\" face, \"DOWN\" feet. VSS actuator, string."
+    },
+    "Vehicle.Cabin.HVAC.IsAirConditioningActive": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Air conditioning compressor on. Usually on when it is hot. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.HVAC.IsRecirculationActive": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Cabin air recirculation on. False means fresh outside air. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.HVAC.IsFrontDefrosterActive": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Front windshield defroster on. Usually on in snow, fog, or below 3 Celsius. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.HVAC.IsRearDefrosterActive": {
+      "type": "bool",
+      "initial": "from_weather",
+      "description": "Rear window defroster on. Usually on in snow, fog, or below 3 Celsius. VSS actuator, boolean."
+    },
+    "Vehicle.Cabin.HVAC.AmbientAirTemperature": {
+      "type": "float",
+      "minimum": -20.0,
+      "maximum": 55.0,
+      "step": 0.5,
+      "initial": "from_weather",
+      "description": "Measured cabin air temperature in Celsius. Drifts toward the outside temperature when climate is off. VSS sensor, float, Celsius."
+    },
+    "Vehicle.Exterior.AirTemperature": {
+      "type": "float",
+      "minimum": -30.0,
+      "maximum": 50.0,
+      "step": 0.5,
+      "initial": "from_weather",
+      "description": "Outside air temperature in Celsius, taken from the weather of the current city. VSS sensor, float, Celsius."
+    },
+    "Vehicle.Exterior.Humidity": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "step": 1.0,
+      "initial": "from_weather",
+      "description": "Outside relative humidity in percent, taken from the weather of the current city. VSS sensor, float, percent."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.OccupancyStatus": {
+      "type": "str",
+      "enum": [
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "initial": "fixed",
+      "default": "OCCUPIED",
+      "description": "Driver seat occupancy sensor. The driver seat is always occupied. VSS sensor, string."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling": {
+      "type": "int",
+      "enum": [
+        -100,
+        -66,
+        -33,
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "from_weather",
+      "description": "Driver seat heating (positive) or ventilation cooling (negative). Levels 1 to 3 map to 33, 66, 100. A seat cannot heat and cool at once, which this one signal guarantees. VSS actuator, int8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.OccupancyStatus": {
+      "type": "str",
+      "enum": [
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "initial": "random",
+      "description": "Front passenger seat occupancy sensor. VSS sensor, string."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling": {
+      "type": "int",
+      "enum": [
+        -100,
+        -66,
+        -33,
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "from_weather",
+      "description": "Front passenger seat heating (positive) or ventilation cooling (negative). Levels 1 to 3 map to 33, 66, 100. A seat cannot heat and cool at once, which this one signal guarantees. VSS actuator, int8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.OccupancyStatus": {
+      "type": "str",
+      "enum": [
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "initial": "random",
+      "description": "Rear driver-side seat occupancy sensor. VSS sensor, string."
+    },
+    "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling": {
+      "type": "int",
+      "enum": [
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "from_weather",
+      "description": "Rear driver-side seat heating. Rear seats heat only; levels 1 to 3 map to 33, 66, 100. VSS actuator, int8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.OccupancyStatus": {
+      "type": "str",
+      "enum": [
+        "OCCUPIED",
+        "EMPTY"
+      ],
+      "initial": "random",
+      "description": "Rear passenger-side seat occupancy sensor. VSS sensor, string."
+    },
+    "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling": {
+      "type": "int",
+      "enum": [
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "from_weather",
+      "description": "Rear passenger-side seat heating. Rear seats heat only; levels 1 to 3 map to 33, 66, 100. VSS actuator, int8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.Level": {
+      "type": "int",
+      "enum": [
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "random",
+      "description": "Driver seat massage intensity in percent, 0 off. This car offers 0, 33, 66, and 100. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.TypeActive": {
+      "type": "str",
+      "enum": [
+        "WAVE",
+        "PULSE",
+        "STRETCH",
+        "LUMBAR"
+      ],
+      "initial": "random",
+      "description": "Driver seat massage program. Ignored while the massage level is 0. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 250,
+      "step": 10,
+      "initial": "random",
+      "description": "Driver seat fore-aft position in mm from the frontmost position. VSS actuator, uint16, mm."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 40.0,
+      "step": 1.0,
+      "initial": "random",
+      "description": "Driver backrest recline in degrees from upright; positive leans back. VSS actuator, float, degrees."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.Level": {
+      "type": "int",
+      "enum": [
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "random",
+      "description": "Front passenger seat massage intensity in percent, 0 off. This car offers 0, 33, 66, and 100. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive": {
+      "type": "str",
+      "enum": [
+        "WAVE",
+        "PULSE",
+        "STRETCH",
+        "LUMBAR"
+      ],
+      "initial": "random",
+      "description": "Front passenger seat massage program. Ignored while the massage level is 0. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Position": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 250,
+      "step": 10,
+      "initial": "random",
+      "description": "Front passenger seat fore-aft position in mm from the frontmost position. VSS actuator, uint16, mm."
+    },
+    "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 40.0,
+      "step": 1.0,
+      "initial": "random",
+      "description": "Front passenger backrest recline in degrees from upright; positive leans back. VSS actuator, float, degrees."
+    },
+    "Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Last recalled driver seat memory profile, 0 means none recalled. VSS extension, actuator, uint8."
+    },
+    "Vehicle.Chassis.SteeringWheel.HeatingCooling": {
+      "type": "int",
+      "enum": [
+        0,
+        33,
+        66,
+        100
+      ],
+      "initial": "from_weather",
+      "description": "Steering wheel heating. This wheel heats only; levels 1 to 3 map to 33, 66, 100. VSS actuator, int8, percent."
+    },
+    "Vehicle.Cabin.Infotainment.Media.Played.Source": {
+      "type": "str",
+      "enum": [
+        "FM",
+        "AM",
+        "DAB",
+        "BLUETOOTH",
+        "USB",
+        "INTERNET"
+      ],
+      "initial": "random",
+      "description": "Active audio source. \"INTERNET\" is the streaming service. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Media.Action": {
+      "type": "str",
+      "enum": [
+        "PLAY",
+        "STOP",
+        "SKIP_FORWARD",
+        "SKIP_BACKWARD"
+      ],
+      "initial": "random",
+      "description": "Last playback command. \"PLAY\" means playing, \"STOP\" means paused. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Media.Volume": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "Audio volume in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Infotainment.Media.IsMuted": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Audio muted without changing the volume. VSS extension, actuator, boolean."
+    },
+    "Vehicle.Cabin.Infotainment.Media.Radio.FMFrequency": {
+      "type": "float",
+      "minimum": 87.5,
+      "maximum": 108.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Tuned FM frequency in MHz. VSS extension, actuator, float."
+    },
+    "Vehicle.Cabin.Infotainment.Media.SelectedURI": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Identifier of the last media item chosen by search, empty when none. VSS actuator, string."
+    },
+    "Vehicle.Speed": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 160.0,
+      "step": 1.0,
+      "initial": "random",
+      "description": "Current vehicle speed in km/h. 0 means stopped. VSS sensor, float, km/h."
+    },
+    "Vehicle.Powertrain.Transmission.SelectedGear": {
+      "type": "int",
+      "enum": [
+        126,
+        127,
+        0,
+        -1
+      ],
+      "initial": "random",
+      "description": "Selected gear: 126 park, 127 drive, 0 neutral, -1 reverse. Speed is 0 whenever the gear is 126. VSS actuator, int8."
+    },
+    "Vehicle.TraveledDistance": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 300000000,
+      "step": 1000,
+      "initial": "random",
+      "description": "Odometer in meters. VSS sensor, uint32, m."
+    },
+    "Vehicle.TripMeterReading": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 2000000,
+      "step": 100,
+      "initial": "random",
+      "description": "Trip meter since the last reset, in meters. VSS actuator, uint32, m."
+    },
+    "Vehicle.TripDuration": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 86400.0,
+      "step": 60.0,
+      "initial": "random",
+      "description": "Driving time since the trip was started, in seconds. VSS sensor, float, s."
+    },
+    "Vehicle.AverageSpeed": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 130.0,
+      "step": 1.0,
+      "initial": "random",
+      "description": "Average speed since the trip was started, in km/h. VSS sensor, float, km/h."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.Pressure": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-left tire pressure in kPa. Recommended 230 to 250. VSS sensor, uint16, kPa."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.IsPressureLow": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front-left tire low-pressure warning. True when the pressure is below 200 kPa. VSS sensor, boolean."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.Pressure": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Front-right tire pressure in kPa. Recommended 230 to 250. VSS sensor, uint16, kPa."
+    },
+    "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.IsPressureLow": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Front-right tire low-pressure warning. True when the pressure is below 200 kPa. VSS sensor, boolean."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.Pressure": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-left tire pressure in kPa. Recommended 230 to 250. VSS sensor, uint16, kPa."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.IsPressureLow": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-left tire low-pressure warning. True when the pressure is below 200 kPa. VSS sensor, boolean."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.Pressure": {
+      "type": "int",
+      "minimum": 150,
+      "maximum": 280,
+      "step": 5,
+      "initial": "random",
+      "description": "Rear-right tire pressure in kPa. Recommended 230 to 250. VSS sensor, uint16, kPa."
+    },
+    "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.IsPressureLow": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Rear-right tire low-pressure warning. True when the pressure is below 200 kPa. VSS sensor, boolean."
+    },
+    "Vehicle.Service.DistanceToService": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 30000.0,
+      "step": 100.0,
+      "initial": "random",
+      "description": "Distance until the next scheduled service in km; 0 means due now. VSS sensor, float, km."
+    },
+    "Vehicle.Service.IsServiceDue": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Scheduled service is due. VSS sensor, boolean."
+    },
+    "Vehicle.Powertrain.CombustionEngine.EngineOil.Level": {
+      "type": "str",
+      "enum": [
+        "CRITICALLY_LOW",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "initial": "random",
+      "description": "Engine oil level. VSS sensor, string."
+    },
+    "Vehicle.Body.Windshield.Front.WasherFluid.Level": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Windshield washer fluid level in percent. VSS sensor, uint8, percent."
+    },
+    "Vehicle.LowVoltageBattery.CurrentVoltage": {
+      "type": "float",
+      "minimum": 11.0,
+      "maximum": 14.8,
+      "step": 0.1,
+      "initial": "random",
+      "description": "12 V battery voltage. Below 11.8 V means it is weak. VSS sensor, float, V."
+    },
+    "Vehicle.Powertrain.Type": {
+      "type": "str",
+      "enum": [
+        "HYBRID"
+      ],
+      "initial": "fixed",
+      "default": "HYBRID",
+      "description": "Powertrain type. VSS attribute, string."
+    },
+    "Vehicle.Powertrain.FuelSystem.HybridType": {
+      "type": "str",
+      "enum": [
+        "PHEV"
+      ],
+      "initial": "fixed",
+      "default": "PHEV",
+      "description": "Hybrid architecture: plug-in hybrid. VSS attribute, string."
+    },
+    "Vehicle.Powertrain.FuelSystem.TankCapacity": {
+      "type": "float",
+      "minimum": 30.0,
+      "maximum": 80.0,
+      "step": 0.5,
+      "initial": "fixed",
+      "default": 45.0,
+      "description": "Fuel tank capacity in liters. VSS attribute, float, l."
+    },
+    "Vehicle.Powertrain.TractionBattery.NetCapacity": {
+      "type": "int",
+      "minimum": 8,
+      "maximum": 40,
+      "step": 1,
+      "initial": "fixed",
+      "default": 18,
+      "description": "Usable high-voltage battery capacity in kWh. VSS sensor, uint16, kWh."
+    },
+    "Vehicle.Powertrain.FuelSystem.RelativeLevel": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 1,
+      "initial": "random",
+      "description": "Fuel level in percent of tank capacity. VSS sensor, uint8, percent."
+    },
+    "Vehicle.Powertrain.FuelSystem.IsFuelLevelLow": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Low fuel warning. True when the fuel level is below 10 percent. VSS sensor, boolean."
+    },
+    "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed": {
+      "type": "float",
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "step": 1.0,
+      "initial": "random",
+      "description": "Battery level shown to the driver, in percent. VSS sensor, float, percent."
+    },
+    "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption": {
+      "type": "float",
+      "minimum": 12.0,
+      "maximum": 25.0,
+      "step": 0.5,
+      "initial": "fixed",
+      "default": 18.0,
+      "description": "Reference electric consumption for range estimates, in kWh per 100 km. VSS sensor, float, kWh/100km."
+    },
+    "Vehicle.Powertrain.FuelSystem.AverageConsumption": {
+      "type": "float",
+      "minimum": 3.0,
+      "maximum": 12.0,
+      "step": 0.1,
+      "initial": "random",
+      "description": "Average fuel consumption with the engine running, in liters per 100 km. Used for fuel range estimates. VSS sensor, float, l/100km."
+    },
+    "Vehicle.Powertrain.CombustionEngine.IsRunning": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Combustion engine running. False whenever the hybrid mode is \"ELECTRIC\". VSS sensor, boolean."
+    },
+    "Vehicle.Powertrain.RangeExtender.OperatingMode": {
+      "type": "str",
+      "enum": [
+        "CHARGE_DEPLETING",
+        "CHARGE_SUSTAINING",
+        "BLENDED"
+      ],
+      "initial": "random",
+      "description": "How the hybrid currently runs: \"CHARGE_DEPLETING\" uses battery first, \"CHARGE_SUSTAINING\" keeps the battery level, \"BLENDED\" mixes both. Follows the hybrid mode. VSS sensor, string."
+    },
+    "Vehicle.Powertrain.Hybrid.Mode": {
+      "type": "str",
+      "enum": [
+        "AUTO",
+        "ELECTRIC",
+        "HOLD",
+        "CHARGE"
+      ],
+      "initial": "random",
+      "description": "Driver-selected hybrid mode: \"AUTO\" blends battery and engine, \"ELECTRIC\" drives on battery only, \"HOLD\" saves the battery level for later, \"CHARGE\" runs the engine to charge the battery to the charge target. VSS extension, actuator, string."
+    },
+    "Vehicle.Powertrain.Hybrid.ChargeTarget": {
+      "type": "int",
+      "minimum": 20,
+      "maximum": 80,
+      "step": 10,
+      "initial": "random",
+      "description": "Battery level the engine charges up to in \"CHARGE\" mode, in percent. VSS extension, actuator, uint8, percent."
+    },
+    "Vehicle.Powertrain.Hybrid.RegenLevel": {
+      "type": "int",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "initial": "random",
+      "description": "Regenerative braking strength, 0 coasting, 3 strongest. VSS extension, actuator, uint8."
+    },
+    "Vehicle.Powertrain.Transmission.PerformanceMode": {
+      "type": "str",
+      "enum": [
+        "NORMAL",
+        "SPORT",
+        "ECONOMY"
+      ],
+      "initial": "random",
+      "description": "Driving mode for throttle response and efficiency. This car offers these three. VSS actuator, string."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit": {
+      "type": "int",
+      "minimum": 50,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Battery level plug-in charging stops at, in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Mode": {
+      "type": "str",
+      "enum": [
+        "INACTIVE",
+        "START_TIME",
+        "END_TIME"
+      ],
+      "initial": "random",
+      "description": "Charging timer: \"INACTIVE\" charges as soon as the cable is plugged in, \"START_TIME\" waits until the timer time, \"END_TIME\" finishes by the timer time. VSS actuator, string."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Timer time of day as HH:MM local time, empty while the timer mode is \"INACTIVE\". VSS stores a full ISO 8601 timestamp; the simulator keeps the time of day. VSS actuator, string, iso8601."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.IsCharging": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "Battery is charging from a cable. Always false while driving. VSS sensor, boolean."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC": {
+      "type": "float",
+      "enum": [
+        3.7,
+        7.4,
+        11.0
+      ],
+      "initial": "fixed",
+      "default": 7.4,
+      "description": "Most AC charging power this car accepts, in kW. VSS extension, attribute, float, kW."
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC": {
+      "type": "float",
+      "enum": [
+        0.0,
+        50.0,
+        80.0
+      ],
+      "initial": "fixed",
+      "default": 50.0,
+      "description": "Most DC fast charging power this car accepts, in kW. 0 means no DC charging. VSS extension, attribute, float, kW."
+    },
+    "Vehicle.VehicleIdentification.VehicleExteriorColor": {
+      "type": "str",
+      "enum": [
+        "Black",
+        "White",
+        "Silver",
+        "Gray",
+        "Blue",
+        "Red",
+        "Green"
+      ],
+      "initial": "fixed",
+      "default": "Blue",
+      "description": "Exterior paint color. VSS attribute, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "A route is set and guidance is running. VSS extension, actuator, boolean."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude": {
+      "type": "float",
+      "minimum": -90.0,
+      "maximum": 90.0,
+      "initial": "fixed",
+      "default": 0.0,
+      "description": "Latitude of the final destination, 0 when no route is set. VSS actuator, double, degrees."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude": {
+      "type": "float",
+      "minimum": -180.0,
+      "maximum": 180.0,
+      "initial": "fixed",
+      "default": 0.0,
+      "description": "Longitude of the final destination, 0 when no route is set. VSS actuator, double, degrees."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of the final destination, empty when no route is set. VSS extension, actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 1 in driving order, empty when unused. Stops fill from 1 upward without gaps. VSS extension, actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 2 in driving order, empty when unused. Stops fill from 1 upward without gaps. VSS extension, actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Location ID of intermediate stop 3 in driving order, empty when unused. Stops fill from 1 upward without gaps. VSS extension, actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteId": {
+      "type": "str",
+      "initial": "fixed",
+      "default": "",
+      "description": "Route ID of the leg currently followed, empty when no route is set. VSS extension, actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Route planning avoids toll roads. VSS extension, actuator, boolean."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided": {
+      "type": "bool",
+      "initial": "random",
+      "description": "Route planning avoids highways. VSS extension, actuator, boolean."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Mute": {
+      "type": "str",
+      "enum": [
+        "UNMUTED",
+        "ALERT_ONLY",
+        "MUTED"
+      ],
+      "initial": "random",
+      "description": "Spoken guidance: \"UNMUTED\" speaks every instruction, \"ALERT_ONLY\" only speaks alerts, \"MUTED\" is silent. VSS actuator, string."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.Volume": {
+      "type": "int",
+      "minimum": 0,
+      "maximum": 100,
+      "step": 5,
+      "initial": "random",
+      "description": "Navigation voice volume in percent. VSS actuator, uint8, percent."
+    },
+    "Vehicle.Cabin.Infotainment.Navigation.IsDestinationReached": {
+      "type": "bool",
+      "initial": "fixed",
+      "default": false,
+      "description": "The final destination has been reached. VSS sensor, boolean."
+    }
+  },
+  "tools": {
+    "set_window_position": {
+      "writes": [
+        "Vehicle.Cabin.Door.Row1.DriverSide.Window.Position",
+        "Vehicle.Cabin.Door.Row1.PassengerSide.Window.Position",
+        "Vehicle.Cabin.Door.Row2.DriverSide.Window.Position",
+        "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position"
+      ]
+    },
+    "set_window_child_lock_state": {
+      "writes": [
+        "Vehicle.Cabin.IsWindowChildLockEngaged"
+      ]
+    },
+    "get_window_positions": {
+      "reads": [
+        "Vehicle.Cabin.Door.Row1.DriverSide.Window.Position",
+        "Vehicle.Cabin.Door.Row1.PassengerSide.Window.Position",
+        "Vehicle.Cabin.Door.Row2.DriverSide.Window.Position",
+        "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position",
+        "Vehicle.Cabin.IsWindowChildLockEngaged"
+      ]
+    },
+    "set_sunroof_shade_position": {
+      "writes": [
+        "Vehicle.Cabin.Sunroof.Shade.Position"
+      ]
+    },
+    "set_sunroof_position": {
+      "writes": [
+        "Vehicle.Cabin.Sunroof.Position"
+      ]
+    },
+    "get_sunroof_and_shade_position": {
+      "reads": [
+        "Vehicle.Cabin.Sunroof.Position",
+        "Vehicle.Cabin.Sunroof.Shade.Position"
+      ]
+    },
+    "set_rear_window_shade_position": {
+      "writes": [
+        "Vehicle.Cabin.RearShade.Position"
+      ]
+    },
+    "get_rear_window_shade_position": {
+      "reads": [
+        "Vehicle.Cabin.RearShade.Position"
+      ]
+    },
+    "set_door_lock_state": {
+      "writes": [
+        "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked",
+        "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked",
+        "Vehicle.Cabin.Door.Row2.DriverSide.IsLocked",
+        "Vehicle.Cabin.Door.Row2.PassengerSide.IsLocked"
+      ]
+    },
+    "get_door_status": {
+      "reads": [
+        "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked",
+        "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked",
+        "Vehicle.Cabin.Door.Row2.DriverSide.IsLocked",
+        "Vehicle.Cabin.Door.Row2.PassengerSide.IsLocked",
+        "Vehicle.Cabin.Door.Row2.DriverSide.IsChildLockActive",
+        "Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive"
+      ]
+    },
+    "set_trunk_lid_state": {
+      "writes": [
+        "Vehicle.Body.Trunk.Rear.IsOpen"
+      ]
+    },
+    "set_trunk_lock_state": {
+      "writes": [
+        "Vehicle.Body.Trunk.Rear.IsLocked"
+      ]
+    },
+    "get_trunk_status": {
+      "reads": [
+        "Vehicle.Body.Trunk.Rear.IsOpen",
+        "Vehicle.Body.Trunk.Rear.IsLocked"
+      ]
+    },
+    "set_fuel_door_state": {
+      "writes": [
+        "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"
+      ]
+    },
+    "get_fuel_door_status": {
+      "reads": [
+        "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"
+      ]
+    },
+    "set_charge_port_door_state": {
+      "writes": [
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen"
+      ]
+    },
+    "set_charging_cable_lock_state": {
+      "writes": [
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked"
+      ]
+    },
+    "get_charge_port_status": {
+      "reads": [
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen",
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableConnected",
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked"
+      ]
+    },
+    "set_headlight_beam_state": {
+      "writes": [
+        "Vehicle.Body.Lights.Beam.Low.IsOn",
+        "Vehicle.Body.Lights.Beam.High.IsOn"
+      ]
+    },
+    "set_fog_light_state": {
+      "writes": [
+        "Vehicle.Body.Lights.Fog.Front.IsOn",
+        "Vehicle.Body.Lights.Fog.Rear.IsOn"
+      ]
+    },
+    "set_hazard_lights_state": {
+      "writes": [
+        "Vehicle.Body.Lights.Hazard.IsSignaling"
+      ]
+    },
+    "get_exterior_lights_status": {
+      "reads": [
+        "Vehicle.Body.Lights.Beam.Low.IsOn",
+        "Vehicle.Body.Lights.Beam.High.IsOn",
+        "Vehicle.Body.Lights.Fog.Front.IsOn",
+        "Vehicle.Body.Lights.Fog.Rear.IsOn",
+        "Vehicle.Body.Lights.Hazard.IsSignaling"
+      ]
+    },
+    "set_wiper_mode": {
+      "writes": [
+        "Vehicle.Body.Windshield.Front.Wiping.Mode",
+        "Vehicle.Body.Windshield.Front.Wiping.Intensity",
+        "Vehicle.Body.Windshield.Rear.Wiping.Mode"
+      ]
+    },
+    "get_wiper_status": {
+      "reads": [
+        "Vehicle.Body.Windshield.Front.Wiping.Mode",
+        "Vehicle.Body.Windshield.Front.Wiping.Intensity",
+        "Vehicle.Body.Windshield.Rear.Wiping.Mode"
+      ]
+    },
+    "set_side_mirror_fold_state": {
+      "writes": [
+        "Vehicle.Body.Mirrors.DriverSide.IsFolded",
+        "Vehicle.Body.Mirrors.PassengerSide.IsFolded"
+      ]
+    },
+    "set_side_mirror_heating_state": {
+      "writes": [
+        "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn",
+        "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn"
+      ]
+    },
+    "get_side_mirror_status": {
+      "reads": [
+        "Vehicle.Body.Mirrors.DriverSide.IsFolded",
+        "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn",
+        "Vehicle.Body.Mirrors.PassengerSide.IsFolded",
+        "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn"
+      ]
+    },
+    "set_reading_light_state": {
+      "writes": [
+        "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row2.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row2.PassengerSide.IsLightOn"
+      ]
+    },
+    "get_reading_lights_status": {
+      "reads": [
+        "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row2.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.Spotlight.Row2.PassengerSide.IsLightOn"
+      ]
+    },
+    "set_ambient_light": {
+      "writes": [
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Intensity"
+      ]
+    },
+    "get_ambient_light_status": {
+      "reads": [
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.DriverSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row1.PassengerSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.DriverSide.Intensity",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.IsLightOn",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Color",
+        "Vehicle.Cabin.Light.AmbientLight.Row2.PassengerSide.Intensity"
+      ]
+    },
+    "set_climate_temperature": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.Temperature"
+      ]
+    },
+    "set_fan_speed": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.FanSpeed",
+        "Vehicle.Cabin.HVAC.IsAutoModeActive"
+      ]
+    },
+    "set_airflow_direction": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.AirDistribution",
+        "Vehicle.Cabin.HVAC.IsAutoModeActive"
+      ]
+    },
+    "set_air_conditioning_state": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.IsAirConditioningActive"
+      ]
+    },
+    "set_air_recirculation_state": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.IsRecirculationActive"
+      ]
+    },
+    "set_defroster_state": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.IsFrontDefrosterActive",
+        "Vehicle.Cabin.HVAC.IsRearDefrosterActive"
+      ]
+    },
+    "set_climate_auto_mode_state": {
+      "writes": [
+        "Vehicle.Cabin.HVAC.IsAutoModeActive"
+      ]
+    },
+    "get_climate_status": {
+      "reads": [
+        "Vehicle.Cabin.HVAC.IsAutoModeActive",
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row2.Driver.AirDistribution",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.Temperature",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.FanSpeed",
+        "Vehicle.Cabin.HVAC.Station.Row2.Passenger.AirDistribution",
+        "Vehicle.Cabin.HVAC.IsAirConditioningActive",
+        "Vehicle.Cabin.HVAC.IsRecirculationActive",
+        "Vehicle.Cabin.HVAC.IsFrontDefrosterActive",
+        "Vehicle.Cabin.HVAC.IsRearDefrosterActive",
+        "Vehicle.Cabin.HVAC.AmbientAirTemperature",
+        "Vehicle.Exterior.AirTemperature",
+        "Vehicle.Exterior.Humidity"
+      ]
+    },
+    "set_seat_heating_cooling": {
+      "writes": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling"
+      ]
+    },
+    "set_seat_massage": {
+      "writes": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.Level",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.TypeActive",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.Level",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive"
+      ]
+    },
+    "set_seat_fore_aft_position": {
+      "writes": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Position",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Position"
+      ]
+    },
+    "set_seat_recline": {
+      "writes": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline"
+      ]
+    },
+    "recall_driver_seat_memory": {
+      "writes": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Position",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline"
+      ]
+    },
+    "set_steering_wheel_heating_level": {
+      "writes": [
+        "Vehicle.Chassis.SteeringWheel.HeatingCooling"
+      ]
+    },
+    "get_seat_status": {
+      "reads": [
+        "Vehicle.Cabin.Seat.Row1.DriverSide.OccupancyStatus",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.OccupancyStatus",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row2.DriverSide.OccupancyStatus",
+        "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row2.PassengerSide.OccupancyStatus",
+        "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.Level",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Massage.TypeActive",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Position",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.Level",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Position",
+        "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline",
+        "Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile",
+        "Vehicle.Chassis.SteeringWheel.HeatingCooling"
+      ]
+    },
+    "set_media_volume": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.Volume",
+        "Vehicle.Cabin.Infotainment.Media.IsMuted"
+      ]
+    },
+    "set_media_mute_state": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.IsMuted"
+      ]
+    },
+    "set_media_source": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.Played.Source",
+        "Vehicle.Cabin.Infotainment.Media.Action"
+      ]
+    },
+    "control_media_playback": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.Action"
+      ]
+    },
+    "tune_fm_radio": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.Radio.FMFrequency",
+        "Vehicle.Cabin.Infotainment.Media.Played.Source",
+        "Vehicle.Cabin.Infotainment.Media.Action"
+      ]
+    },
+    "play_media_by_query": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Media.SelectedURI",
+        "Vehicle.Cabin.Infotainment.Media.Played.Source",
+        "Vehicle.Cabin.Infotainment.Media.Action"
+      ]
+    },
+    "get_media_status": {
+      "reads": [
+        "Vehicle.Cabin.Infotainment.Media.Played.Source",
+        "Vehicle.Cabin.Infotainment.Media.Action",
+        "Vehicle.Cabin.Infotainment.Media.Volume",
+        "Vehicle.Cabin.Infotainment.Media.IsMuted",
+        "Vehicle.Cabin.Infotainment.Media.Radio.FMFrequency",
+        "Vehicle.Cabin.Infotainment.Media.SelectedURI"
+      ]
+    },
+    "get_driving_status": {
+      "reads": [
+        "Vehicle.Speed",
+        "Vehicle.Powertrain.Transmission.SelectedGear",
+        "Vehicle.TraveledDistance"
+      ]
+    },
+    "get_tire_pressure": {
+      "reads": [
+        "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.Pressure",
+        "Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.IsPressureLow",
+        "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.Pressure",
+        "Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.IsPressureLow",
+        "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.Pressure",
+        "Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.IsPressureLow",
+        "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.Pressure",
+        "Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.IsPressureLow"
+      ]
+    },
+    "get_maintenance_status": {
+      "reads": [
+        "Vehicle.Service.DistanceToService",
+        "Vehicle.Service.IsServiceDue",
+        "Vehicle.Powertrain.CombustionEngine.EngineOil.Level",
+        "Vehicle.Body.Windshield.Front.WasherFluid.Level",
+        "Vehicle.LowVoltageBattery.CurrentVoltage"
+      ]
+    },
+    "get_trip_info": {
+      "reads": [
+        "Vehicle.TripMeterReading",
+        "Vehicle.TripDuration",
+        "Vehicle.AverageSpeed",
+        "Vehicle.Powertrain.FuelSystem.AverageConsumption"
+      ]
+    },
+    "reset_trip_meter": {
+      "writes": [
+        "Vehicle.TripMeterReading"
+      ]
+    },
+    "get_vehicle_specs": {
+      "reads": [
+        "Vehicle.VehicleIdentification.VehicleExteriorColor",
+        "Vehicle.Powertrain.Type",
+        "Vehicle.Powertrain.FuelSystem.HybridType",
+        "Vehicle.Powertrain.FuelSystem.TankCapacity",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC"
+      ]
+    },
+    "get_energy_status": {
+      "reads": [
+        "Vehicle.Powertrain.FuelSystem.RelativeLevel",
+        "Vehicle.Powertrain.FuelSystem.IsFuelLevelLow",
+        "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
+        "Vehicle.Powertrain.FuelSystem.TankCapacity",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption",
+        "Vehicle.Powertrain.FuelSystem.AverageConsumption",
+        "Vehicle.Powertrain.Hybrid.Mode",
+        "Vehicle.Powertrain.Hybrid.ChargeTarget",
+        "Vehicle.Powertrain.Hybrid.RegenLevel",
+        "Vehicle.Powertrain.RangeExtender.OperatingMode",
+        "Vehicle.Powertrain.Transmission.PerformanceMode",
+        "Vehicle.Powertrain.CombustionEngine.IsRunning"
+      ]
+    },
+    "set_hybrid_mode": {
+      "writes": [
+        "Vehicle.Powertrain.Hybrid.Mode",
+        "Vehicle.Powertrain.Hybrid.ChargeTarget",
+        "Vehicle.Powertrain.RangeExtender.OperatingMode",
+        "Vehicle.Powertrain.CombustionEngine.IsRunning"
+      ]
+    },
+    "set_drive_mode": {
+      "writes": [
+        "Vehicle.Powertrain.Transmission.PerformanceMode"
+      ]
+    },
+    "set_regen_braking_level": {
+      "writes": [
+        "Vehicle.Powertrain.Hybrid.RegenLevel"
+      ]
+    },
+    "get_charging_status": {
+      "reads": [
+        "Vehicle.Powertrain.TractionBattery.Charging.IsCharging",
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit",
+        "Vehicle.Powertrain.TractionBattery.Charging.Timer.Mode",
+        "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC"
+      ]
+    },
+    "set_charge_limit": {
+      "writes": [
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit"
+      ]
+    },
+    "set_charging_timer": {
+      "writes": [
+        "Vehicle.Powertrain.TractionBattery.Charging.Timer.Mode",
+        "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time"
+      ]
+    },
+    "set_charging_state": {
+      "writes": [
+        "Vehicle.Powertrain.TractionBattery.Charging.IsCharging"
+      ]
+    },
+    "estimate_charging_time": {
+      "reads": [
+        "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC",
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit"
+      ]
+    },
+    "estimate_battery_after_charging": {
+      "reads": [
+        "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerAC",
+        "Vehicle.Powertrain.TractionBattery.Charging.MaxAcceptedPowerDC",
+        "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit"
+      ]
+    },
+    "estimate_electric_distance": {
+      "reads": [
+        "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption"
+      ]
+    },
+    "estimate_refuel": {
+      "reads": [
+        "Vehicle.Powertrain.FuelSystem.RelativeLevel",
+        "Vehicle.Powertrain.FuelSystem.TankCapacity",
+        "Vehicle.Powertrain.FuelSystem.AverageConsumption"
+      ]
+    },
+    "estimate_route_energy": {
+      "reads": [
+        "Vehicle.Powertrain.FuelSystem.RelativeLevel",
+        "Vehicle.Powertrain.FuelSystem.IsFuelLevelLow",
+        "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
+        "Vehicle.Powertrain.FuelSystem.TankCapacity",
+        "Vehicle.Powertrain.TractionBattery.NetCapacity",
+        "Vehicle.Powertrain.RangeExtender.ChargeDepleting.EnergyConsumption",
+        "Vehicle.Powertrain.FuelSystem.AverageConsumption",
+        "Vehicle.Powertrain.Hybrid.Mode"
+      ]
+    },
+    "get_location_id_by_name": {
+      "external": true
+    },
+    "search_poi_at_location": {
+      "external": true
+    },
+    "search_poi_along_route": {
+      "external": true
+    },
+    "get_routes": {
+      "reads": [
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided"
+      ]
+    },
+    "convert_route_distance_and_time": {
+      "external": true
+    },
+    "start_navigation": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
+      ]
+    },
+    "update_navigation_waypoint": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
+      ]
+    },
+    "update_navigation_destination": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
+      ]
+    },
+    "cancel_navigation": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
+      ]
+    },
+    "set_route_preferences": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided"
+      ]
+    },
+    "set_navigation_voice_guidance": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.Mute"
+      ]
+    },
+    "set_navigation_voice_volume": {
+      "writes": [
+        "Vehicle.Cabin.Infotainment.Navigation.Volume"
+      ]
+    },
+    "get_navigation_status": {
+      "reads": [
+        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
+        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteId",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided",
+        "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided",
+        "Vehicle.Cabin.Infotainment.Navigation.Mute",
+        "Vehicle.Cabin.Infotainment.Navigation.Volume",
+        "Vehicle.Cabin.Infotainment.Navigation.IsDestinationReached"
+      ]
+    },
+    "get_weather": {
+      "external": true
+    },
+    "get_contact_id_by_name": {
+      "external": true
+    },
+    "get_contact_details": {
+      "external": true
+    },
+    "call_phone_number": {
+      "external": true
+    },
+    "send_text_message": {
+      "external": true
+    },
+    "send_email": {
+      "external": true
+    },
+    "get_calendar_events": {
+      "external": true
+    },
+    "get_user_preferences": {
+      "external": true
+    },
+    "calculate_math": {
+      "external": true
+    },
+    "calculate_datetime": {
+      "external": true
+    }
+  }
+}
