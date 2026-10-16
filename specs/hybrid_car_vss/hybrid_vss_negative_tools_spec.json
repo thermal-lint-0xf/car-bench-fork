@@ -1,10 +1,10 @@
 {
   "set_home_thermostat": {
-    "description": "Set the target temperature of the home thermostat.",
+    "description": "Sets the target temperature of the thermostat in the driver's home. Use it only when the driver explicitly asks about the temperature at home. It controls nothing in the car; for the car's own cabin temperature, use `set_climate_temperature`. Returns the new home target temperature.",
     "domain": "SmartHome",
     "kind": "action",
     "parameters": {
-      "temperature_c": {
+      "temperature_celsius": {
         "type": "float",
         "required": true,
         "description": "number from 10.0 to 30.0, in steps of 0.5."
@@ -13,7 +13,7 @@
     "sample_commands": []
   },
   "set_home_lights": {
-    "description": "Turn lights in a room of the home on or off and set their color.",
+    "description": "Turns the lights in one room of the driver's home on or off and sets their color. Use it only when the driver explicitly asks about lights at home. It controls nothing in the car; for the car's own interior lights, use `set_reading_light_state` or `set_ambient_light`. Returns the room's new light state.",
     "domain": "SmartHome",
     "kind": "action",
     "parameters": {
@@ -22,10 +22,10 @@
         "required": true,
         "description": "one of \"living_room\", \"bedroom\", \"kitchen\", or \"garden\"."
       },
-      "on": {
+      "enabled": {
         "type": "bool",
         "required": true,
-        "description": "true to turn on, false to turn off."
+        "description": "true turns the lights on, false turns them off."
       },
       "color": {
         "type": "str",
@@ -36,25 +36,25 @@
     },
     "sample_commands": []
   },
-  "lock_home_door": {
-    "description": "Lock or unlock the smart lock on the home's front door.",
+  "set_home_door_lock_state": {
+    "description": "Locks or unlocks the smart lock on the front door of the driver's home. Use it only when the driver explicitly asks about the door at home. It controls nothing in the car; for the car's own doors, use `set_door_lock_state`. Returns the new lock state of the home door.",
     "domain": "SmartHome",
     "kind": "action",
     "parameters": {
-      "locked": {
+      "is_locked": {
         "type": "bool",
         "required": true,
-        "description": "true to lock, false to unlock."
+        "description": "true locks the home door, false unlocks it."
       }
     },
     "sample_commands": []
   },
   "play_on_home_speaker": {
-    "description": "Play music on a smart speaker at home.",
+    "description": "Plays music on a smart speaker in a room of the driver's home. Use it only when the driver wants music playing at home. It controls nothing in the car; for the car's own audio, use `play_media_by_query`. Returns what started playing.",
     "domain": "SmartHome",
     "kind": "action",
     "parameters": {
-      "query": {
+      "search_query": {
         "type": "str",
         "required": true,
         "description": "free text naming what to play.",
@@ -71,11 +71,11 @@
     "sample_commands": []
   },
   "start_home_wallbox_charging": {
-    "description": "Start charging on the home wallbox app account. This controls the home charger's own app, not the car.",
+    "description": "Starts a charging session through the home wallbox's own app account, at a chosen current. It only works for a car plugged in at home. It controls nothing in the car; for the car's own charging, use `set_charging_state` and `set_charging_timer`. Returns whether the wallbox started.",
     "domain": "SmartHome",
     "kind": "action",
     "parameters": {
-      "max_current_a": {
+      "max_current_amps": {
         "type": "int",
         "required": true,
         "description": "integer from 6 to 32."
@@ -84,11 +84,11 @@
     "sample_commands": []
   },
   "set_phone_alarm": {
-    "description": "Set an alarm on the user's phone.",
+    "description": "Sets a wake-up alarm on the driver's phone. Use it only when the driver explicitly asks for a phone alarm. The car has no alarm clock; for time calculations use `calculate_datetime`. Returns the alarm time.",
     "domain": "Phone",
     "kind": "action",
     "parameters": {
-      "time": {
+      "alarm_time": {
         "type": "str",
         "required": true,
         "description": "time as HH:MM on a 24-hour clock.",
@@ -100,11 +100,11 @@
     "sample_commands": []
   },
   "set_phone_ringer_volume": {
-    "description": "Change the phone's own ringer volume.",
+    "description": "Changes the ringer volume of the phone itself, not the car's speakers. Use it only when the driver explicitly asks about the phone's ringer. It controls nothing in the car; for the car's own audio volume, use `set_media_volume`. Returns the new ringer level.",
     "domain": "Phone",
     "kind": "action",
     "parameters": {
-      "level": {
+      "ringer_level": {
         "type": "int",
         "required": true,
         "description": "integer from 0 to 10."
@@ -113,11 +113,11 @@
     "sample_commands": []
   },
   "book_flight": {
-    "description": "Search and book a flight ticket.",
+    "description": "Searches and books a flight ticket with the driver's travel account. It is a purchase outside the car and should not be made while driving. For directions to an airport, use `get_location_id_by_name` and `get_routes`. Returns the booking confirmation.",
     "domain": "Travel",
     "kind": "action",
     "parameters": {
-      "origin": {
+      "origin_airport": {
         "type": "str",
         "required": true,
         "description": "free text city or airport code.",
@@ -125,7 +125,7 @@
           "SFO"
         ]
       },
-      "destination": {
+      "destination_airport": {
         "type": "str",
         "required": true,
         "description": "free text city or airport code.",
@@ -133,7 +133,7 @@
           "ORD"
         ]
       },
-      "date": {
+      "travel_date": {
         "type": "str",
         "required": true,
         "description": "date as YYYY-MM-DD.",
@@ -145,11 +145,11 @@
     "sample_commands": []
   },
   "order_food_delivery": {
-    "description": "Order food for delivery to a home address.",
+    "description": "Orders food for delivery to a home address. It is a purchase outside the car. To find somewhere to eat on the way, use `search_poi_along_route` with category \"restaurant\". Returns the order confirmation.",
     "domain": "Shopping",
     "kind": "action",
     "parameters": {
-      "restaurant": {
+      "restaurant_name": {
         "type": "str",
         "required": true,
         "description": "free text restaurant name.",
@@ -157,7 +157,7 @@
           "Corner Noodle House"
         ]
       },
-      "items": {
+      "menu_items": {
         "type": "list",
         "required": true,
         "description": "list of 1 to 10 free text item names."
@@ -166,7 +166,7 @@
     "sample_commands": []
   },
   "transfer_money": {
-    "description": "Transfer money from the user's bank account to another account.",
+    "description": "Transfers money from the driver's bank account to another account. It is a financial transaction outside the car and should not be made by voice while driving. The car offers no payment or banking features. Returns the transfer confirmation.",
     "domain": "Finance",
     "kind": "action",
     "parameters": {
@@ -187,11 +187,11 @@
     "sample_commands": []
   },
   "create_document": {
-    "description": "Create a new text document in the user's cloud drive.",
+    "description": "Creates a new text document in the driver's cloud drive. It is office work outside the car. To send a short note to someone, use `send_text_message` or `send_email`. Returns the new document's ID.",
     "domain": "Productivity",
     "kind": "action",
     "parameters": {
-      "title": {
+      "document_title": {
         "type": "str",
         "required": true,
         "description": "free text document title.",
@@ -199,7 +199,7 @@
           "Trip notes"
         ]
       },
-      "content": {
+      "document_text": {
         "type": "str",
         "required": true,
         "description": "free text document content.",
@@ -211,11 +211,11 @@
     "sample_commands": []
   },
   "post_to_social_media": {
-    "description": "Publish a post on the user's social media account.",
+    "description": "Publishes a post on the driver's social media account. It is public, cannot be recalled, and is outside the car. To message one person, use `send_text_message`. Returns the post's link.",
     "domain": "Social",
     "kind": "action",
     "parameters": {
-      "text": {
+      "post_text": {
         "type": "str",
         "required": true,
         "description": "free text post content.",

@@ -277,6 +277,11 @@ def sel(*rx):
 
 
 # ------------------------------------------------------------------ tools
+# Written to Anthropic's tool-definition guidance
+# (https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools#best-practices-for-tool-definitions):
+# every description says what the tool does, when to use it and when to use a sibling instead, what each
+# parameter means, the caveats, and what it returns. Parameter names carry their meaning and unit
+# (percent_open, temperature_celsius, is_locked), and closely related operations share one tool.
 TOOLS, TOOL_STATE = {}, {}
 
 
@@ -290,281 +295,388 @@ def tool(name, domain, kind, desc, params=None, writes=None, reads=None, externa
         TOOL_STATE[name] = {"reads": reads}
 
 
-STOPPED = "Blocked unless the car is stopped in park (`Vehicle.Speed` is 0 and `Vehicle.Powertrain.Transmission.SelectedGear` is 126); if blocked, tell the driver why instead of retrying."
-MOVING = "Blocked while `Vehicle.Speed` is above 0."
+STOPPED = ("It only works while the car is stopped in park (`Vehicle.Speed` is 0 and `Vehicle.Powertrain.Transmission.SelectedGear` is 126); "
+           "otherwise it returns an error, and the assistant should tell the driver why instead of retrying.")
+MOVING = "It returns an error while the car is moving (`Vehicle.Speed` above 0)."
 WEATHER = "Check the weather with `get_weather` first."
 SEAT4 = list(SIDES) + ["all"]
-SEATDESC = " \"row1_driver_side\" is the driver seat; row 2 is the back seat."
-LEVEL = "integer from 0 to 3. 0 is off; 1, 2, 3 set 33, 66, 100 percent."
+SEATS = one_of(SEAT4) + " \"row1_driver_side\" is the driver's seat, \"row1_passenger_side\" the front passenger's, and \"row2_...\" the back seat; \"all\" covers all four."
+FRONTS = lambda extra: one_of(FRONT + extra) + " \"row1_driver_side\" is the driver's seat."
+RETURNS_NEW = "Returns the new value of every setting it changed."
 
-# ---- Body: windows, sunroof, shades
+# ---- windows, sunroof, shades
 tool("set_window_position", "Vehicle", "action",
-     "Open or close one window, or all four, to a position from 0 (closed) to 100 (fully open). Policy: if air conditioning is on and a window is opened beyond 25, warn about energy waste and ask for confirmation first.",
-     {"window": P("str", one_of(SEAT4) + " \"row1_driver_side\" is the driver window."),
-      "position": P("int", "integer from 0 to 100, in steps of 5. Default is 100.", False, 100)},
+     "Opens or closes one side window, or all four, to an exact opening in percent. Use it for any request to open, close, crack, or lower a window; "
+     "use `set_sunroof_position` for the roof and `set_rear_window_shade_position` for the rear sun shade. "
+     "Policy: if air conditioning is on and a window would open beyond 25 percent, warn about wasted energy and ask for confirmation first. "
+     + RETURNS_NEW,
+     {"windows": P("str", one_of(SEAT4) + " \"row1_driver_side\" is the driver's window; \"all\" moves all four to the same opening."),
+      "percent_open": P("int", "integer from 0 to 100, in steps of 5. 0 is fully closed and 100 fully open; for \"open a bit\" use 20. Default is 100.", False, 100)},
      writes=sel(r"Window\.Position$"))
-tool("set_window_child_lock", "Vehicle", "action",
-     "Disable or enable the rear passengers' window switches, so only the driver can move the rear windows.",
-     {"on": P("bool", "true to disable the rear window switches, false to enable them.")},
+tool("set_window_child_lock_state", "Vehicle", "action",
+     "Enables or disables the rear window child lock, which stops rear passengers from moving their windows with their own switches. "
+     "Use it when the driver wants to keep children from opening the rear windows. The driver can still move every window with `set_window_position` while the lock is on. "
+     "It does not lock the doors; use `set_door_lock_state` for that. " + RETURNS_NEW,
+     {"enabled": P("bool", "true disables the rear window switches, false lets rear passengers use them again.")},
      writes=[f"{C}.IsWindowChildLockEngaged"])
 tool("get_window_positions", "Vehicle", "retrieve",
-     "Return the opening position of all four windows and whether the rear window switches are locked.",
+     "Returns the opening of each of the four side windows in percent (0 closed, 100 fully open) and whether the rear window child lock is on. "
+     "Use it before relative requests such as \"open it a bit more\", or to answer whether any window is open. "
+     "It does not cover the sunroof, the sunroof shade, or the rear window shade; use `get_sunroof_and_shade_position` and `get_rear_window_shade_position`.",
      reads=sel(r"Window\.Position$") + [f"{C}.IsWindowChildLockEngaged"])
-tool("set_sunshade_position", "Vehicle", "action",
-     "Open or close the sunroof shade from 0 (closed) to 100 (fully open). It cannot close below 100 while the sunroof is open; close the sunroof first.",
-     {"position": P("int", "integer from 0 to 100, in steps of 5. Default is 100.", False, 100)},
+tool("set_sunroof_shade_position", "Vehicle", "action",
+     "Opens or closes the sliding shade under the glass sunroof, to let light in or block it. "
+     "The shade cannot close below 100 percent while the sunroof itself is open, so close the sunroof first with `set_sunroof_position`. "
+     "Opening the sunroof needs this shade at 100 percent, so call this first when the driver asks to open the roof. " + RETURNS_NEW,
+     {"percent_open": P("int", "integer from 0 to 100, in steps of 5. 0 is fully closed and 100 fully open. Default is 100.", False, 100)},
      writes=[f"{C}.Sunroof.Shade.Position"])
 tool("set_sunroof_position", "Vehicle", "action",
-     "Open, close, or tilt the sunroof. Opening above 0 is blocked unless the shade is already at 100 or is opened to 100 with `set_sunshade_position` in the same turn; tilting needs no shade. "
-     + WEATHER + " If the condition is not \"clear\", \"sunny\", \"partly_cloudy\", or \"cloudy\", get an explicit yes from the driver before opening or tilting.",
-     {"position": P("int", "integer from -100 to 100, in steps of 5. 0 closes, 100 opens fully, negative values tilt up with -100 fully tilted. Default is 100.", False, 100)},
+     "Slides the glass sunroof open or closed, or tilts its rear edge up for ventilation. "
+     "Sliding it open returns an error unless the sunroof shade is at 100 percent or is opened to 100 with `set_sunroof_shade_position` in the same turn; tilting needs no shade. "
+     + WEATHER + " If the condition is not \"clear\", \"sunny\", \"partly_cloudy\", or \"cloudy\", get an explicit yes from the driver before sliding or tilting it open. "
+     "Returns the new sunroof position, where negative values mean tilted.",
+     {"opening_style": P("str", one_of(["slide", "tilt"]) + " \"slide\" moves the glass back; \"tilt\" only raises its rear edge. Default is \"slide\".", False, "slide"),
+      "percent_open": P("int", "integer from 0 to 100, in steps of 5. How far to slide or tilt; 0 closes the sunroof in either style. Default is 100.", False, 100)},
      writes=[f"{C}.Sunroof.Position"])
-tool("get_sunroof_and_sunshade_position", "Vehicle", "retrieve",
-     "Return the sunroof position (negative means tilted) and the sunroof shade position. They are read together because the sunroof can only open when the shade is fully open.",
+tool("get_sunroof_and_shade_position", "Vehicle", "retrieve",
+     "Returns the sunroof position (0 closed, 100 fully slid open, negative values tilted, -100 fully tilted) and the sunroof shade opening in percent. "
+     "They come together because the sunroof can only slide open when the shade is fully open. "
+     "Use it before opening the sunroof or to answer whether the roof is open. It does not cover the side windows; use `get_window_positions`.",
      reads=[f"{C}.Sunroof.Position", f"{C}.Sunroof.Shade.Position"])
-tool("set_rear_window_shade", "Vehicle", "action",
-     "Raise or lower the rear window sun shade.",
-     {"position": P("int", "integer from 0 to 100, in steps of 10. 0 retracts it, 100 raises it fully. Default is 100.", False, 100)},
+tool("set_rear_window_shade_position", "Vehicle", "action",
+     "Raises or lowers the sun shade on the rear window, for example to block low sun or keep the back seat private. "
+     "This is the shade behind the rear seats, not the sunroof shade, which `set_sunroof_shade_position` controls. "
+     "It works while driving. " + RETURNS_NEW,
+     {"percent_raised": P("int", "integer from 0 to 100, in steps of 10. 0 is fully lowered out of sight and 100 fully raised. Default is 100.", False, 100)},
      writes=[f"{C}.RearShade.Position"])
 tool("get_rear_window_shade_position", "Vehicle", "retrieve",
-     "Return how far the rear window sun shade is raised.",
+     "Returns how far the rear window sun shade is raised, in percent (0 lowered, 100 fully raised). "
+     "Use it before relative requests such as \"raise it a bit more\" or to answer whether the shade is up. "
+     "It does not cover the sunroof shade; use `get_sunroof_and_shade_position`.",
      reads=[f"{C}.RearShade.Position"])
 
 # ---- doors and access
-tool("set_door_locks", "Vehicle", "action",
-     "Lock or unlock one door or all doors. Unlocking is " + MOVING[0].lower() + MOVING[1:],
-     {"door": P("str", one_of(SEAT4) + " Default is \"all\".", False, "all"),
-      "locked": P("bool", "true to lock, false to unlock.")},
+tool("set_door_lock_state", "Vehicle", "action",
+     "Locks or unlocks one door or all four doors. Use it when the driver asks to lock or unlock the car or a single door. "
+     "Unlocking " + MOVING[3:] + " "
+     "It does not change the trunk lock (`set_trunk_lock_state`) or the rear child safety locks, which are mechanical switches the assistant cannot move. " + RETURNS_NEW,
+     {"doors": P("str", one_of(SEAT4) + " \"row1_driver_side\" is the driver's door and \"row2_...\" the back doors; \"all\" covers all four. Default is \"all\".", False, "all"),
+      "is_locked": P("bool", "true locks the doors, false unlocks them.")},
      writes=sel(r"Door\.Row\d\.\w+\.IsLocked$"))
 tool("get_door_status", "Vehicle", "retrieve",
-     "Return which doors are locked and whether the rear child safety locks are engaged. Child locks are mechanical switches on the doors, so the assistant can report them but not change them.",
+     "Returns, for each of the four doors, whether it is locked, and for the two rear doors whether the child safety lock is engaged. "
+     "Use it to answer whether the car is locked or before unlocking. "
+     "Child safety locks are mechanical switches on the door edge, so the assistant can report them but cannot change them; tell the driver to set them by hand. "
+     "It does not cover the trunk; use `get_trunk_status`.",
      reads=sel(r"Door\.Row\d\.\w+\.IsLocked$", r"IsChildLockActive$"))
-tool("set_trunk", "Vehicle", "action",
-     "Open or close the power trunk lid. " + STOPPED,
-     {"open": P("bool", "true to open the trunk, false to close it.")},
+tool("set_trunk_lid_state", "Vehicle", "action",
+     "Opens or closes the power trunk lid. " + STOPPED + " "
+     "It does not lock or unlock the trunk; use `set_trunk_lock_state` for that. " + RETURNS_NEW,
+     {"is_open": P("bool", "true opens the trunk lid, false closes it.")},
      writes=["Vehicle.Body.Trunk.Rear.IsOpen"])
-tool("set_trunk_lock", "Vehicle", "action",
-     "Lock or unlock the trunk separately from the doors, for example to keep valet staff out.",
-     {"locked": P("bool", "true to lock the trunk, false to unlock it.")},
+tool("set_trunk_lock_state", "Vehicle", "action",
+     "Locks or unlocks the trunk on its own, independently of the doors, for example to keep valet staff out of the trunk. "
+     "It does not open the lid; use `set_trunk_lid_state` for that. "
+     "Locking the doors with `set_door_lock_state` does not change this setting. " + RETURNS_NEW,
+     {"is_locked": P("bool", "true locks the trunk, false unlocks it.")},
      writes=["Vehicle.Body.Trunk.Rear.IsLocked"])
 tool("get_trunk_status", "Vehicle", "retrieve",
-     "Return whether the trunk lid is open and whether the trunk is locked.",
+     "Returns whether the trunk lid is open and whether the trunk is locked. "
+     "Use it before opening or closing the trunk, or to answer whether the trunk is open. "
+     "It does not cover the doors; use `get_door_status`.",
      reads=["Vehicle.Body.Trunk.Rear.IsOpen", "Vehicle.Body.Trunk.Rear.IsLocked"])
-tool("set_fuel_door", "Vehicle", "action",
-     "Open or close the fuel filler door for refueling. " + STOPPED,
-     {"open": P("bool", "true to open the fuel door, false to close it.")},
+tool("set_fuel_door_state", "Vehicle", "action",
+     "Opens or closes the fuel filler door so the driver can refuel. " + STOPPED + " "
+     "It is not the charging port door; use `set_charge_port_door_state` for plug-in charging. " + RETURNS_NEW,
+     {"is_open": P("bool", "true opens the fuel filler door, false closes it.")},
      writes=["Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"])
 tool("get_fuel_door_status", "Vehicle", "retrieve",
-     "Return whether the fuel filler door is open.",
+     "Returns whether the fuel filler door is open. "
+     "Use it before refueling or to answer whether the fuel door was left open. "
+     "It does not report the fuel level; use `get_energy_status`.",
      reads=["Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"])
-tool("set_charge_port", "Vehicle", "action",
-     "Open or close the charging port door. " + STOPPED,
-     {"open": P("bool", "true to open the charge port door, false to close it.")},
+tool("set_charge_port_door_state", "Vehicle", "action",
+     "Opens or closes the charging port door on the front-left fender so the driver can plug in. " + STOPPED + " "
+     "It is not the fuel filler door; use `set_fuel_door_state` for refueling. " + RETURNS_NEW,
+     {"is_open": P("bool", "true opens the charging port door, false closes it.")},
      writes=[f"{CHARGE_PORT}.IsFlapOpen"])
-tool("set_charging_cable_lock", "Vehicle", "action",
-     "Lock or release the charging cable in the port. Only works while a cable is connected; release it before the driver unplugs.",
-     {"locked": P("bool", "true to lock the cable, false to release it.")},
+tool("set_charging_cable_lock_state", "Vehicle", "action",
+     "Locks the charging cable into the port or releases it. "
+     "Release it before the driver unplugs; lock it to stop someone else pulling the cable at a public charger. "
+     "It returns an error when no cable is connected (`get_charge_port_status`). " + RETURNS_NEW,
+     {"is_locked": P("bool", "true locks the cable in the port, false releases it.")},
      writes=[f"{CHARGE_PORT}.IsChargingCableLocked"])
 tool("get_charge_port_status", "Vehicle", "retrieve",
-     "Return whether the charge port door is open, whether a cable is connected, and whether the cable is locked.",
+     "Returns whether the charging port door is open, whether a charging cable is plugged in, and whether the cable is locked. "
+     "Use it before starting charging or releasing the cable. "
+     "It does not report the battery level or charging progress; use `get_energy_status` and `get_charging_status`.",
      reads=paths(CHARGE_PORT))
 
 # ---- exterior lights
-tool("set_low_beams", "Vehicle", "action",
-     "Turn the low beam headlights on or off. Turning them off is not allowed while the front fog lights are on.",
-     {"on": P("bool", "true to turn on, false to turn off.")},
-     writes=[f"{B}.Lights.Beam.Low.IsOn"])
-tool("set_high_beams", "Vehicle", "action",
-     "Turn the high beam headlights on or off. Turning them on is blocked while the front fog lights are on.",
-     {"on": P("bool", "true to turn on, false to turn off.")},
-     writes=[f"{B}.Lights.Beam.High.IsOn"])
-tool("set_fog_lights", "Vehicle", "action",
-     "Turn the front fog lights, the rear fog light, or both on or off. Policy: when turning the front fog lights on, also make sure the low beams are on (`set_low_beams`) and the high beams are off (`set_high_beams`). "
-     + WEATHER + " If the condition is not \"fog\", \"heavy_rain\", \"snow\", or \"storm\", get an explicit yes from the driver before turning any fog light on.",
-     {"which": P("str", one_of(["front", "rear", "both"])),
-      "on": P("bool", "true to turn on, false to turn off.")},
+tool("set_headlight_beam_state", "Vehicle", "action",
+     "Turns the low beam or the high beam headlights on or off. "
+     "Turning the high beams on returns an error while the front fog lights are on, and turning the low beams off returns an error while the front fog lights are on. "
+     "Use `set_fog_light_state` for fog lights and `set_hazard_lights_state` for hazard lights. " + RETURNS_NEW,
+     {"beam": P("str", one_of(["low", "high"]) + " \"low\" is the normal driving light; \"high\" is the long-range main beam."),
+      "enabled": P("bool", "true turns the beam on, false turns it off.")},
+     writes=[f"{B}.Lights.Beam.Low.IsOn", f"{B}.Lights.Beam.High.IsOn"])
+tool("set_fog_light_state", "Vehicle", "action",
+     "Turns the front fog lights, the rear fog light, or both on or off. "
+     "Policy: when turning the front fog lights on, also make sure the low beams are on and the high beams are off with `set_headlight_beam_state`. "
+     + WEATHER + " If the condition is not \"fog\", \"heavy_rain\", \"snow\", or \"storm\", get an explicit yes from the driver before turning any fog light on. " + RETURNS_NEW,
+     {"fog_lights": P("str", one_of(["front", "rear", "both"])),
+      "enabled": P("bool", "true turns the chosen fog lights on, false turns them off.")},
      writes=[f"{B}.Lights.Fog.Front.IsOn", f"{B}.Lights.Fog.Rear.IsOn"])
-tool("set_hazard_lights", "Vehicle", "action",
-     "Turn the hazard warning lights on or off.",
-     {"on": P("bool", "true to start flashing, false to stop.")},
+tool("set_hazard_lights_state", "Vehicle", "action",
+     "Starts or stops the hazard warning lights, which flash all turn signals at once. "
+     "Use it when the driver asks for hazards, for example after stopping on the shoulder or at the end of a traffic jam. "
+     "It does not change the headlights or fog lights. " + RETURNS_NEW,
+     {"enabled": P("bool", "true starts flashing, false stops it.")},
      writes=[f"{B}.Lights.Hazard.IsSignaling"])
 tool("get_exterior_lights_status", "Vehicle", "retrieve",
-     "Return whether the low beams, high beams, front fog lights, rear fog light, and hazard lights are on.",
+     "Returns whether the low beams, high beams, front fog lights, rear fog light, and hazard lights are on. "
+     "Use it before changing any exterior light, because the fog lights restrict the headlight beams. "
+     "It does not cover interior lights; use `get_reading_lights_status` and `get_ambient_light_status`.",
      reads=paths(f"{B}.Lights."))
 
 # ---- wipers and mirrors
-tool("set_wipers", "Vehicle", "action",
-     "Set the front or rear wiper mode, and for the front wiper the interval or rain sensor sensitivity.",
-     {"window": P("str", one_of(["front", "rear"])),
-      "mode": P("str", one_of(WIPE) + " The rear wiper supports only \"OFF\", \"INTERVAL\", and \"SLOW\"."),
-      "intensity": P("int", "integer from 1 to 4. Default is 2. Used only for the front wiper in \"INTERVAL\" or \"RAIN_SENSOR\" mode.", False, 2)},
+tool("set_wiper_mode", "Vehicle", "action",
+     "Sets the mode of the front or the rear windshield wiper, and for the front wiper how often it wipes in interval or rain-sensor mode. "
+     "Use it for requests to start, stop, speed up, or slow down the wipers. The rear wiper supports only \"OFF\", \"INTERVAL\", and \"SLOW\" and returns an error for other modes. "
+     "It does not spray washer fluid. " + RETURNS_NEW,
+     {"wiper": P("str", one_of(["front", "rear"])),
+      "wiper_mode": P("str", one_of(WIPE) + " \"RAIN_SENSOR\" wipes automatically when rain is detected."),
+      "interval_level": P("int", "integer from 1 to 4. How often the front wiper wipes in \"INTERVAL\" mode, or how sensitive it is in \"RAIN_SENSOR\" mode; 4 is most frequent. Default is 2. Ignored for other modes and for the rear wiper.", False, 2)},
      writes=sel(r"Wiping\.(Mode|Intensity)$"))
 tool("get_wiper_status", "Vehicle", "retrieve",
-     "Return the front and rear wiper modes and the front wiper intensity.",
+     "Returns the front and rear wiper modes and the front wiper interval level. "
+     "Use it before relative requests such as \"wipe faster\". "
+     "It does not report the washer fluid level; use `get_maintenance_status`.",
      reads=sel(r"Wiping\.(Mode|Intensity)$"))
-tool("set_side_mirrors_folded", "Vehicle", "action",
-     "Fold or unfold both exterior mirrors. Folding is " + MOVING[0].lower() + MOVING[1:],
-     {"folded": P("bool", "true to fold the mirrors in, false to unfold them.")},
+tool("set_side_mirror_fold_state", "Vehicle", "action",
+     "Folds both exterior side mirrors in against the car, or unfolds them for driving. "
+     "Use it for tight parking spots or car washes. Folding " + MOVING[3:] + " " + RETURNS_NEW,
+     {"is_folded": P("bool", "true folds both mirrors in, false unfolds them.")},
      writes=sel(r"Mirrors\.\w+\.IsFolded$"))
-tool("set_mirror_heating", "Vehicle", "action",
-     "Turn exterior mirror heating on or off for both mirrors, to clear ice, frost, or fog.",
-     {"on": P("bool", "true to turn on, false to turn off.")},
+tool("set_side_mirror_heating_state", "Vehicle", "action",
+     "Turns heating on or off in both exterior side mirrors, to clear ice, frost, or fog from the glass. "
+     "Use it in cold or damp weather or when the driver says the mirrors are fogged. "
+     "It does not defrost the windshield; use `set_defroster_state`. " + RETURNS_NEW,
+     {"enabled": P("bool", "true turns mirror heating on, false turns it off.")},
      writes=sel(r"Mirrors\.\w+\.IsHeatingOn$"))
 tool("get_side_mirror_status", "Vehicle", "retrieve",
-     "Return whether each exterior mirror is folded and whether its heating is on.",
+     "Returns, for the driver-side and passenger-side mirrors, whether each is folded and whether its heating is on. "
+     "Use it before folding the mirrors or to answer whether mirror heating is on. "
+     "It does not return mirror angles.",
      reads=paths(f"{B}.Mirrors."))
 
 # ---- interior lights
-tool("set_reading_light", "Vehicle", "action",
-     "Turn the reading light at one seat, or at all seats, on or off.",
-     {"seat": P("str", one_of(SEAT4) + SEATDESC),
-      "on": P("bool", "true to turn on, false to turn off.")},
+tool("set_reading_light_state", "Vehicle", "action",
+     "Turns the reading light above one seat, or above all seats, on or off. "
+     "Use it for requests to switch on a light to read or find something; use `set_ambient_light` for the mood lighting along the doors and dashboard. "
+     "When the driver says only \"my light\", use \"row1_driver_side\". " + RETURNS_NEW,
+     {"seats": P("str", SEATS),
+      "enabled": P("bool", "true turns the reading light on, false turns it off.")},
      writes=sel(r"Spotlight\..*IsLightOn$"))
 tool("get_reading_lights_status", "Vehicle", "retrieve",
-     "Return which seats have their reading light on.",
+     "Returns, for each of the four seats, whether its reading light is on. "
+     "Use it to answer which lights are on or before turning them off. "
+     "It does not cover the ambient light; use `get_ambient_light_status`.",
      reads=sel(r"Spotlight\..*IsLightOn$"))
 tool("set_ambient_light", "Vehicle", "action",
-     "Set the ambient interior lighting in all four zones: on or off, color, and brightness. Colors map to RGB codes: "
-     + ", ".join(f"{n} {h}" for n, h in AMBIENT.items()) + ".",
-     {"on": P("bool", "true to turn on, false to turn off."),
-      "color": P("str", one_of(list(AMBIENT)) + " Default is \"white\". Ignored when on is false.", False, "white"),
-      "brightness_pct": P("int", "integer from 10 to 100, in steps of 10. Default is 70. Ignored when on is false.", False, 70)},
+     "Turns the ambient mood lighting on or off and sets its color and brightness in all four zones at once. "
+     "Use it for requests about the cabin's mood or accent lighting; use `set_reading_light_state` for lights to read by. "
+     "Colors are stored as RGB codes: " + ", ".join(f"{n} {h}" for n, h in AMBIENT.items()) + ". " + RETURNS_NEW,
+     {"enabled": P("bool", "true turns the ambient light on, false turns it off."),
+      "color": P("str", one_of(list(AMBIENT)) + " Default is \"white\". Ignored when enabled is false.", False, "white"),
+      "brightness_percent": P("int", "integer from 10 to 100, in steps of 10. Default is 70. Ignored when enabled is false.", False, 70)},
      writes=paths(f"{C}.Light.AmbientLight."))
 tool("get_ambient_light_status", "Vehicle", "retrieve",
-     "Return, for each ambient light zone, whether it is on, its color code, and its brightness.",
+     "Returns, for each of the four ambient light zones, whether it is on, its color as an RGB code, and its brightness in percent. "
+     "Use it before relative requests such as \"make it a bit brighter\". "
+     "It does not cover the reading lights; use `get_reading_lights_status`.",
      reads=paths(f"{C}.Light.AmbientLight."))
 
 # ---- climate
 ZONES = list(STATIONS) + ["row2", "all"]
-ZDESC = " \"row1_driver\" is the driver zone; \"row2\" means both rear zones."
+ZONEDESC = one_of(ZONES) + " \"row1_driver\" is the driver's zone, \"row1_passenger\" the front passenger's, \"row2\" both back-seat zones, and \"all\" every zone."
+AIRFLOW = {"windshield": "UP", "face": "MIDDLE", "feet": "DOWN"}
 tool("set_climate_temperature", "Vehicle", "action",
-     "Set the target temperature of one climate zone, both rear zones, or all zones. Policy: if the result leaves more than 3 Celsius between zones, tell the driver.",
-     {"zone": P("str", one_of(ZONES) + ZDESC),
-      "temperature_c": P("float", "number from 16.0 to 28.0, in steps of 0.5.")},
+     "Sets the target cabin temperature for one climate zone, both back-seat zones, or every zone. "
+     "Use it for requests to make it warmer or colder; for a relative request, read the current target with `get_climate_status` and change it by 1 to 2 degrees. "
+     "Policy: if the result leaves more than 3 degrees between zones, tell the driver. "
+     "It does not turn air conditioning on or change the fan. " + RETURNS_NEW,
+     {"zones": P("str", ZONEDESC),
+      "temperature_celsius": P("float", "number from 16.0 to 28.0, in steps of 0.5.")},
      writes=sel(r"Station\..*\.Temperature$"))
 tool("set_fan_speed", "Vehicle", "action",
-     "Set the fan speed of one climate zone or all zones. This switches climate auto mode off.",
-     {"zone": P("str", one_of(ZONES) + ZDESC + " Default is \"all\".", False, "all"),
-      "level": P("int", "integer from 0 to 5. 0 is off; each level adds 20 percent fan speed.")},
+     "Sets how hard the climate fan blows in one zone or in every zone. "
+     "Use it for requests about airflow strength such as \"more air\" or \"turn the fan down\". Setting a fan level switches climate auto mode off. "
+     "It does not change temperature or direction; use `set_climate_temperature` and `set_airflow_direction`. " + RETURNS_NEW,
+     {"zones": P("str", ZONEDESC + " Default is \"all\".", False, "all"),
+      "fan_level": P("int", "integer from 0 to 5. 0 turns the fan off and 5 is the strongest; each level is 20 percent fan speed.")},
      writes=sel(r"Station\..*\.FanSpeed$") + [f"{H}.IsAutoModeActive"])
-tool("set_air_distribution", "Vehicle", "action",
-     "Set where a climate zone blows air: up to the windshield, middle to the face, or down to the feet. This switches climate auto mode off.",
-     {"zone": P("str", one_of(ZONES) + ZDESC + " Default is \"all\".", False, "all"),
-      "direction": P("str", one_of(["UP", "MIDDLE", "DOWN"]))},
+tool("set_airflow_direction", "Vehicle", "action",
+     "Sets where the climate air comes out in one zone or in every zone: onto the windshield, at the face, or at the feet. "
+     "Use it for requests such as \"blow on my feet\" or \"air on the windshield\". Setting a direction switches climate auto mode off. "
+     "To clear a fogged windshield, prefer `set_defroster_state`, which also handles fan and air conditioning. " + RETURNS_NEW,
+     {"zones": P("str", ZONEDESC + " Default is \"all\".", False, "all"),
+      "airflow_direction": P("str", one_of(list(AIRFLOW)) + " These are stored as the VSS values \"UP\", \"MIDDLE\", and \"DOWN\".")},
      writes=sel(r"Station\..*\.AirDistribution$") + [f"{H}.IsAutoModeActive"])
-tool("set_air_conditioning", "Vehicle", "action",
-     "Turn the air conditioning compressor on or off. Policy: when turning it on, also close any window open beyond 20 (`set_window_position`) and raise the fan to level 1 if it is off (`set_fan_speed`).",
-     {"on": P("bool", "true to turn on, false to turn off.")},
+tool("set_air_conditioning_state", "Vehicle", "action",
+     "Turns the air conditioning compressor on or off. AC cools and dries the air; the temperature itself comes from `set_climate_temperature`. "
+     "Policy: when turning AC on, also close any window open beyond 20 percent with `set_window_position` and raise the fan to level 1 with `set_fan_speed` if it is off. "
+     "Turning AC off saves energy and battery range. " + RETURNS_NEW,
+     {"enabled": P("bool", "true turns air conditioning on, false turns it off.")},
      writes=[f"{H}.IsAirConditioningActive"])
-tool("set_air_recirculation", "Vehicle", "action",
-     "Switch between recirculating cabin air and drawing fresh outside air.",
-     {"on": P("bool", "true to recirculate cabin air, false for fresh outside air.")},
+tool("set_air_recirculation_state", "Vehicle", "action",
+     "Switches between recirculating the cabin air and drawing in fresh outside air. "
+     "Use recirculation when the driver mentions bad smells, exhaust, or dust outside, or to cool down faster; use fresh air when the windows fog up or the air feels stale. "
+     "It does not change fan speed or temperature. " + RETURNS_NEW,
+     {"enabled": P("bool", "true recirculates cabin air, false draws in fresh outside air.")},
      writes=[f"{H}.IsRecirculationActive"])
-tool("set_defrost", "Vehicle", "action",
-     "Turn the front windshield defroster, the rear window defroster, or both on or off. Policy: when turning on the front defroster, also set fan level 2 or higher (`set_fan_speed`), set the front air distribution to \"UP\" (`set_air_distribution`), and turn on air conditioning (`set_air_conditioning`).",
-     {"window": P("str", one_of(["front", "rear", "all"])),
-      "on": P("bool", "true to turn on, false to turn off.")},
+tool("set_defroster_state", "Vehicle", "action",
+     "Turns the front windshield defroster, the rear window defroster, or both on or off, to clear fog, frost, or ice from the glass. "
+     "Policy: when turning on the front defroster, also set fan level 2 or higher with `set_fan_speed`, set the front zones' airflow to \"windshield\" with `set_airflow_direction`, and turn on air conditioning with `set_air_conditioning_state`. "
+     "It does not heat the side mirrors; use `set_side_mirror_heating_state`. " + RETURNS_NEW,
+     {"defrosters": P("str", one_of(["front", "rear", "both"])),
+      "enabled": P("bool", "true turns the chosen defrosters on, false turns them off.")},
      writes=[f"{H}.IsFrontDefrosterActive", f"{H}.IsRearDefrosterActive"])
-tool("set_climate_auto_mode", "Vehicle", "action",
-     "Turn climate auto mode on or off. In auto mode the car picks fan speed and air distribution to reach the target temperatures.",
-     {"on": P("bool", "true to turn on, false to turn off.")},
+tool("set_climate_auto_mode_state", "Vehicle", "action",
+     "Turns climate auto mode on or off. In auto mode the car chooses fan speed and airflow direction to reach the target temperatures. "
+     "Use it when the driver asks the car to handle the climate itself, or to undo manual fan and airflow changes. "
+     "It does not change target temperatures or air conditioning. " + RETURNS_NEW,
+     {"enabled": P("bool", "true turns auto mode on, false keeps the current manual fan and airflow settings.")},
      writes=[f"{H}.IsAutoModeActive"])
 tool("get_climate_status", "Vehicle", "retrieve",
-     "Return the climate settings (auto mode, each zone's temperature, fan speed, and air distribution, air conditioning, recirculation, defrosters) plus the measured cabin temperature and the outside temperature and humidity.",
+     "Returns the whole climate setup: auto mode, each zone's target temperature, fan speed in percent, and airflow direction, plus air conditioning, recirculation, and both defrosters. "
+     "It also returns the measured cabin temperature and the outside temperature and humidity. "
+     "Use it before any relative climate request or to answer how warm it is inside or outside. It does not cover seat or steering wheel heating; use `get_seat_status`.",
      reads=paths(f"{H}.") + ["Vehicle.Exterior.AirTemperature", "Vehicle.Exterior.Humidity"])
 
 # ---- seats and steering wheel
-tool("set_seat_heating", "Vehicle", "action",
-     "Set seat heating for one seat or all seats. On a front seat this replaces any ventilation, because both use the same heating-cooling setting.",
-     {"seat": P("str", one_of(SEAT4) + SEATDESC),
-      "level": P("int", LEVEL)},
+tool("set_seat_heating_cooling", "Vehicle", "action",
+     "Heats or ventilates (cools) one seat or all seats, or turns both off. "
+     "Heating and ventilation share one setting per seat, so a seat never heats and cools at once; choosing one replaces the other. "
+     "Only the front seats ventilate, so \"ventilate\" returns an error for back seats. Use `set_steering_wheel_heating_level` for the steering wheel. " + RETURNS_NEW,
+     {"seats": P("str", SEATS),
+      "climate_mode": P("str", one_of(["heat", "ventilate", "off"])),
+      "intensity_level": P("int", "integer from 1 to 3. 1 is gentle and 3 the strongest; levels are stored as 33, 66, and 100 percent, negative when ventilating. Default is 2. Ignored when climate_mode is \"off\".", False, 2)},
      writes=sel(r"Seat\.Row\d\.\w+\.HeatingCooling$"))
-tool("set_seat_ventilation", "Vehicle", "action",
-     "Set seat ventilation (cooling) for a front seat. Only the front seats ventilate. This replaces any heating on that seat, because both use the same heating-cooling setting.",
-     {"seat": P("str", one_of(FRONT + ["both"]) + " \"row1_driver_side\" is the driver seat."),
-      "level": P("int", "integer from 0 to 3. 0 is off; 1, 2, 3 set -33, -66, -100 percent.")},
-     writes=[f"{C}.Seat.Row1.DriverSide.HeatingCooling", f"{C}.Seat.Row1.PassengerSide.HeatingCooling"])
 tool("set_seat_massage", "Vehicle", "action",
-     "Start, change, or stop the massage of a front seat. Only the front seats have massage.",
-     {"seat": P("str", one_of(FRONT + ["both"]) + " \"row1_driver_side\" is the driver seat."),
-      "program": P("str", one_of(["WAVE", "PULSE", "STRETCH", "LUMBAR"]) + " Default is \"WAVE\".", False, "WAVE"),
-      "level": P("int", LEVEL)},
+     "Starts, changes, or stops the massage in one or both front seats. Only the front seats have massage. "
+     "Use it when the driver or front passenger asks for a massage or says their back is tired. "
+     "Massage works while driving. " + RETURNS_NEW,
+     {"seats": P("str", FRONTS(["both"])),
+      "massage_program": P("str", one_of(["WAVE", "PULSE", "STRETCH", "LUMBAR"]) + " \"LUMBAR\" targets the lower back. Default is \"WAVE\".", False, "WAVE"),
+      "intensity_level": P("int", "integer from 0 to 3. 0 stops the massage and 3 is the strongest; levels are stored as 0, 33, 66, and 100 percent.")},
      writes=sel(r"Massage\.(Level|TypeActive)$"))
-tool("set_seat_position", "Vehicle", "action",
-     "Move a front seat forward or back. Moving the driver seat is " + MOVING[0].lower() + MOVING[1:] + " For relative requests, read the current position with `get_seat_status` first.",
-     {"seat": P("str", one_of(FRONT) + " \"row1_driver_side\" is the driver seat."),
-      "position_mm": P("int", "integer from 0 to 250, in steps of 10. 0 is fully forward.")},
+tool("set_seat_fore_aft_position", "Vehicle", "action",
+     "Moves a front seat forward or backward along its rail. "
+     "For a relative request such as \"move my seat back a bit\", read the current position with `get_seat_status` and move it by about 30 mm. "
+     "Moving the driver's seat " + MOVING[3:] + " To restore a saved driver position, use `recall_driver_seat_memory`. " + RETURNS_NEW,
+     {"seats": P("str", FRONTS([])),
+      "distance_from_front_mm": P("int", "integer from 0 to 250, in steps of 10. 0 is the seat's frontmost position; larger values move it back.")},
      writes=sel(r"Row1\.\w+\.Position$"))
 tool("set_seat_recline", "Vehicle", "action",
-     "Change the backrest recline of a front seat. Changing the driver seat is " + MOVING[0].lower() + MOVING[1:] + " For relative requests, read the current angle with `get_seat_status` first.",
-     {"seat": P("str", one_of(FRONT) + " \"row1_driver_side\" is the driver seat."),
-      "angle_deg": P("int", "integer from 0 to 40. Degrees back from upright.")},
+     "Changes how far a front seat's backrest leans back. "
+     "For a relative request such as \"lean back a little\", read the current angle with `get_seat_status` and change it by about 5 degrees. "
+     "Changing the driver's seat " + MOVING[3:] + " " + RETURNS_NEW,
+     {"seats": P("str", FRONTS([])),
+      "recline_degrees": P("int", "integer from 0 to 40. Degrees back from upright; 0 is upright and about 25 is a relaxed position.")},
      writes=sel(r"Backrest\.Recline$"))
-tool("recall_seat_memory", "Vehicle", "action",
-     "Move the driver seat to a saved memory profile. " + MOVING,
-     {"profile": P("int", "integer from 1 to 3.")},
+tool("recall_driver_seat_memory", "Vehicle", "action",
+     "Moves the driver's seat to one of three saved memory positions, setting both its fore-aft position and recline. "
+     "Use it when the driver asks for \"my seat position\" or names a profile number. " + MOVING + " "
+     "It does not save a new memory position. Returns the recalled profile and the new seat position and recline.",
+     {"profile_number": P("int", "integer from 1 to 3.")},
      writes=[f"{C}.Seat.Row1.DriverSide.MemoryProfile", f"{C}.Seat.Row1.DriverSide.Position", f"{C}.Seat.Row1.DriverSide.Backrest.Recline"])
-tool("set_steering_wheel_heating", "Vehicle", "action",
-     "Set the steering wheel heating level.",
-     {"level": P("int", LEVEL)},
+tool("set_steering_wheel_heating_level", "Vehicle", "action",
+     "Sets the steering wheel heating level, or turns it off. "
+     "Use it when the driver says their hands or the wheel are cold. The wheel only heats; it cannot cool. " + RETURNS_NEW,
+     {"heating_level": P("int", "integer from 0 to 3. 0 is off and 3 the warmest; levels are stored as 0, 33, 66, and 100 percent.")},
      writes=["Vehicle.Chassis.SteeringWheel.HeatingCooling"])
 tool("get_seat_status", "Vehicle", "retrieve",
-     "Return seat occupancy, each seat's heating or ventilation, front seat massage, front seat position and recline, the last recalled memory profile, and steering wheel heating.",
+     "Returns each seat's occupancy and heating or ventilation level (positive values heat, negative values cool), the front seats' massage program and level, fore-aft position, and recline, the last recalled driver memory profile, and the steering wheel heating level. "
+     "Use it before any relative seat request, or to check which seats are occupied before turning on heating for passengers. "
+     "It does not cover cabin air temperature; use `get_climate_status`.",
      reads=paths(f"{C}.Seat.") + ["Vehicle.Chassis.SteeringWheel.HeatingCooling"])
 
 # ---- media
 tool("set_media_volume", "Media", "action",
-     "Set the audio volume. Setting a volume also unmutes the audio.",
-     {"volume_pct": P("int", "integer from 0 to 100.")},
+     "Sets the volume of music, radio, and podcasts. Setting any volume also unmutes the audio. "
+     "For a relative request such as \"a bit louder\", read the current volume with `get_media_status` and change it by about 10. "
+     "It does not change the navigation voice; use `set_navigation_voice_volume`. " + RETURNS_NEW,
+     {"volume_percent": P("int", "integer from 0 to 100.")},
      writes=[f"{M}.Volume", f"{M}.IsMuted"])
-tool("set_media_mute", "Media", "action",
-     "Mute or unmute the audio without changing the volume.",
-     {"muted": P("bool", "true to mute, false to unmute.")},
+tool("set_media_mute_state", "Media", "action",
+     "Mutes or unmutes music, radio, and podcasts while keeping the volume setting. "
+     "Use it for quick silence, for example during a phone call or a conversation, so the previous volume comes back on unmute. "
+     "It does not pause playback; use `control_media_playback`. " + RETURNS_NEW,
+     {"is_muted": P("bool", "true mutes the audio, false unmutes it at the previous volume.")},
      writes=[f"{M}.IsMuted"])
 tool("set_media_source", "Media", "action",
-     "Switch the audio source. Playback continues from the new source.",
-     {"source": P("str", one_of(SOURCES) + " \"INTERNET\" is the streaming service.")},
+     "Switches the audio source, for example from FM radio to the phone over Bluetooth, and keeps playing. "
+     "Use it when the driver names a source. To play a specific song or artist, use `play_media_by_query`; to tune a radio station, use `tune_fm_radio`. "
+     + RETURNS_NEW,
+     {"media_source": P("str", one_of(SOURCES) + " \"INTERNET\" is the built-in streaming service and \"BLUETOOTH\" the connected phone.")},
      writes=[f"{M}.Played.Source", f"{M}.Action"])
-tool("set_media_playback", "Media", "action",
-     "Play or pause the current audio source.",
-     {"playing": P("bool", "true to play, false to pause.")},
-     writes=[f"{M}.Action"])
-tool("skip_media_track", "Media", "action",
-     "Skip to the next or previous track on the current source and keep playing. Not available on \"FM\", \"AM\", or \"DAB\".",
-     {"direction": P("str", one_of(["next", "previous"]))},
+tool("control_media_playback", "Media", "action",
+     "Plays, pauses, or skips forward or back on the current audio source. "
+     "Use it for requests such as \"pause\", \"resume\", \"next song\", or \"go back one track\". Skipping returns an error on \"FM\", \"AM\", and \"DAB\" radio, which have no tracks. "
+     "It does not change the source or volume. " + RETURNS_NEW,
+     {"playback_command": P("str", one_of(["play", "pause", "next_track", "previous_track"]) + " Skipping keeps playback running.")},
      writes=[f"{M}.Action"])
 tool("tune_fm_radio", "Media", "action",
-     "Tune the FM radio to a frequency and switch the audio source to FM.",
+     "Tunes the FM radio to a frequency and switches the audio source to FM. "
+     "Use it when the driver names an FM frequency; if they name a station instead, ask for its frequency. "
+     "It does not tune AM or DAB. " + RETURNS_NEW,
      {"frequency_mhz": P("float", "number from 87.5 to 108.0, in steps of 0.1.")},
      writes=[f"{M}.Radio.FMFrequency", f"{M}.Played.Source", f"{M}.Action"])
 tool("play_media_by_query", "Media", "action",
-     "Search the streaming service for a song, artist, album, playlist, or podcast and start playing the best match. Switches the audio source to \"INTERNET\".",
-     {"query": P("str", "free text naming what to play.", samples=["Bohemian Rhapsody", "Norah Jones", "lo-fi focus playlist", "the latest episode of a daily news podcast"]),
-      "media_type": P("str", one_of(["any", "song", "artist", "album", "playlist", "podcast"]) + " Default is \"any\".", False, "any")},
+     "Searches the built-in streaming service for a song, artist, album, playlist, or podcast and starts playing the best match. "
+     "It switches the audio source to \"INTERNET\". Use it whenever the driver names what to hear rather than a source or a radio frequency. "
+     "Returns the identifier of the item it started playing; if nothing matches, it returns an error and playback continues unchanged.",
+     {"search_query": P("str", "free text naming what to play, as the driver said it.", samples=["Bohemian Rhapsody", "Norah Jones", "lo-fi focus playlist", "the latest episode of a daily news podcast"]),
+      "media_type": P("str", one_of(["any", "song", "artist", "album", "playlist", "podcast"]) + " Narrow it when the driver says which kind; \"any\" lets the service decide. Default is \"any\".", False, "any")},
      writes=[f"{M}.SelectedURI", f"{M}.Played.Source", f"{M}.Action"])
 tool("get_media_status", "Media", "retrieve",
-     "Return the audio source, the last playback command, the volume, mute state, the tuned FM frequency, and the last item chosen by search.",
+     "Returns the audio source, whether it is playing or paused, the volume in percent, whether it is muted, the tuned FM frequency, and the identifier of the last item chosen by search. "
+     "Use it before relative volume requests or to answer what is playing. "
+     "It does not return the navigation voice volume; use `get_navigation_status`.",
      reads=paths(f"{M}."))
 
 # ---- driving, tires, maintenance, trip
 tool("get_driving_status", "Vehicle", "retrieve",
-     "Return the current speed, the selected gear (126 park, 127 drive, 0 neutral, -1 reverse), and the odometer. Use it to check whether the car is stopped in park before actions that require it.",
+     "Returns the current speed in km/h, the selected gear (126 park, 127 drive, 0 neutral, -1 reverse), and the odometer in meters. "
+     "Use it to check whether the car is stopped in park before actions that need it, such as opening the trunk, fuel door, or charge port. "
+     "It does not return trip figures; use `get_trip_info`.",
      reads=["Vehicle.Speed", "Vehicle.Powertrain.Transmission.SelectedGear", "Vehicle.TraveledDistance"])
 tool("get_tire_pressure", "Vehicle", "retrieve",
-     "Return the pressure of all four tires in kPa and which tires have a low-pressure warning.",
+     "Returns each tire's pressure in kPa and whether it has a low-pressure warning (below 200 kPa; 230 to 250 is recommended). "
+     "Use it when the driver asks about the tires or a tire warning. "
+     "It does not return tire temperature or tread depth.",
      reads=sel(r"Tire\.(Pressure|IsPressureLow)$"))
 tool("get_maintenance_status", "Vehicle", "retrieve",
-     "Return the distance to the next service, whether service is due, the engine oil level, the washer fluid level, and the 12 V battery voltage.",
+     "Returns the distance to the next scheduled service in km and whether service is due, the engine oil level, the washer fluid level in percent, and the 12 V battery voltage. "
+     "Use it for questions about service, warning lights, oil, washer fluid, or a weak starter battery. "
+     "It does not report tire pressure (`get_tire_pressure`) or fuel and battery range (`get_energy_status`).",
      reads=["Vehicle.Service.DistanceToService", "Vehicle.Service.IsServiceDue", "Vehicle.Powertrain.CombustionEngine.EngineOil.Level",
             f"{B}.Windshield.Front.WasherFluid.Level", "Vehicle.LowVoltageBattery.CurrentVoltage"])
 tool("get_trip_info", "Vehicle", "retrieve",
-     "Return the trip meter, trip duration, average speed, and average fuel consumption.",
+     "Returns the trip meter in meters, the trip duration in seconds, the average speed in km/h, and the average fuel consumption in liters per 100 km. "
+     "Use it for questions about the current trip, such as how far or how long the driver has driven. "
+     "It does not return the odometer; use `get_driving_status`.",
      reads=["Vehicle.TripMeterReading", "Vehicle.TripDuration", "Vehicle.AverageSpeed", f"{PT}.FuelSystem.AverageConsumption"])
 tool("reset_trip_meter", "Vehicle", "action",
-     "Reset the trip meter to zero. Ask for confirmation first, because the old trip distance is lost.",
+     "Resets the trip meter to zero to start measuring a new trip. "
+     "The old trip distance is lost, so ask the driver to confirm first. "
+     "It does not reset the odometer or the average fuel consumption. Returns the new trip meter reading, which is 0.",
      writes=["Vehicle.TripMeterReading"])
 tool("get_vehicle_specs", "Vehicle", "retrieve",
-     "Return fixed facts about the car: exterior color, powertrain and hybrid type, fuel tank capacity, usable battery capacity, and maximum AC and DC charging power.",
+     "Returns fixed facts about this car: exterior color, powertrain type (hybrid) and hybrid type (plug-in), fuel tank capacity in liters, usable battery capacity in kWh, and maximum AC and DC charging power in kW. "
+     "Use it for questions about what the car is or can do, or before estimates that depend on capacities. "
+     "It does not return current levels; use `get_energy_status`.",
      reads=["Vehicle.VehicleIdentification.VehicleExteriorColor", f"{PT}.Type", f"{PT}.FuelSystem.HybridType", f"{PT}.FuelSystem.TankCapacity",
             f"{PT}.TractionBattery.NetCapacity", f"{CH}.MaxAcceptedPowerAC", f"{CH}.MaxAcceptedPowerDC"])
 
@@ -573,64 +685,91 @@ ENERGY = [f"{PT}.FuelSystem.RelativeLevel", f"{PT}.FuelSystem.IsFuelLevelLow", f
           f"{PT}.FuelSystem.TankCapacity", f"{PT}.TractionBattery.NetCapacity",
           f"{PT}.RangeExtender.ChargeDepleting.EnergyConsumption", f"{PT}.FuelSystem.AverageConsumption"]
 tool("get_energy_status", "Energy", "retrieve",
-     "Return the battery level, fuel level and low-fuel warning, the electric, fuel, and combined range in km (computed from the levels and reference consumption), the hybrid mode and how the hybrid is running, the drive mode, regen level, charge target, and whether the engine is running.",
+     "Returns the battery level and fuel level in percent, the low-fuel warning, and the electric, fuel, and combined range in km, computed from those levels and the reference consumption. "
+     "It also returns the hybrid mode and how the hybrid is currently running, the drive mode, the regenerative braking level, the hybrid charge target, and whether the engine is running. "
+     "Use it for any question about range, battery, fuel, or driving modes, and before changing a mode. It does not return plug-in charging settings; use `get_charging_status`.",
      reads=ENERGY + [f"{PT}.Hybrid.Mode", f"{PT}.Hybrid.ChargeTarget", f"{PT}.Hybrid.RegenLevel", f"{PT}.RangeExtender.OperatingMode",
                      f"{PT}.Transmission.PerformanceMode", f"{PT}.CombustionEngine.IsRunning"])
 tool("set_hybrid_mode", "Energy", "action",
-     "Choose how the hybrid uses the battery and the engine. \"AUTO\" blends both, \"ELECTRIC\" drives on battery only (blocked when the battery level is below 10), \"HOLD\" saves the battery level for later (for example a city zone at the destination), \"CHARGE\" runs the engine to charge the battery up to `charge_target_pct`. Policy: in \"CHARGE\" mode warn that fuel consumption rises.",
-     {"mode": P("str", one_of(["AUTO", "ELECTRIC", "HOLD", "CHARGE"])),
-      "charge_target_pct": P("int", "integer from 20 to 80, in steps of 10. Default is 60. Used only when mode is \"CHARGE\".", False, 60)},
+     "Chooses how the plug-in hybrid uses its battery and engine. "
+     "\"AUTO\" blends both; \"ELECTRIC\" drives on the battery only and returns an error when the battery is below 10 percent; \"HOLD\" saves the current battery level for later, for example for a low-emission zone at the destination; \"CHARGE\" runs the engine to charge the battery up to `charge_target_percent`. "
+     "Policy: when choosing \"CHARGE\", warn that fuel consumption rises. Returns the new hybrid mode, charge target, and whether the engine is running.",
+     {"hybrid_mode": P("str", one_of(["AUTO", "ELECTRIC", "HOLD", "CHARGE"])),
+      "charge_target_percent": P("int", "integer from 20 to 80, in steps of 10. The battery level the engine charges up to. Default is 60. Used only when hybrid_mode is \"CHARGE\".", False, 60)},
      writes=[f"{PT}.Hybrid.Mode", f"{PT}.Hybrid.ChargeTarget", f"{PT}.RangeExtender.OperatingMode", f"{PT}.CombustionEngine.IsRunning"])
 tool("set_drive_mode", "Energy", "action",
-     "Set the driving mode, which changes throttle response and efficiency.",
-     {"mode": P("str", one_of(["NORMAL", "SPORT", "ECONOMY"]))},
+     "Sets the drive mode, which changes throttle response, gear shifts, and efficiency. "
+     "Use \"ECONOMY\" when the driver wants to save fuel or battery, \"SPORT\" for sharper response, and \"NORMAL\" to go back to the default. "
+     "It does not change how the hybrid uses battery and engine; use `set_hybrid_mode`. " + RETURNS_NEW,
+     {"drive_mode": P("str", one_of(["NORMAL", "SPORT", "ECONOMY"]))},
      writes=[f"{PT}.Transmission.PerformanceMode"])
-tool("set_regen_level", "Energy", "action",
-     "Set the regenerative braking strength.",
-     {"level": P("int", "integer from 0 to 3. 0 is coasting, 3 is strongest.")},
+tool("set_regen_braking_level", "Energy", "action",
+     "Sets how strongly the car slows down and recovers energy when the driver lifts off the accelerator. "
+     "Higher levels recover more energy and allow near one-pedal driving; level 0 lets the car coast. "
+     "It does not affect the brake pedal. " + RETURNS_NEW,
+     {"regen_level": P("int", "integer from 0 to 3. 0 coasts freely and 3 slows down the most.")},
      writes=[f"{PT}.Hybrid.RegenLevel"])
 tool("get_charging_status", "Energy", "retrieve",
-     "Return the plug-in charging state: whether it is charging, the charge limit, the charging timer, and the car's maximum AC and DC charging power.",
+     "Returns whether the battery is charging from a cable, the charge limit in percent, the charging timer mode and time, and the car's maximum AC and DC charging power in kW. "
+     "Use it before changing charging settings or to answer whether the car is charging. "
+     "It does not return the battery level (`get_energy_status`) or the cable state (`get_charge_port_status`).",
      reads=[f"{CH}.IsCharging", f"{CH}.ChargeLimit", f"{CH}.Timer.Mode", f"{CH}.Timer.Time", f"{CH}.MaxAcceptedPowerAC", f"{CH}.MaxAcceptedPowerDC"])
 tool("set_charge_limit", "Energy", "action",
-     "Set the battery level at which plug-in charging stops.",
-     {"limit_pct": P("int", "integer from 50 to 100, in steps of 5.")},
+     "Sets the battery level at which plug-in charging stops. "
+     "A limit of about 80 percent is gentler on the battery for daily use; 100 percent gives full range before a long trip. "
+     "It does not start charging; use `set_charging_state`. " + RETURNS_NEW,
+     {"charge_limit_percent": P("int", "integer from 50 to 100, in steps of 5.")},
      writes=[f"{CH}.ChargeLimit"])
 tool("set_charging_timer", "Energy", "action",
-     "Set when plug-in charging runs: right away, starting at a time (for example cheaper night power), or finished by a time (for example a morning departure).",
-     {"mode": P("str", one_of(["INACTIVE", "START_TIME", "END_TIME"]) + " \"INACTIVE\" charges as soon as the cable is plugged in."),
-      "time": P("str", "time as HH:MM on a 24-hour clock, local time. Default is \"\". Required unless mode is \"INACTIVE\".", False, "", samples=["22:00", "06:30"])},
+     "Sets when plug-in charging runs: right away, starting at a time of day (for example cheaper night power), or finishing by a time of day (for example a morning departure). "
+     "Use it for scheduling requests; use `set_charging_state` to start or stop charging immediately. "
+     "Times are local and apply to the next charging session. " + RETURNS_NEW,
+     {"timer_mode": P("str", one_of(["INACTIVE", "START_TIME", "END_TIME"]) + " \"INACTIVE\" charges as soon as the cable is plugged in; \"START_TIME\" waits until timer_time; \"END_TIME\" finishes by timer_time."),
+      "timer_time": P("str", "time of day as HH:MM on a 24-hour clock, local time. Default is \"\". Required unless timer_mode is \"INACTIVE\".", False, "", samples=["22:00", "06:30"])},
      writes=[f"{CH}.Timer.Mode", f"{CH}.Timer.Time"])
-tool("start_stop_charging", "Energy", "action",
-     "Start or stop plug-in charging now. Only works while a charging cable is connected (`get_charge_port_status`).",
-     {"action": P("str", one_of(["START", "STOP"]))},
+tool("set_charging_state", "Energy", "action",
+     "Starts or stops plug-in charging immediately, overriding the charging timer for this session. "
+     "It returns an error when no cable is connected; check with `get_charge_port_status`. "
+     "Charging stops on its own at the charge limit. Returns whether the car is now charging.",
+     {"is_charging": P("bool", "true starts charging now, false stops it.")},
      writes=[f"{CH}.IsCharging"])
-STATION_PARAMS = {"charging_station_id": P("str", "charging station ID returned by `search_poi_at_location` or `search_poi_along_route`."),
-                  "plug_id": P("str", "plug ID of that station, returned in the same search result.")}
+STATION_PARAMS = {"charging_station_id": P("str", "charging station ID returned by `search_poi_at_location` or `search_poi_along_route` with category \"charging_station\"."),
+                  "plug_id": P("str", "ID of one plug at that station, returned in the same search result; the plug decides the charging power and whether it is AC or DC.")}
 CHG_READS = [f"{PT}.TractionBattery.StateOfCharge.Displayed", f"{PT}.TractionBattery.NetCapacity", f"{CH}.MaxAcceptedPowerAC", f"{CH}.MaxAcceptedPowerDC", f"{CH}.ChargeLimit"]
+START_BATT = P("int", "integer from 0 to 99. The battery level charging starts from; use the current level from `get_energy_status` unless the driver names another.")
 tool("estimate_charging_time", "Energy", "retrieve",
-     "Estimate how many minutes charging takes at a given charging station plug, from a start battery level to a target level. The tool looks up the plug's power and AC or DC type, and caps it at the car's maximum.",
+     "Estimates how many minutes it takes to charge from one battery level to another at a specific charging station plug. "
+     "It looks up the plug's power and AC or DC type, caps the power at what this car accepts, and follows the car's charging curve. "
+     "Use it when the driver asks how long charging will take; use `estimate_battery_after_charging` when they ask what level a given time gets them. Returns the estimated minutes and the charging power used.",
      {**STATION_PARAMS,
-      "target_soc_pct": P("int", "integer from 1 to 100. Must be above the start level."),
-      "start_soc_pct": P("int", "integer from 0 to 99. Use the current battery level from `get_energy_status` unless the driver names another start level.")},
+      "start_battery_percent": START_BATT,
+      "target_battery_percent": P("int", "integer from 1 to 100. Must be above start_battery_percent; levels above the charge limit are capped to it.")},
      reads=CHG_READS)
-tool("estimate_soc_after_charging", "Energy", "retrieve",
-     "Estimate the battery level after charging for a given number of minutes at a given charging station plug.",
+tool("estimate_battery_after_charging", "Energy", "retrieve",
+     "Estimates the battery level after charging for a given number of minutes at a specific charging station plug. "
+     "It looks up the plug's power and AC or DC type, caps the power at what this car accepts, and stops at the charge limit. "
+     "Use it when the driver asks what a stop of a certain length gets them; use `estimate_charging_time` for the reverse question. Returns the estimated battery level in percent.",
      {**STATION_PARAMS,
-      "minutes": P("int", "integer from 1 to 720."),
-      "start_soc_pct": P("int", "integer from 0 to 99. Use the current battery level from `get_energy_status` unless the driver names another start level.")},
+      "start_battery_percent": START_BATT,
+      "charging_minutes": P("int", "integer from 1 to 720.")},
      reads=CHG_READS)
 tool("estimate_electric_distance", "Energy", "retrieve",
-     "Estimate how many km the car can drive on electric power alone between two battery levels.",
-     {"from_soc_pct": P("int", "integer from 1 to 100. Use the current battery level from `get_energy_status` unless the driver names another start level."),
-      "to_soc_pct": P("int", "integer from 0 to 99. Must be below the start level. Default is 0.", False, 0)},
+     "Estimates how many km the car can drive on electric power alone between two battery levels, using the usable battery capacity and the reference consumption. "
+     "Use it for questions such as \"how far can I go on electric only?\". "
+     "It ignores the fuel tank; for a whole route with fuel included, use `estimate_route_energy`. Returns the distance in km.",
+     {"start_battery_percent": P("int", "integer from 1 to 100. Use the current level from `get_energy_status` unless the driver names another."),
+      "end_battery_percent": P("int", "integer from 0 to 99. Must be below start_battery_percent. Default is 0.", False, 0)},
      reads=[f"{PT}.TractionBattery.StateOfCharge.Displayed", f"{PT}.TractionBattery.NetCapacity", f"{PT}.RangeExtender.ChargeDepleting.EnergyConsumption"])
 tool("estimate_refuel", "Energy", "retrieve",
-     "Estimate how many liters fill the tank to a target level, and the fuel range that adds in km.",
-     {"target_fuel_pct": P("int", "integer from 1 to 100. Default is 100.", False, 100)},
+     "Estimates how many liters fill the tank to a target level and how many km of fuel range that adds. "
+     "Use it when the driver asks how much fuel to buy or how far a fill-up gets them. "
+     "It does not find gas stations; use `search_poi_at_location` or `search_poi_along_route` with category \"gas_station\". Returns liters and added range in km.",
+     {"target_fuel_percent": P("int", "integer from 1 to 100. Default is 100, a full tank.", False, 100)},
      reads=[f"{PT}.FuelSystem.RelativeLevel", f"{PT}.FuelSystem.TankCapacity", f"{PT}.FuelSystem.AverageConsumption"])
 tool("estimate_route_energy", "Energy", "retrieve",
-     "Estimate how much of a route can be driven electrically, how much fuel the rest needs, and whether the car arrives without charging or refueling. The route ID comes from `get_routes` or `get_navigation_status`.",
+     "Estimates, for a route, how many km can be driven electrically, how many liters of fuel the rest needs, and whether the car arrives without charging or refueling. "
+     "Use it before long trips or when the driver asks whether they will make it. It takes the current hybrid mode into account, for example \"HOLD\" saves battery. "
+     "Returns electric km, fuel liters, and whether a stop is needed.",
      {"route_id": P("str", "route ID returned by `get_routes` or `get_navigation_status`.")},
      reads=ENERGY + [f"{PT}.Hybrid.Mode"])
 
@@ -638,132 +777,235 @@ tool("estimate_route_energy", "Energy", "retrieve",
 POI = ["gas_station", "charging_station", "restaurant", "fast_food", "cafe", "bakery", "supermarket", "parking", "public_toilet", "hotel", "airport", "pharmacy", "hospital", "car_wash"]
 FILTERS = ["open_now", "has_available_plug", "has_dc_plug"]
 FILTER_DESC = "list of 0 to 3 filters, each " + one_of(FILTERS)[:-1] + ". \"has_available_plug\" and \"has_dc_plug\" apply only to \"charging_station\". Default is an empty list."
+POI_RETURNS = ("Returns up to 10 results; each has its POI ID, name, location ID, distance, opening hours, and phone number; charging stations also list each plug's ID, power in kW, AC or DC type, and whether it is free. "
+               "Results do not include prices or reviews.")
 tool("get_location_id_by_name", "Navigation", "retrieve",
-     "Look up the location ID of a city, address, or named place. Navigation, route, weather, and POI tools need this ID.",
-     {"name": P("str", "free text name of the city, address, or place.", samples=["Munich", "Chico", "Sacramento International Airport", "1200 Main Street, Madison"])},
+     "Looks up the location ID of a city, street address, or named place. "
+     "Call it first whenever the driver names a place, because navigation, route, weather, and POI tools only accept location IDs. "
+     "If several places match, it returns all of them with their city so the assistant can ask which one. Returns location IDs, names, and coordinates.",
+     {"place_name": P("str", "free text name of the city, address, or place, as the driver said it.", samples=["Munich", "Chico", "Sacramento International Airport", "1200 Main Street, Madison"])},
      external=True)
 tool("search_poi_at_location", "Navigation", "retrieve",
-     "Find points of interest of one category near a location. Results include POI IDs, distance, opening hours, phone number, and for charging stations the station ID and each plug's ID, power in kW, AC or DC type, and availability. The location ID comes from `get_location_id_by_name`.",
+     "Finds points of interest of one category near a location, sorted by distance. "
+     "Use it for requests such as \"find a pharmacy near the hotel\" or \"is there a charger in town\"; for places on the way to the destination, use `search_poi_along_route`. "
+     + POI_RETURNS,
      {"location_id": P("str", "location ID returned by `get_location_id_by_name`."),
-      "category": P("str", one_of(POI)),
+      "poi_category": P("str", one_of(POI)),
       "filters": P("list", FILTER_DESC, False, [])},
      external=True)
 tool("search_poi_along_route", "Navigation", "retrieve",
-     "Find points of interest of one category along a route, with the km along the route and the detour time. Results include the same details as `search_poi_at_location`. The route ID comes from `get_routes` or `get_navigation_status`.",
+     "Finds points of interest of one category along a route, with how many km along the route each one is and the extra driving time of the detour. "
+     "Use it for stops on the way, such as \"find a charger on the way\" or \"a gas station before we run out\"; for places around one location, use `search_poi_at_location`. "
+     + POI_RETURNS,
      {"route_id": P("str", "route ID returned by `get_routes` or `get_navigation_status`."),
-      "category": P("str", one_of(POI)),
+      "poi_category": P("str", one_of(POI)),
       "filters": P("list", FILTER_DESC, False, []),
-      "max_detour_minutes": P("int", "integer from 1 to 30. Default is 10.", False, 10)},
+      "max_detour_minutes": P("int", "integer from 1 to 30. Leave out places that add more extra driving time than this. Default is 10.", False, 10)},
      external=True)
 tool("get_routes", "Navigation", "retrieve",
-     "Return up to three route options between two locations with route IDs, distance, duration, toll roads, and road types. Respects the avoid-tolls and avoid-highways options. Location IDs come from `get_location_id_by_name`.",
+     "Returns up to three route options between two locations, each with its route ID, distance in km, duration, whether it uses toll roads, and the main roads it takes. "
+     "Call it before `start_navigation`, and present the options so the driver can choose. It respects the avoid-tolls and avoid-highways settings from `set_route_preferences`. "
+     "It does not start guidance.",
      {"destination_id": P("str", "location ID returned by `get_location_id_by_name`."),
-      "start_id": P("str", "location ID returned by `get_location_id_by_name`. Default is \"current\", the car's current location.", False, "current")},
+      "start_location_id": P("str", "location ID returned by `get_location_id_by_name`. Default is \"current\", the car's current location.", False, "current")},
      reads=[f"{N}.RouteOptions.IsTollAvoided", f"{N}.RouteOptions.IsHighwayAvoided"])
 tool("convert_route_distance_and_time", "Navigation", "retrieve",
-     "On a given route, convert a distance in km into driving time, or a driving time in minutes into distance. The route ID comes from `get_routes` or `get_navigation_status`.",
+     "Converts, on a given route, a distance into the driving time it takes, or a driving time into the distance covered. "
+     "Use it for questions such as \"where will I be in 30 minutes?\" or \"how long until the charger 40 km ahead?\". "
+     "It uses the speeds of the roads on that route. Returns the converted value.",
      {"route_id": P("str", "route ID returned by `get_routes` or `get_navigation_status`."),
-      "value": P("float", "number from 0.0 to 2000.0. A distance in km or a time in minutes, as set by `unit`."),
-      "unit": P("str", one_of(["km", "minutes"]))},
+      "amount": P("float", "number from 0.0 to 2000.0. The distance or time to convert, in the unit given by amount_unit."),
+      "amount_unit": P("str", one_of(["km", "minutes"]) + " \"km\" converts a distance into minutes; \"minutes\" converts a time into km.")},
      external=True)
 NAV = [f"{N}.IsGuidanceActive", f"{N}.DestinationSet.Latitude", f"{N}.DestinationSet.Longitude", f"{N}.DestinationSet.LocationId",
        f"{N}.Waypoints.Stop1.LocationId", f"{N}.Waypoints.Stop2.LocationId", f"{N}.Waypoints.Stop3.LocationId", f"{N}.RouteId"]
-tool("set_navigation", "Navigation", "action",
-     "Start guidance from the current location to a destination, with up to three intermediate stops in order. Use only when guidance is not active; if it is active, use the add, replace, or delete tools instead. Location IDs come from `get_location_id_by_name`, and the route ID of the first leg from `get_routes`.",
+tool("start_navigation", "Navigation", "action",
+     "Starts turn-by-turn guidance from the current location to a destination, optionally through up to three intermediate stops in order. "
+     "Use it only when guidance is not active; to change an active route, use `update_navigation_waypoint` or `update_navigation_destination`, which do not restart guidance. "
+     "Get location IDs from `get_location_id_by_name` and the route ID of the first leg from `get_routes`. Returns the destination, stops, and active route ID.",
      {"destination_id": P("str", "location ID returned by `get_location_id_by_name`."),
-      "route_id": P("str", "route ID of the first leg, returned by `get_routes`."),
-      "waypoint_ids": P("list", "list of 0 to 3 location IDs from `get_location_id_by_name`, in driving order. Default is an empty list.", False, [])},
+      "first_leg_route_id": P("str", "route ID of the first leg, returned by `get_routes` for the current location to the first stop, or to the destination when there are no stops."),
+      "stop_location_ids": P("list", "list of 0 to 3 location IDs from `get_location_id_by_name`, in driving order. Default is an empty list.", False, [])},
      writes=NAV)
-tool("add_navigation_waypoint", "Navigation", "action",
-     "Insert an intermediate stop into the active route. Only works while guidance is active and fewer than three stops are set. Call one at a time, never in parallel, because stop numbers shift.",
-     {"location_id": P("str", "location ID returned by `get_location_id_by_name`."),
-      "position": P("int", "integer from 1 to 3. The stop number the new stop gets; later stops move back. Default is 1.", False, 1)},
+tool("update_navigation_waypoint", "Navigation", "action",
+     "Adds, replaces, or removes one intermediate stop on the active route without restarting guidance. "
+     "It returns an error when guidance is not active, when adding a fourth stop, or when the stop number does not exist. "
+     "Change one stop per call and never call it in parallel, because stop numbers shift after each change. Returns the updated list of stops and the new route ID.",
+     {"waypoint_operation": P("str", one_of(["add", "replace", "remove"])),
+      "stop_number": P("int", "integer from 1 to 3. For \"add\", the number the new stop takes, with later stops moving back; for \"replace\" and \"remove\", the stop to change."),
+      "location_id": P("str", "location ID returned by `get_location_id_by_name`. Required for \"add\" and \"replace\"; leave it empty for \"remove\". Default is \"\".", False, "")},
      writes=NAV)
-tool("replace_navigation_waypoint", "Navigation", "action",
-     "Replace one intermediate stop of the active route with another location. Only works while guidance is active and that stop exists.",
-     {"position": P("int", "integer from 1 to 3. The stop number to replace."),
-      "location_id": P("str", "location ID returned by `get_location_id_by_name`.")},
-     writes=NAV)
-tool("delete_navigation_waypoint", "Navigation", "action",
-     "Remove one intermediate stop from the active route. Only works while guidance is active and that stop exists. Call one at a time, never in parallel, because stop numbers shift.",
-     {"position": P("int", "integer from 1 to 3. The stop number to remove.")},
-     writes=NAV)
-tool("replace_navigation_destination", "Navigation", "action",
-     "Replace the final destination of the active route and keep the intermediate stops. Only works while guidance is active.",
-     {"location_id": P("str", "location ID returned by `get_location_id_by_name`.")},
-     writes=NAV)
-tool("delete_navigation_destination", "Navigation", "action",
-     "Remove the final destination so the last intermediate stop becomes the destination. Only works while guidance is active and at least one intermediate stop exists; otherwise use `cancel_navigation`.",
+tool("update_navigation_destination", "Navigation", "action",
+     "Replaces the final destination of the active route, or removes it so the last intermediate stop becomes the destination, without restarting guidance. "
+     "It returns an error when guidance is not active, or when removing the destination with no intermediate stop left; use `cancel_navigation` to end guidance instead. "
+     "Intermediate stops are kept. Returns the updated destination, stops, and route ID.",
+     {"destination_operation": P("str", one_of(["replace", "remove"])),
+      "location_id": P("str", "location ID returned by `get_location_id_by_name`. Required for \"replace\"; leave it empty for \"remove\". Default is \"\".", False, "")},
      writes=NAV)
 tool("cancel_navigation", "Navigation", "action",
-     "Stop guidance and clear the destination and all stops.",
+     "Stops guidance and clears the destination and all intermediate stops. "
+     "Use it when the driver wants no route at all; to change only part of the route, use `update_navigation_waypoint` or `update_navigation_destination`. "
+     "Route preferences and voice settings are kept. Returns confirmation that guidance is off.",
      writes=NAV)
-tool("set_route_options", "Navigation", "action",
-     "Set whether route planning avoids toll roads and highways. Applies to the next `get_routes` call; an active route is not recalculated.",
-     {"avoid_tolls": P("bool", "true to avoid toll roads, false to allow them."),
-      "avoid_highways": P("bool", "true to avoid highways, false to allow them.")},
+tool("set_route_preferences", "Navigation", "action",
+     "Sets whether route planning avoids toll roads and whether it avoids highways. "
+     "The preferences apply to the next `get_routes` call; an active route is not recalculated, so call `get_routes` again if the driver wants the current trip changed. "
+     "Avoiding highways usually makes trips much longer. " + RETURNS_NEW,
+     {"avoid_tolls": P("bool", "true avoids toll roads, false allows them."),
+      "avoid_highways": P("bool", "true avoids highways, false allows them.")},
      writes=[f"{N}.RouteOptions.IsTollAvoided", f"{N}.RouteOptions.IsHighwayAvoided"])
-tool("set_voice_guidance", "Navigation", "action",
-     "Choose how much spoken navigation guidance plays: every instruction, alerts only, or none.",
-     {"mode": P("str", one_of(["UNMUTED", "ALERT_ONLY", "MUTED"]))},
+tool("set_navigation_voice_guidance", "Navigation", "action",
+     "Chooses how much the navigation voice speaks: every turn instruction, only alerts such as hazards and speed cameras, or nothing. "
+     "Use it when the driver finds the voice too chatty or wants it back. "
+     "It does not change its loudness; use `set_navigation_voice_volume`. " + RETURNS_NEW,
+     {"guidance_level": P("str", one_of(["UNMUTED", "ALERT_ONLY", "MUTED"]) + " \"UNMUTED\" speaks every instruction and \"MUTED\" is silent.")},
      writes=[f"{N}.Mute"])
-tool("set_navigation_volume", "Navigation", "action",
-     "Set the volume of the navigation voice, separately from the media volume.",
-     {"volume_pct": P("int", "integer from 0 to 100, in steps of 5.")},
+tool("set_navigation_voice_volume", "Navigation", "action",
+     "Sets the loudness of the navigation voice, separately from music and radio. "
+     "Use it when the driver says the directions are too loud or too quiet. "
+     "It does not change the media volume (`set_media_volume`) and does not unmute a muted voice (`set_navigation_voice_guidance`). " + RETURNS_NEW,
+     {"volume_percent": P("int", "integer from 0 to 100, in steps of 5.")},
      writes=[f"{N}.Volume"])
 tool("get_navigation_status", "Navigation", "retrieve",
-     "Return whether guidance is active, the destination and its coordinates, intermediate stops, the current route ID, whether the destination is reached, route options, and voice guidance mode and volume.",
+     "Returns whether guidance is active, the destination's location ID and coordinates, the intermediate stops in order, the route ID being followed, and whether the destination is reached. "
+     "It also returns the route preferences and the voice guidance level and volume. "
+     "Use it before changing an active route or to answer where the car is heading. It does not return arrival time or distance left; use `convert_route_distance_and_time` with the route ID.",
      reads=paths(f"{N}."))
 
 # ---- outside-world, communication, preferences, utilities (no vehicle state)
 tool("get_weather", "Weather", "retrieve",
-     "Return the weather condition, temperature, humidity, and wind for a location at a time today. Only today can be requested. The location ID comes from `get_location_id_by_name`.",
+     "Returns the weather condition, temperature in Celsius, humidity, and wind speed for a location at a time today. "
+     "Use it before opening the sunroof or turning on fog lights, and for any weather question. Only today can be requested; it returns an error for other days. "
+     "Returns one forecast for the requested time.",
      {"location_id": P("str", "location ID returned by `get_location_id_by_name`, or \"current\" for the car's current location."),
-      "time": P("str", "time today as HH:MM on a 24-hour clock, or \"now\". Default is \"now\".", False, "now", samples=["now", "17:30"])},
+      "time_of_day": P("str", "time today as HH:MM on a 24-hour clock, or \"now\". Default is \"now\".", False, "now", samples=["now", "17:30"])},
      external=True)
 tool("get_contact_id_by_name", "Communication", "retrieve",
-     "Find contacts in the connected phone's address book by name and return their contact IDs.",
-     {"name": P("str", "free text first name, last name, or both.", samples=["Alex", "Jordan Lee", "Dr. Patel", "Mom"])},
+     "Finds contacts in the connected phone's address book by name and returns their contact IDs and full names. "
+     "Call it before `get_contact_details` whenever the driver names a person. If several contacts match, ask the driver which one. "
+     "It does not return phone numbers or email addresses.",
+     {"contact_name": P("str", "free text first name, last name, nickname, or both names.", samples=["Alex", "Jordan Lee", "Dr. Patel", "Mom"])},
      external=True)
 tool("get_contact_details", "Communication", "retrieve",
-     "Return the phone numbers and email addresses of contacts. Contact IDs come from `get_contact_id_by_name`.",
+     "Returns the phone numbers and email addresses saved for one or more contacts. "
+     "Use it after `get_contact_id_by_name` and before calling, texting, or emailing someone. "
+     "It does not return the contact's location or calendar.",
      {"contact_ids": P("list", "list of 1 to 5 contact IDs returned by `get_contact_id_by_name`.")},
      external=True)
 tool("call_phone_number", "Communication", "action",
-     "Place a hands-free call through the connected phone. The number usually comes from `get_contact_details`.",
+     "Places a hands-free call through the connected phone. "
+     "Look the number up with `get_contact_details` when the driver names a person, and confirm the person when several numbers exist. "
+     "It does not send texts; use `send_text_message`. Returns whether the call was placed.",
      {"phone_number": P("str", "phone number in international format.", samples=["+1 530 555 0142", "+49 89 5550 1234"])},
      external=True)
 tool("send_text_message", "Communication", "action",
-     "Send a short SMS through the connected phone. Read the message back and get confirmation before sending.",
+     "Sends a short SMS through the connected phone. "
+     "Read the message back to the driver and get confirmation before sending, because a sent message cannot be recalled. "
+     "Use `send_email` for longer messages or email addresses. Returns whether the message was sent.",
      {"phone_number": P("str", "phone number in international format, usually from `get_contact_details`.", samples=["+1 530 555 0142"]),
-      "message": P("str", "free text message, at most 300 characters.", samples=["Running 15 minutes late, start without me.", "Just parked, see you at the entrance."])},
+      "message_text": P("str", "free text message, at most 300 characters.", samples=["Running 15 minutes late, start without me.", "Just parked, see you at the entrance."])},
      external=True)
 tool("send_email", "Communication", "action",
-     "Send a short email from the driver's connected account. Read the content back and get confirmation before sending. Addresses usually come from `get_contact_details`.",
-     {"to": P("list", "list of 1 to 5 email addresses."),
+     "Sends a short email from the driver's connected account. "
+     "Read the subject and body back and get confirmation before sending, because a sent email cannot be recalled. "
+     "Addresses usually come from `get_contact_details`. Returns whether the email was sent.",
+     {"recipient_emails": P("list", "list of 1 to 5 email addresses."),
       "subject": P("str", "free text subject line.", samples=["Running late", "Meeting notes"]),
       "body": P("str", "free text message body.", samples=["I'm stuck in traffic and will arrive around 10:20."])},
      external=True)
 tool("get_calendar_events", "Communication", "retrieve",
-     "Return today's calendar events with start time, duration, topic, location, and attendees. Only today can be requested.",
-     {"from_hour": P("int", "integer from 0 to 23, local time. Default is 0.", False, 0)},
+     "Returns today's calendar events from a given hour onward, each with start time, duration, topic, location, and attendees. "
+     "Use it when the driver asks about their schedule or the next meeting, and to plan a route to a meeting location. "
+     "Only today can be requested; it cannot create or change events.",
+     {"start_hour": P("int", "integer from 0 to 23, local time. Events starting before this hour are left out. Default is 0.", False, 0)},
      external=True)
 tool("get_user_preferences", "Preferences", "retrieve",
-     "Return the driver's saved preferences for one category, such as preferred charging or fuel brands, route choices, or climate habits. Check them before choosing between options on the driver's behalf.",
-     {"category": P("str", one_of(["points_of_interest", "navigation_and_routing", "climate", "seats", "media", "energy", "communication", "weather"]))},
+     "Returns the driver's saved preferences for one category, such as preferred charging and fuel brands, route choices, or usual climate settings. "
+     "Check them before choosing between options on the driver's behalf, for example which of several chargers to suggest. "
+     "It cannot change preferences.",
+     {"preference_category": P("str", one_of(["points_of_interest", "navigation_and_routing", "climate", "seats", "media", "energy", "communication", "weather"]))},
      external=True)
 tool("calculate_math", "Utility", "retrieve",
-     "Evaluate an arithmetic expression, for example to add up distances or costs.",
+     "Evaluates an arithmetic expression and returns the exact result. "
+     "Use it instead of mental math whenever an answer depends on a calculation, such as adding distances, splitting costs, or converting units. "
+     "It supports numbers, + - * /, and parentheses only.",
      {"expression": P("str", "free text arithmetic expression using numbers, + - * / and parentheses.", samples=["(42.5 + 17.3) * 1.8", "45 * 0.62"])},
      external=True)
 tool("calculate_datetime", "Utility", "retrieve",
-     "Add or subtract minutes to a time, for example to work out an arrival time.",
-     {"time": P("str", "time as HH:MM on a 24-hour clock, or \"now\".", samples=["now", "14:35"]),
-      "add_minutes": P("int", "integer from -1440 to 1440. Negative values subtract.")},
+     "Adds or subtracts minutes to a time of day and returns the resulting time, rolling over midnight when needed. "
+     "Use it to work out arrival times, departure times, or how long until an event. "
+     "It works with times of day only, not dates.",
+     {"start_time": P("str", "time as HH:MM on a 24-hour clock, or \"now\".", samples=["now", "14:35"]),
+      "minutes_to_add": P("int", "integer from -1440 to 1440. Negative values subtract.")},
      external=True)
 
-# ------------------------------------------------------------------ negative tools (unchanged from v1)
-NEG = json.load(open(HERE.parent / "hybrid_car" / "2026-10-11_hybrid_negative_tools_spec.json"))
+# ------------------------------------------------------------------ negative tools
+# Visible to the assistant but wrong for in-car requests: they control the home, the phone itself, or
+# services the car does not offer. Their descriptions state that plainly so the model learns to decline.
+NEG = {}
+
+
+def neg(name, domain, desc, params=None):
+    NEG[name] = {"description": desc, "domain": domain, "kind": "action", "parameters": params or {}, "sample_commands": []}
+
+
+NOT_CAR = "It controls nothing in the car; for the car's own {what}, use {tool}."
+neg("set_home_thermostat", "SmartHome",
+    "Sets the target temperature of the thermostat in the driver's home. Use it only when the driver explicitly asks about the temperature at home. "
+    + NOT_CAR.format(what="cabin temperature", tool="`set_climate_temperature`") + " Returns the new home target temperature.",
+    {"temperature_celsius": P("float", "number from 10.0 to 30.0, in steps of 0.5.")})
+neg("set_home_lights", "SmartHome",
+    "Turns the lights in one room of the driver's home on or off and sets their color. Use it only when the driver explicitly asks about lights at home. "
+    + NOT_CAR.format(what="interior lights", tool="`set_reading_light_state` or `set_ambient_light`") + " Returns the room's new light state.",
+    {"room": P("str", one_of(["living_room", "bedroom", "kitchen", "garden"])),
+     "enabled": P("bool", "true turns the lights on, false turns them off."),
+     "color": P("str", one_of(["warm_white", "cool_white", "red", "blue", "green"]) + " Default is \"warm_white\".", False, "warm_white")})
+neg("set_home_door_lock_state", "SmartHome",
+    "Locks or unlocks the smart lock on the front door of the driver's home. Use it only when the driver explicitly asks about the door at home. "
+    + NOT_CAR.format(what="doors", tool="`set_door_lock_state`") + " Returns the new lock state of the home door.",
+    {"is_locked": P("bool", "true locks the home door, false unlocks it.")})
+neg("play_on_home_speaker", "SmartHome",
+    "Plays music on a smart speaker in a room of the driver's home. Use it only when the driver wants music playing at home. "
+    + NOT_CAR.format(what="audio", tool="`play_media_by_query`") + " Returns what started playing.",
+    {"search_query": P("str", "free text naming what to play.", samples=["jazz for dinner"]),
+     "room": P("str", one_of(["living_room", "bedroom", "kitchen"]))})
+neg("start_home_wallbox_charging", "SmartHome",
+    "Starts a charging session through the home wallbox's own app account, at a chosen current. It only works for a car plugged in at home. "
+    + NOT_CAR.format(what="charging", tool="`set_charging_state` and `set_charging_timer`") + " Returns whether the wallbox started.",
+    {"max_current_amps": P("int", "integer from 6 to 32.")})
+neg("set_phone_alarm", "Phone",
+    "Sets a wake-up alarm on the driver's phone. Use it only when the driver explicitly asks for a phone alarm. "
+    "The car has no alarm clock; for time calculations use `calculate_datetime`. Returns the alarm time.",
+    {"alarm_time": P("str", "time as HH:MM on a 24-hour clock.", samples=["06:30"])})
+neg("set_phone_ringer_volume", "Phone",
+    "Changes the ringer volume of the phone itself, not the car's speakers. Use it only when the driver explicitly asks about the phone's ringer. "
+    + NOT_CAR.format(what="audio volume", tool="`set_media_volume`") + " Returns the new ringer level.",
+    {"ringer_level": P("int", "integer from 0 to 10.")})
+neg("book_flight", "Travel",
+    "Searches and books a flight ticket with the driver's travel account. It is a purchase outside the car and should not be made while driving. "
+    "For directions to an airport, use `get_location_id_by_name` and `get_routes`. Returns the booking confirmation.",
+    {"origin_airport": P("str", "free text city or airport code.", samples=["SFO"]),
+     "destination_airport": P("str", "free text city or airport code.", samples=["ORD"]),
+     "travel_date": P("str", "date as YYYY-MM-DD.", samples=["2026-11-02"])})
+neg("order_food_delivery", "Shopping",
+    "Orders food for delivery to a home address. It is a purchase outside the car. "
+    "To find somewhere to eat on the way, use `search_poi_along_route` with category \"restaurant\". Returns the order confirmation.",
+    {"restaurant_name": P("str", "free text restaurant name.", samples=["Corner Noodle House"]),
+     "menu_items": P("list", "list of 1 to 10 free text item names.")})
+neg("transfer_money", "Finance",
+    "Transfers money from the driver's bank account to another account. It is a financial transaction outside the car and should not be made by voice while driving. "
+    "The car offers no payment or banking features. Returns the transfer confirmation.",
+    {"recipient": P("str", "free text recipient name or account number.", samples=["Savings account"]),
+     "amount": P("float", "number from 0.01 to 10000.0.")})
+neg("create_document", "Productivity",
+    "Creates a new text document in the driver's cloud drive. It is office work outside the car. "
+    "To send a short note to someone, use `send_text_message` or `send_email`. Returns the new document's ID.",
+    {"document_title": P("str", "free text document title.", samples=["Trip notes"]),
+     "document_text": P("str", "free text document content.", samples=["Packing list: charger cable, snacks"])})
+neg("post_to_social_media", "Social",
+    "Publishes a post on the driver's social media account. It is public, cannot be recalled, and is outside the car. "
+    "To message one person, use `send_text_message`. Returns the post's link.",
+    {"post_text": P("str", "free text post content.", samples=["Road trip day!"])})
 
 # ------------------------------------------------------------------ validate
 errors = []
@@ -779,6 +1021,15 @@ for name, spec in {**TOOLS, **NEG}.items():
             errors.append(f"{name}.{pn} numeric without range")
         if p["type"] == "str" and "sample_values" not in p and "one of" not in d and "ID" not in d:
             errors.append(f"{name}.{pn} str without enum or samples")
+VAGUE = {"on", "open", "position", "level", "mode", "value", "time", "which", "action", "name", "window", "seat", "door", "zone", "unit", "query", "category", "direction", "locked", "folded", "muted", "playing"}
+for name, spec in {**TOOLS, **NEG}.items():
+    if len(re.findall(r"[.!?](?:\s|$)", spec["description"])) < 3:
+        errors.append(f"{name}: description shorter than three sentences")
+    if "return" not in spec["description"].lower():
+        errors.append(f"{name}: description does not say what it returns")
+    for pn in spec["parameters"]:
+        if pn in VAGUE:
+            errors.append(f"{name}.{pn}: parameter name too vague")
 for name in TOOLS:
     t = TOOL_STATE[name]
     if t.get("external"):

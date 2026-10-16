@@ -1189,7 +1189,7 @@
         "Vehicle.Cabin.Door.Row2.PassengerSide.Window.Position"
       ]
     },
-    "set_window_child_lock": {
+    "set_window_child_lock_state": {
       "writes": [
         "Vehicle.Cabin.IsWindowChildLockEngaged"
       ]
@@ -1203,7 +1203,7 @@
         "Vehicle.Cabin.IsWindowChildLockEngaged"
       ]
     },
-    "set_sunshade_position": {
+    "set_sunroof_shade_position": {
       "writes": [
         "Vehicle.Cabin.Sunroof.Shade.Position"
       ]
@@ -1213,13 +1213,13 @@
         "Vehicle.Cabin.Sunroof.Position"
       ]
     },
-    "get_sunroof_and_sunshade_position": {
+    "get_sunroof_and_shade_position": {
       "reads": [
         "Vehicle.Cabin.Sunroof.Position",
         "Vehicle.Cabin.Sunroof.Shade.Position"
       ]
     },
-    "set_rear_window_shade": {
+    "set_rear_window_shade_position": {
       "writes": [
         "Vehicle.Cabin.RearShade.Position"
       ]
@@ -1229,7 +1229,7 @@
         "Vehicle.Cabin.RearShade.Position"
       ]
     },
-    "set_door_locks": {
+    "set_door_lock_state": {
       "writes": [
         "Vehicle.Cabin.Door.Row1.DriverSide.IsLocked",
         "Vehicle.Cabin.Door.Row1.PassengerSide.IsLocked",
@@ -1247,12 +1247,12 @@
         "Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive"
       ]
     },
-    "set_trunk": {
+    "set_trunk_lid_state": {
       "writes": [
         "Vehicle.Body.Trunk.Rear.IsOpen"
       ]
     },
-    "set_trunk_lock": {
+    "set_trunk_lock_state": {
       "writes": [
         "Vehicle.Body.Trunk.Rear.IsLocked"
       ]
@@ -1263,7 +1263,7 @@
         "Vehicle.Body.Trunk.Rear.IsLocked"
       ]
     },
-    "set_fuel_door": {
+    "set_fuel_door_state": {
       "writes": [
         "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"
       ]
@@ -1273,12 +1273,12 @@
         "Vehicle.Powertrain.FuelSystem.IsFuelPortFlapOpen"
       ]
     },
-    "set_charge_port": {
+    "set_charge_port_door_state": {
       "writes": [
         "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsFlapOpen"
       ]
     },
-    "set_charging_cable_lock": {
+    "set_charging_cable_lock_state": {
       "writes": [
         "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked"
       ]
@@ -1290,23 +1290,19 @@
         "Vehicle.Powertrain.TractionBattery.Charging.ChargingPort.FrontLeft.IsChargingCableLocked"
       ]
     },
-    "set_low_beams": {
+    "set_headlight_beam_state": {
       "writes": [
-        "Vehicle.Body.Lights.Beam.Low.IsOn"
-      ]
-    },
-    "set_high_beams": {
-      "writes": [
+        "Vehicle.Body.Lights.Beam.Low.IsOn",
         "Vehicle.Body.Lights.Beam.High.IsOn"
       ]
     },
-    "set_fog_lights": {
+    "set_fog_light_state": {
       "writes": [
         "Vehicle.Body.Lights.Fog.Front.IsOn",
         "Vehicle.Body.Lights.Fog.Rear.IsOn"
       ]
     },
-    "set_hazard_lights": {
+    "set_hazard_lights_state": {
       "writes": [
         "Vehicle.Body.Lights.Hazard.IsSignaling"
       ]
@@ -1320,7 +1316,7 @@
         "Vehicle.Body.Lights.Hazard.IsSignaling"
       ]
     },
-    "set_wipers": {
+    "set_wiper_mode": {
       "writes": [
         "Vehicle.Body.Windshield.Front.Wiping.Mode",
         "Vehicle.Body.Windshield.Front.Wiping.Intensity",
@@ -1334,13 +1330,13 @@
         "Vehicle.Body.Windshield.Rear.Wiping.Mode"
       ]
     },
-    "set_side_mirrors_folded": {
+    "set_side_mirror_fold_state": {
       "writes": [
         "Vehicle.Body.Mirrors.DriverSide.IsFolded",
         "Vehicle.Body.Mirrors.PassengerSide.IsFolded"
       ]
     },
-    "set_mirror_heating": {
+    "set_side_mirror_heating_state": {
       "writes": [
         "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn",
         "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn"
@@ -1354,7 +1350,7 @@
         "Vehicle.Body.Mirrors.PassengerSide.IsHeatingOn"
       ]
     },
-    "set_reading_light": {
+    "set_reading_light_state": {
       "writes": [
         "Vehicle.Cabin.Light.Spotlight.Row1.DriverSide.IsLightOn",
         "Vehicle.Cabin.Light.Spotlight.Row1.PassengerSide.IsLightOn",
@@ -1419,7 +1415,7 @@
         "Vehicle.Cabin.HVAC.IsAutoModeActive"
       ]
     },
-    "set_air_distribution": {
+    "set_airflow_direction": {
       "writes": [
         "Vehicle.Cabin.HVAC.Station.Row1.Driver.AirDistribution",
         "Vehicle.Cabin.HVAC.Station.Row1.Passenger.AirDistribution",
@@ -1428,23 +1424,23 @@
         "Vehicle.Cabin.HVAC.IsAutoModeActive"
       ]
     },
-    "set_air_conditioning": {
+    "set_air_conditioning_state": {
       "writes": [
         "Vehicle.Cabin.HVAC.IsAirConditioningActive"
       ]
     },
-    "set_air_recirculation": {
+    "set_air_recirculation_state": {
       "writes": [
         "Vehicle.Cabin.HVAC.IsRecirculationActive"
       ]
     },
-    "set_defrost": {
+    "set_defroster_state": {
       "writes": [
         "Vehicle.Cabin.HVAC.IsFrontDefrosterActive",
         "Vehicle.Cabin.HVAC.IsRearDefrosterActive"
       ]
     },
-    "set_climate_auto_mode": {
+    "set_climate_auto_mode_state": {
       "writes": [
         "Vehicle.Cabin.HVAC.IsAutoModeActive"
       ]
@@ -1473,18 +1469,12 @@
         "Vehicle.Exterior.Humidity"
       ]
     },
-    "set_seat_heating": {
+    "set_seat_heating_cooling": {
       "writes": [
         "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling",
         "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling",
         "Vehicle.Cabin.Seat.Row2.DriverSide.HeatingCooling",
         "Vehicle.Cabin.Seat.Row2.PassengerSide.HeatingCooling"
-      ]
-    },
-    "set_seat_ventilation": {
-      "writes": [
-        "Vehicle.Cabin.Seat.Row1.DriverSide.HeatingCooling",
-        "Vehicle.Cabin.Seat.Row1.PassengerSide.HeatingCooling"
       ]
     },
     "set_seat_massage": {
@@ -1495,7 +1485,7 @@
         "Vehicle.Cabin.Seat.Row1.PassengerSide.Massage.TypeActive"
       ]
     },
-    "set_seat_position": {
+    "set_seat_fore_aft_position": {
       "writes": [
         "Vehicle.Cabin.Seat.Row1.DriverSide.Position",
         "Vehicle.Cabin.Seat.Row1.PassengerSide.Position"
@@ -1507,14 +1497,14 @@
         "Vehicle.Cabin.Seat.Row1.PassengerSide.Backrest.Recline"
       ]
     },
-    "recall_seat_memory": {
+    "recall_driver_seat_memory": {
       "writes": [
         "Vehicle.Cabin.Seat.Row1.DriverSide.MemoryProfile",
         "Vehicle.Cabin.Seat.Row1.DriverSide.Position",
         "Vehicle.Cabin.Seat.Row1.DriverSide.Backrest.Recline"
       ]
     },
-    "set_steering_wheel_heating": {
+    "set_steering_wheel_heating_level": {
       "writes": [
         "Vehicle.Chassis.SteeringWheel.HeatingCooling"
       ]
@@ -1547,7 +1537,7 @@
         "Vehicle.Cabin.Infotainment.Media.IsMuted"
       ]
     },
-    "set_media_mute": {
+    "set_media_mute_state": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Media.IsMuted"
       ]
@@ -1558,12 +1548,7 @@
         "Vehicle.Cabin.Infotainment.Media.Action"
       ]
     },
-    "set_media_playback": {
-      "writes": [
-        "Vehicle.Cabin.Infotainment.Media.Action"
-      ]
-    },
-    "skip_media_track": {
+    "control_media_playback": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Media.Action"
       ]
@@ -1674,7 +1659,7 @@
         "Vehicle.Powertrain.Transmission.PerformanceMode"
       ]
     },
-    "set_regen_level": {
+    "set_regen_braking_level": {
       "writes": [
         "Vehicle.Powertrain.Hybrid.RegenLevel"
       ]
@@ -1700,7 +1685,7 @@
         "Vehicle.Powertrain.TractionBattery.Charging.Timer.Time"
       ]
     },
-    "start_stop_charging": {
+    "set_charging_state": {
       "writes": [
         "Vehicle.Powertrain.TractionBattery.Charging.IsCharging"
       ]
@@ -1714,7 +1699,7 @@
         "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit"
       ]
     },
-    "estimate_soc_after_charging": {
+    "estimate_battery_after_charging": {
       "reads": [
         "Vehicle.Powertrain.TractionBattery.StateOfCharge.Displayed",
         "Vehicle.Powertrain.TractionBattery.NetCapacity",
@@ -1767,7 +1752,7 @@
     "convert_route_distance_and_time": {
       "external": true
     },
-    "set_navigation": {
+    "start_navigation": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
         "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
@@ -1779,7 +1764,7 @@
         "Vehicle.Cabin.Infotainment.Navigation.RouteId"
       ]
     },
-    "add_navigation_waypoint": {
+    "update_navigation_waypoint": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
         "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
@@ -1791,43 +1776,7 @@
         "Vehicle.Cabin.Infotainment.Navigation.RouteId"
       ]
     },
-    "replace_navigation_waypoint": {
-      "writes": [
-        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
-      ]
-    },
-    "delete_navigation_waypoint": {
-      "writes": [
-        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
-      ]
-    },
-    "replace_navigation_destination": {
-      "writes": [
-        "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Longitude",
-        "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop1.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop2.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.Waypoints.Stop3.LocationId",
-        "Vehicle.Cabin.Infotainment.Navigation.RouteId"
-      ]
-    },
-    "delete_navigation_destination": {
+    "update_navigation_destination": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.IsGuidanceActive",
         "Vehicle.Cabin.Infotainment.Navigation.DestinationSet.Latitude",
@@ -1851,18 +1800,18 @@
         "Vehicle.Cabin.Infotainment.Navigation.RouteId"
       ]
     },
-    "set_route_options": {
+    "set_route_preferences": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsTollAvoided",
         "Vehicle.Cabin.Infotainment.Navigation.RouteOptions.IsHighwayAvoided"
       ]
     },
-    "set_voice_guidance": {
+    "set_navigation_voice_guidance": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.Mute"
       ]
     },
-    "set_navigation_volume": {
+    "set_navigation_voice_volume": {
       "writes": [
         "Vehicle.Cabin.Infotainment.Navigation.Volume"
       ]
